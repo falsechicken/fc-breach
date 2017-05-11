@@ -819,8 +819,7 @@ script 601 (void) NET
 }
 
 //Set Player Speed
-//script 602 (int mode)
-script 699 (int mode)
+script 602 (int mode)
 {	
 	while(GetActorProperty(0,APROP_Health) > 0)
 	{
@@ -1439,7 +1438,7 @@ script 608 RESPAWN
 		}
 			
 		ACS_ExecuteAlways(500,0,0,0,0);
-		ACS_ExecuteAlways(699,0,0,0,0);
+		ACS_ExecuteAlways(602,0,0,0,0);
 		
 		delay(1);
 }
