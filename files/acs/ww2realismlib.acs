@@ -1,0 +1,115 @@
+//Library for map makers to use while making WWII Realism maps.
+
+#library "ww2realismlib"
+#include "zcommon.acs"
+
+function void ResupplyAlliesInstant(void) //Give the players full ammo instantly.
+{
+	GiveInventory("Colt45Ammo", 21);
+	GiveInventory("TT30Ammo",24);
+	GiveInventory("WebleyAmmo",18);
+	
+	GiveInventory("M3GGAmmo",160);
+	GiveInventory("ThompsonAmmo",120);
+	GiveInventory("PPS42Ammo",140);
+	GiveInventory("StenAmmo",160);
+
+	GiveInventory("M1CarbineAmmo",60);
+	GiveInventory("M1GarandAmmo",48);
+	GiveInventory("SVTAmmo",50);    
+    
+    GiveInventory("NagantAmmo",50);
+	GiveInventory("EnfieldAmmo",50);
+	GiveInventory("SpringfieldAmmo",50);
+
+	GiveInventory("TrenchgunAmmo",36);
+
+	GiveInventory("BARAmmo",140);
+	GiveInventory("PPSh41Ammo",71);
+	GiveInventory("BrenAmmo",150);
+	
+	LocalAmbientSound("kar98k/chamber",127);	
+	Print(s:"Rearmed");
+}
+
+function void ResupplyAxisInstant(void)
+{
+	GiveInventory("LugerAmmo",24);
+	
+	GiveInventory("MP40Ammo",160);
+	
+	GiveInventory("Kar98KAmmo",50);
+	
+	GiveInventory("G43Ammo",50);
+	
+	GiveInventory("TrenchgunAmmo",36);
+	
+	GiveInventory("MP44Ammo",180);
+	
+	LocalAmbientSound("kar98k/chamber",127);
+	Print(s:"Rearmed");	
+}
+
+function void ResupplyAllInstant(void)
+{
+	GiveInventory("Colt45Ammo", 21);
+	GiveInventory("TT30Ammo",24);
+	GiveInventory("WebleyAmmo",18);
+	
+	GiveInventory("M3GGAmmo",160);
+	GiveInventory("ThompsonAmmo",120);
+	GiveInventory("PPS42Ammo",140);
+	GiveInventory("StenAmmo",160);
+
+	GiveInventory("M1CarbineAmmo",60);
+	GiveInventory("M1GarandAmmo",48);
+	GiveInventory("SVTAmmo",50);    
+    
+    GiveInventory("NagantAmmo",50);
+	GiveInventory("EnfieldAmmo",50);
+	GiveInventory("SpringfieldAmmo",50);
+
+	GiveInventory("TrenchgunAmmo",36);
+
+	GiveInventory("BARAmmo",140);
+	GiveInventory("PPSh41Ammo",71);
+	GiveInventory("BrenAmmo",150);
+	
+	
+	GiveInventory("LugerAmmo",24);
+	GiveInventory("MP40Ammo",160);
+	GiveInventory("Kar98KAmmo",50);
+	GiveInventory("G43Ammo",50);
+	GiveInventory("MP44Ammo",180);
+	
+	Print(s:"Rearmed");	
+	
+}
+
+function void SetClientWalkingSettings(void)
+{
+	ConsoleCommand("stillbob 0");
+	ConsoleCommand("movebob 0.20");
+	ConsoleCommand("cl_run false");
+}
+
+function void SetClientCrouchingSettings(void)
+{
+	ConsoleCommand("stillbob 0");
+	ConsoleCommand("movebob 0.10");
+	ConsoleCommand("cl_run false");
+}
+
+function void SetClientSprintingSettings(void)
+{
+	ConsoleCommand("stillbob 0");
+	ConsoleCommand("movebob 0.40");
+	ConsoleCommand("cl_run false");
+}
+
+function void SetClientAimingSettings(void)
+{
+	ConsoleCommand("stillbob 0");
+	ConsoleCommand("movebob 0.05");
+	ConsoleCommand("cl_run false");
+}

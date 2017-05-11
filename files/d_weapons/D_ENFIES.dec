@@ -1,0 +1,279 @@
+actor "Scoped Lee-Enfield" : RGUWeapon
+{
+  obituary "\cf%k \cc>> \cgScoped Lee-Enfield \cc>> \cf%o"
+  inventory.pickupmessage "Scoped Lee-Enfield"  
+  weapon.selectionorder 16
+  weapon.ammotype "EnfieldClip"
+  weapon.ammouse 1
+  weapon.ammogive 1
+  weapon.ammotype2 "EnfieldAmmo"
+  weapon.ammouse2 0
+  weapon.ammogive2 10
+  +NOAUTOFIRE
+  states
+  {
+  Select:
+    TNT1 A 0 A_Raise
+    loop
+  Ready:
+    TNT1 A 0 A_GiveInventory("Weight",4)	//Determines player speed - 4 means 30% less speed
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    LESA A 2 A_PlayWeaponSound("weapon/select")
+    LESA BCDE 2 A_WeaponReady(WRF_NOPRIMARY)
+    //goto InHand 				-- intentional drop to next state
+  InHand: 					//Ready state
+    LESA E 0 A_JumpIfNoAmmo("Reload")
+    LESA E 0 A_JumpIfInventory("Aiming",1,"Aiming")
+    LESA E 0 A_JumpIfInventory("Reloading",1,"Reload")
+    LESA E 0 A_JumpIfInventory("ThrowingGrenade",1,"KnifeAttack")
+    LESA E 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESA E 0 A_JumpIfInventory("EnfieldSClosed",1,1)
+    LESA E 1 A_WeaponReady
+    loop 
+  Aiming:
+    SCOP D 0 A_JumpIfInventory("Reloading",1,"Reload")    
+    SCOP D 0 A_JumpIfInventory("ThrowingGrenade",1,"KnifeAttack")
+    SCOP D 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    SCOP D 1 A_WeaponReady(WRF_NOBOB)
+    loop
+  Deselect:
+    TNT1 A 0 A_TakeInventory("Weight",5)	//Determines player speed - 4 means 30% less speed
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 A_ZoomFactor(1.0,ZOOM_INSTANT)
+    LESH ABCD 2
+    TNT1 A 2
+  DeselectFull: 				//Deselect
+    TNT1 AA 0 A_Lower
+    TNT1 A 1 A_Lower
+    loop
+  Fire:
+    LESA E 0 A_JumpIfInventory("Reloading",1,"ReloadEnd")
+    LESA E 1 A_JumpIfInventory("Aiming",1,"FireAim")
+    LESA E 1 A_JumpIfInventory("EnfieldSBolt",1, "Bolt")
+    LESB A 0 A_JumpIfNoAmmo("ReloadStart")
+    LESB A 0 A_TakeInventory("EnfieldSClosed",1)
+    LESB A 0 A_FireCustomMissile("EnfieldPuff2",0,0,4,2)
+    LESB A 1 BRIGHT A_FireBullets (15, 15, -1, 100, "EnfieldBullet3", 1, 3000)
+    LESB B 0 ACS_ExecuteAlways(600,0,1500,150*random(2,4),0)		//Recoil script - 1500 recoil, don't revert aim
+    LESB B 1 BRIGHT A_GunFlash
+    LESB CDEE 1 A_JumpIfNoAmmo("FireEmpty")
+    LESB E 5 A_WeaponReady(WRF_NOFIRE)
+	LESB E 0 A_GiveInventory("EnfieldSBolt",1)
+    LESA E 5 A_WeaponReady(WRF_NOFIRE)
+    goto InHand
+    LESB A 0 A_JumpIfNoAmmo(2)
+    goto InHand
+    LESB A 0 A_GiveInventory("EnfieldEmpty",1)		//Go to reload
+    goto Reload
+  FireEmpty:
+    LESB CDEF 1
+    goto Fire+17
+  FireAim:
+    SCOP D 1 A_JumpIfInventory("EnfieldSBolt",1,"BoltAim") 
+    SCOP D 1 A_JumpIfNoAmmo("ReloadStart")
+    SCOP D 0 A_TakeInventory("EnfieldSClosed",1)
+    SCOP D 0 A_FireCustomMissile("EnfieldPuff2",0,0,0,4)
+    SCOP D 1 BRIGHT A_FireBullets (0.1, 0.1, 2, 100, "EnfieldBullet2", 1, 9001) //45, 90, 135, 180, 225, 270
+    SCOP D 0 ACS_ExecuteAlways(600,0,1500,150*random(1,2),0)		//Recoil script - 1500 recoil, revert aim
+    SCOP D 1 BRIGHT A_GunFlash
+    SCOP D 4 A_ZoomFactor(1.5)
+    SCOP DDDD 1 A_JumpIfNoAmmo("FireEmptyAim")
+    SCOP D 5 A_WeaponReady(WRF_NOPRIMARY|WRF_NOBOB|WRF_NOFIRE)
+	SCOP D 4 A_ZoomFactor(3.5)
+	SCOP D 0 A_GiveInventory("EnfieldSBolt",1)
+    SCOP D 0 A_JumpIfInventory("EnfieldAmmo",1,2)
+    SCOP D 0 A_ReFire
+    goto InHand
+    SCOP D 0 A_JumpIfNoAmmo(2)
+    goto InHand
+    SCOP D 0 A_GiveInventory("EnfieldEmpty",1)		//Go to reload
+    goto Reload
+  FireEmptyAim:
+    SCOP DDDD 1
+    goto Fire+17
+  Hold:
+    LESA E 0 A_JumpIfInventory("Aiming",1,"HoldAim")	//Don't need a hold because of the already long rechamber time
+    LESA E 0 A_JumpIfInventory("ThrowingGrenade",1,"KnifeAttack")
+    LESA E 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    goto Fire
+  HoldAim:
+    LEEC E 0
+    goto FireAim
+  Flash:
+    TNT1 A 2 bright A_Light1
+    TNT1 A 0 bright A_Light0
+    stop
+  Reload:
+    TNT1 A 0 A_JumpIfInventory("EnfieldAmmo",1,"ReloadStart")
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    goto InHand+3
+  ReloadStart:
+    LESE A 0 A_JumpIfInventory("Aiming",1,"ReloadStartAim")
+    LESE A 0 A_WeaponReady(WRF_NOFIRE)
+    LESE A 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE B 0 A_WeaponReady(WRF_NOFIRE)
+    LESE B 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE C 0 A_TakeInventory("EnfieldSClosed",1)
+    LESE C 0 A_PlaySoundEx("kar98k/open","SoundSlot5")
+    LESE C 0 A_WeaponReady(WRF_NOFIRE)				//This apparent "messy" setup allows for interruption at all times
+    LESE C 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE D 0 A_WeaponReady(WRF_NOFIRE)
+    LESE D 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE E 0 A_WeaponReady(WRF_NOFIRE)
+    LESE E 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE F 0 A_WeaponReady(WRF_NOFIRE)
+    LESE F 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE G 0 A_WeaponReady(WRF_NOFIRE)
+    LESE G 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE H 0 A_PlaySoundEx("kar98k/clipin","SoundSlot5")
+    LESE H 0 A_WeaponReady(WRF_NOFIRE)
+    LESE H 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE I 0 A_WeaponReady(WRF_NOFIRE)
+    LESE I 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")    
+    LESE J 0 A_JumpIfInventory("EnfieldAmmo",6,1)
+    Goto ReloadAmmo
+    LESE J 0 A_JumpIfInventory("EnfieldClip",5,"ReloadAmmo")	//Because the animation shows 2 clips, skip the second if 5 is already in
+    LESE J 0 A_WeaponReady(WRF_NOFIRE)
+    LESE J 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE K 0 A_WeaponReady(WRF_NOFIRE)
+    LESE K 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE L 0 A_PlaySoundEx("kar98k/clipin","SoundSlot5")
+    LESE L 0 A_WeaponReady(WRF_NOFIRE)
+    LESE L 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    goto ReloadAmmo
+  ReloadAmmo:
+    TNT1 A 0 A_GiveInventory("EnfieldClip",1)
+    TNT1 A 0 A_TakeInventory("EnfieldAmmo",1)
+    TNT1 A 0 A_TakeInventory("EnfieldSBolt",1)
+    TNT1 A 0 A_JumpIfInventory("EnfieldClip",10,"ReloadEnd")
+    TNT1 A 0 A_JumpIfInventory("EnfieldAmmo",1,"ReloadAmmo")
+    goto ReloadEnd
+  ReloadEnd:
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    LESE M 0 A_WeaponReady(WRF_NOFIRE)
+    LESE M 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE N 0 A_GiveInventory("EnfieldSClosed",1)
+    LESE N 0 A_PlaySoundEx("kar98k/close","SoundSlot5")
+    LESE N 0 A_WeaponReady(WRF_NOFIRE)
+    LESE N 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE O 0 A_WeaponReady(WRF_NOFIRE)
+    LESE O 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    LESE P 0 A_WeaponReady(WRF_NOFIRE)
+    LESE P 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TNT1 A 0 A_ReFire
+    goto Ready+12
+  AltFire:	//Aim
+    LESC E 0 A_JumpIfInventory("Reloading",1,"ReloadEnd")
+    LESC A 0 A_JumpIfInventory("Aiming",1,"AltFire2")
+    LESC ABC 2
+    LESC A 0 A_ZoomFactor(3.5,ZOOM_INSTANT)
+    LESC E 0 A_GiveInventory("Aiming",1)
+    LESC E 0 ACS_ExecuteAlways(602,0,1,0,0)
+    LESC E 0 ACS_ExecuteAlways(600,0,1,0,3)
+    goto Aiming
+  AltFire2:
+    LESC C 0 A_ZoomFactor(1.0,ZOOM_INSTANT)
+    LESC CBA 2
+    LESC A 0 A_TakeInventory("Aiming",1)
+    S98C A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    goto InHand
+  ReloadStartAim:
+    LESC C 1 A_ZoomFactor(1.0,ZOOM_INSTANT)
+    LESC CBA 1
+    LESC A 0 A_TakeInventory("Aiming",1)
+    LESC A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    goto ReloadStart+1
+  Spawn:
+    WEAP A -1
+    loop
+  KnifeAttack: //Butt of weapon
+    TNT1 A 0 A_ZoomFactor(1.0,ZOOM_INSTANT)
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_JumpIfInventory("ThrowingGrenade",1,"FragGrenade")
+    TNT1 A 0 ACS_ExecuteAlways(600,0,900,900,2)		//Recoil script
+    LESG A 3 A_PlaySoundEx("melee/swing","SoundSlot5")
+    LESG B 3
+    LESG C 3 A_FireCustomMissile("MeleeAttack",4,0,0,-4)
+    LESG DE 3
+    TNT1 A 3
+    LESG FG 3
+    TNT1 A 0 A_TakeInventory("KnifeAttack",1)
+    goto InHand
+  FragGrenade:
+    FRGE ABCDEF 3
+    FRGE G 3 A_PlaySoundEx("grenade/pinpull","SoundSlot5")
+    TNT1 A 15 
+    FRGE H 3
+    FRGE H 0 A_PlaySoundEx("grenade/throw","SoundSlot5")
+    FRGE I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    FRGE I 0 A_TakeInventory("ThrowingGrenade",1)
+    FRGE I 0 A_TakeInventory("KnifeAttack",1)
+    FRGE I 3 A_FireCustomMissile("MillsBomb",0,0,0,16)
+    goto Ready+1		//Reselect weapon
+  Bolt:
+	LESB H 0 A_JumpIfInventory("Aiming",1,"BoltAim")
+	LESB H 0 A_GiveInventory("EnfieldSClosed",1)
+	LESB H 0 A_TakeInventory("EnfieldSBolt",1)
+	LESB H 5 A_PlayWeaponSound("kar98k/chamber")
+	LESB IJKL 5 A_WeaponReady(WRF_NOFIRE)
+	goto InHand
+  BoltAim:
+	LESC C 0 A_ZoomFactor(1.0,ZOOM_INSTANT)
+    LESC CBA 2
+    LESC A 0 A_TakeInventory("Aiming",1)
+    S98C A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    LESB H 0 A_GiveInventory("EnfieldSClosed",1)
+    LESB H 0 A_TakeInventory("EnfieldSBolt",1)
+    LESB H 5 A_PlayWeaponSound("kar98k/chamber")
+    LESB IJKL 5 A_WeaponReady(WRF_NOFIRE)
+    goto InHand
+  }
+}
+
+actor EnfieldPuff2
+{
+  RenderStyle None
+  -RANDOMIZE
+  +NOCLIP
+  PROJECTILE
+  Speed 28
+  Damage 0
+  states
+  {
+  Spawn:
+    TNT1 A 0
+    TNT1 A 0 A_AlertMonsters
+    TNT1 A 0 A_SpawnItemEx("WeaponSmokePuffShotgun_Spawned", 1, 0, 0, 0, 0, 0, 0, 128, 0)
+    TNT1 A 1 A_SpawnItemEx("MuzzleFlash2", 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    TNT1 A 0 A_Jump(128,"Spawn2")
+    TNT1 A 0 A_PlaySoundEx("Enfield/sniper1","SoundSlot5")
+    TNT1 A 5 A_PlaySoundEx("Enfield/sniper3","SoundSlot6")
+    stop
+  Spawn2:
+    TNT1 A 0 A_PlaySoundEx("Enfield/sniper2","SoundSlot5")
+    TNT1 A 5 A_PlaySoundEx("Enfield/sniper4","SoundSlot6")
+    stop
+  }
+}
+
+actor EnfieldBullet2 : HHBulletPuff
+{
+  damagetype "Enfield2"
+}
+
+actor EnfieldSBolt : Inventory //If this is in the players inventory the weapon needs to be bolted.
+{
+	inventory.amount 0
+    inventory.maxamount 1
+}
+
+actor EnfieldSClosed : Inventory //Custom closed actor to prevent conflict with Enfield.
+{
+	inventory.amount 0
+    inventory.maxamount 1
+}
+

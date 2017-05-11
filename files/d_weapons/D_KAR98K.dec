@@ -1,0 +1,285 @@
+actor "Kar98k" : RGUWeapon
+{
+  obituary "\cf%k \cc>> \csKar98K \cc>> \cf%o"
+  inventory.pickupmessage "Kar98K"  
+  weapon.selectionorder 19
+  weapon.ammotype "Kar98KClip"
+  weapon.ammouse 1
+  weapon.ammogive 1
+  weapon.ammotype2 "Kar98KAmmo"
+  weapon.ammouse2 0
+  weapon.ammogive2 5
+  +NOAUTOFIRE
+  states
+  {
+  Select:
+    TNT1 A 0 A_Raise
+    loop
+  Ready:
+    TNT1 A 0 A_GiveInventory("Weight",3)	//Determines player speed - 3 means 20% less speed
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    K98A A 2 A_PlayWeaponSound("weapon/select")
+    K98A BCDE 2 A_WeaponReady(WRF_NOPRIMARY)
+    //goto InHand 				-- intentional drop to next state
+  InHand: 					//Ready state
+    K98A E 0 A_JumpIfNoAmmo("Reload")
+    K98A E 0 A_JumpIfInventory("Aiming",1,"Aiming")
+    K98A E 0 A_JumpIfInventory("Reloading",1,"Reload")
+    K98A E 0 A_JumpIfInventory("ThrowingGrenade",1,"KnifeAttack")
+    K98A E 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98A E 1 A_WeaponReady
+    loop 
+  Aiming:
+    K98C E 0 A_JumpIfInventory("Reloading",1,"Reload")    
+    K98C E 0 A_JumpIfInventory("ThrowingGrenade",1,"KnifeAttack")
+    K98C E 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98C E 1 A_WeaponReady(WRF_NOBOB)
+    loop
+  Deselect:
+    TNT1 A 0 A_TakeInventory("Weight",5)	//Determines player speed - 3 means 20% less speed
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 A_ZoomFactor(1.0)
+    K98H ABC 2
+    TNT1 AA 2
+  DeselectFull: 				//Deselect
+    TNT1 AA 0 A_Lower
+    TNT1 A 1 A_Lower
+    loop
+  Fire:
+    K98A E 1 A_JumpIfInventory("Aiming",1,"FireAim")
+    K98A E 1 A_JumpIfInventory("Kar98kBolt",1,"Bolt")
+    K98B A 0 A_JumpIfNoAmmo("ReloadStart")
+    K98B A 0 A_TakeInventory("Kar98KClosed",1)
+    K98B A 0 A_FireCustomMissile("Kar98kPuff",0,0,4,2)
+    K98B A 1 BRIGHT A_FireBullets (10, 10, -1, 100, "Kar98kBullet3", 1, 3000)
+    K98B B 0 ACS_ExecuteAlways(600,0,1500,150*random(2,4),0)		//Recoil script - 1500 recoil, don't revert aim
+    K98B B 1 BRIGHT A_GunFlash
+    K98B CDEF 1 A_JumpIfNoAmmo("FireEmpty")
+    K98B G 5 A_WeaponReady(WRF_NOFIRE)
+	K98B G 0 A_GiveInventory("Kar98kBolt",1)
+    K98A E 5 A_WeaponReady(WRF_NOFIRE)
+    goto InHand
+    K98B A 0 A_JumpIfNoAmmo(2)
+    goto InHand
+    K98B A 0 A_GiveInventory("Kar98KEmpty",1)		//Go to reload
+    goto Reload
+  FireEmpty:
+    K98B CDEF 1
+    goto Fire+14
+  FireAim:
+    K98A E 0 A_JumpIfInventory("Kar98kBolt",1,"Bolt") 
+    K98C E 1 A_JumpIfNoAmmo("ReloadStart")
+    K98D A 0 A_TakeInventory("Kar98KClosed",1)
+    K98D A 0 A_FireCustomMissile("Kar98KPuff",0,0,0,4)
+    K98D A 1 BRIGHT A_FireBullets (0.35, 0.35, -1, 100, "Kar98kBullet", 1, 9001)
+    K98D B 0 ACS_ExecuteAlways(600,0,1500,150*random(1,2),0)		//Recoil script
+    K98D B 1 BRIGHT A_GunFlash
+    K89D B 0 A_ZoomFactor(1.18)
+    K98D CDEF 1 A_JumpIfNoAmmo("FireEmptyAim")
+    K98D F 1 A_ZoomFactor(1.2)
+    K98D F 5 A_WeaponReady(WRF_NOFIRE|WRF_NOBOB)
+    K98D F 0 A_GiveInventory("Kar98kBolt",1) 
+    K98D A 0 A_JumpIfInventory("Kar98KAmmo",1,2)
+    K98D A 0 A_ReFire
+    goto InHand
+    K98D A 0 A_JumpIfNoAmmo(2)
+    goto InHand
+    K98D A 0 A_GiveInventory("Kar98KEmpty",1)		//Go to reload
+    goto Reload
+  FireEmptyAim:
+    K98D CDEF 1
+    K98D F 0 A_TakeInventory("Aiming",1)
+    goto Fire+14
+  Hold:
+    K98A E 0 A_JumpIfInventory("Aiming",1,"HoldAim")	//Don't need a hold because of the already long rechamber time
+    K98A E 0 A_JumpIfInventory("ThrowingGrenade",1,"KnifeAttack")
+    K98A E 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    goto Fire
+  HoldAim:
+    K98C E 0
+    goto FireAim
+  Flash:
+    TNT1 A 2 bright A_Light1
+    TNT1 A 0 bright A_Light0
+    stop
+  Reload:
+    TNT1 A 0 A_JumpIfInventory("Kar98KAmmo",1,"ReloadStart")
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    goto InHand+3
+  ReloadStart:
+    K98E A 0 A_JumpIfInventory("Aiming",1,"ReloadStartAim")
+    K98E A 0 A_WeaponReady(WRF_NOFIRE)
+    K98E A 0 A_ZoomFactor(1.0)
+    K98E A 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98E B 0 A_TakeInventory("Kar98KClosed",1)
+    K98E B 0 A_PlaySoundEx("kar98k/open","SoundSlot5")
+    K98E B 0 A_WeaponReady(WRF_NOFIRE)
+    K98E B 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98E C 0 A_WeaponReady(WRF_NOFIRE)				//This apparent "messy" setup allows for interruption at all times
+    K98E C 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98E D 0 A_WeaponReady(WRF_NOFIRE)
+    K98E D 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98E E 0 A_WeaponReady(WRF_NOFIRE)
+    K98E E 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98E F 0 A_WeaponReady(WRF_NOFIRE)
+    K98E F 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98E G 0 A_WeaponReady(WRF_NOFIRE)
+    K98E G 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98E H 0 A_WeaponReady(WRF_NOFIRE)
+    K98E H 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98E I 0 A_PlaySoundEx("kar98k/clipin","SoundSlot5")
+    K98E I 0 A_WeaponReady(WRF_NOFIRE)
+    K98E I 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98E J 0 A_WeaponReady(WRF_NOFIRE)
+    K98E J 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98E K 0 A_WeaponReady(WRF_NOFIRE)
+    K98E K 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    goto ReloadAmmo
+  ReloadAmmo:
+    TNT1 A 0 A_GiveInventory("Kar98KClip",1)
+    TNT1 A 0 A_TakeInventory("Kar98KAmmo",1)
+    TNT1 A 0 A_TakeInventory("Kar98kBolt",1)
+    TNT1 A 0 A_JumpIfInventory("Kar98KClip",5,"ReloadEnd")
+    TNT1 A 0 A_JumpIfInventory("Kar98KAmmo",1,"ReloadAmmo")
+    goto ReloadEnd
+  ReloadEnd:
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    K98E L 0 A_WeaponReady(WRF_NOFIRE)
+    K98E L 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98E M 0 A_GiveInventory("Kar98KClosed",1)
+    K98E M 0 A_PlaySoundEx("kar98k/close","SoundSlot5")
+    K98E M 0 A_WeaponReady(WRF_NOFIRE)
+    K98E M 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    K98E N 0 A_WeaponReady(WRF_NOFIRE)
+    K98E N 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TNT1 A 0 A_ReFire
+    goto Ready+12
+  AltFire:	//Aim
+    K98C A 0 A_JumpIfInventory("Aiming",1,"AltFire2")
+    K98C A 0 A_ZoomFactor(1.2)		
+    K98C ABCDE 2
+    K98C E 0 A_GiveInventory("Aiming",1)
+    K98C E 0 ACS_ExecuteAlways(602,0,0,0,0)
+    K98C E 0 ACS_ExecuteAlways(600,0,1,0,3)
+    goto Aiming
+  AltFire2:
+    K98C E 0 A_ZoomFactor(1.0)
+    K98C EDCBA 2
+    K98C A 0 A_TakeInventory("Aiming",1)
+    K98C A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    goto InHand
+  ReloadStartAim:
+    K98C E 1 A_ZoomFactor(1.0)
+    K98C EDCBA 1
+    K98C A 0 A_TakeInventory("Aiming",1)
+    K98C A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    goto ReloadStart+1
+  Spawn:
+    WEAP A -1
+    loop
+  KnifeAttack: //Butt of weapon
+    TNT1 A 0 A_ZoomFactor(1.0)
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_JumpIfInventory("ThrowingGrenade",1,"FragGrenade")
+    TNT1 A 0 ACS_ExecuteAlways(600,0,900,900,2)		//Recoil script
+    K98G A 3 A_PlaySoundEx("melee/swing","SoundSlot5")
+    K98G B 3
+    K98G C 3 A_FireCustomMissile("MeleeAttack",4,0,0,-4)
+    K98G DEF 3
+    TNT1 A 3
+    K98G G 3
+    TNT1 A 0 A_TakeInventory("KnifeAttack",1)
+    goto InHand
+  FragGrenade:
+    FRGC ABCDEFG 3
+    TNT1 A 15 
+    FRGC H 3
+    FRGC H 0 A_PlaySoundEx("stick/throw","SoundSlot5")
+    FRGC I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    FRGC I 0 A_TakeInventory("ThrowingGrenade",1)
+    FRGC I 0 A_TakeInventory("KnifeAttack",1)
+    FRGC I 3 A_FireCustomMissile("StickGrenade",0,0,0,16)
+    goto Ready+1		//Reselect weapon
+   Bolt:
+    K98B H 0 A_JumpIfInventory("Aiming",1,"BoltAim")
+    K98B H 0 A_GiveInventory("Kar98KClosed",1)
+    K98B H 0 A_TakeInventory("Kar98kBolt",1)
+    K98B H 5 A_PlayWeaponSound("kar98k/chamber")
+    K98B IJKL 5 A_WeaponReady(WRF_NOFIRE)
+    goto InHand
+  BoltAim:
+    K98D H 0 A_ZoomFactor(1.0)
+    K98D H 0 A_GiveInventory("Kar98KClosed",1)
+    K98D H 0 A_TakeInventory("Kar98kBolt",1)
+    K98D H 5 A_PlayWeaponSound("kar98k/chamber")
+    K98D IJKL 5 A_WeaponReady(WRF_NOFIRE|WRF_NOBOB)
+    K98D L 0 A_ZoomFactor(1.2)
+    goto InHand
+  }
+}
+
+actor Kar98KEmpty : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+actor Kar98KClosed : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+actor Kar98KClip : Ammo
+{
+    inventory.icon "CLIPA0"
+    inventory.amount 0
+    inventory.maxamount 5
+    ammo.backpackamount 0
+    ammo.backpackmaxamount 5
+    +IGNORESKILL
+}
+
+actor Kar98KPuff
+{
+  RenderStyle None
+  -RANDOMIZE
+  +NOCLIP
+  PROJECTILE
+  Speed 28
+  Damage 0
+  states
+  {
+  Spawn:
+    TNT1 A 0
+    TNT1 A 0 A_AlertMonsters
+    TNT1 A 0 A_SpawnItemEx("WeaponSmokePuffShotgun_Spawned", 1, 0, 0, 0, 0, 0, 0, 128, 0)
+    TNT1 A 1 A_SpawnItemEx("MuzzleFlash2", 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    TNT1 A 0 A_Jump(128,"Spawn2")
+    TNT1 A 0 A_PlaySoundEx("Kar98K/fire1","SoundSlot5")
+    TNT1 A 5 A_PlaySoundEx("Kar98K/fire3","SoundSlot6")
+    stop
+  Spawn2:
+    TNT1 A 0 A_PlaySoundEx("Kar98K/fire2","SoundSlot5")
+    TNT1 A 5 A_PlaySoundEx("Kar98K/fire4","SoundSlot6")
+    stop
+  }
+}
+
+actor Kar98kBullet : HHBulletPuff
+{
+  damagetype "Kar98"
+}
+
+actor Kar98kBullet3 : HHBulletPuff
+{
+  damagetype "Kar983"
+}
+
+actor Kar98kBolt : Inventory //If this is in the the players inventory the rifle needs to be bolted.
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}

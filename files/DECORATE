@@ -1,0 +1,1028 @@
+#include "d_misc/D_DEFAUL.dec"	
+#include "d_misc/D_HEAD.dec"	
+#include "d_misc/D_INFO.dec"
+#include "d_misc/D_AMMO.dec"
+#include "d_misc/D_PICKUP.dec"
+
+//Weapons
+#include "d_weapons/D_FRAG.dec"		//Frag Grenade
+#include "d_weapons/D_SMOKE.dec"		//Smoke Grenade
+
+#include "d_weapons/D_TRENCH.dec"	//M1897 Trenchgun	-- Shotgun
+
+#include "d_weapons/D_COLT45.dec"	//Colt .45		-- Main Allies sidearm
+#include "d_weapons/D_LUGER.dec"	//Luger			-- Main Axis sidearm
+#include "d_weapons/D_TT30.dec"		//TT30			-- Main Russian sidearm
+#include "d_weapons/D_WEBLEY.dec"		//Webley		-- Main British sidearm
+
+#include "d_weapons/D_M3GREA.dec"		//M3 Grease Gun		-- Main Allies SMG
+#include "d_weapons/D_PPS42.dec"		//PPS-42		-- Main Russian SMG
+#include "d_weapons/D_MP40.dec"		//MP40			-- Main Axis SMG
+#include "d_weapons/D_STEN.dec"		//STEN			-- Main British SMG
+#include "d_weapons/D_THOMPS.dec"		//Thompson		-- Alternate Allies/British SMG
+
+#include "d_weapons/D_M1CARB.dec"		//M1A1 Carbine		-- Main Allies Rifle 1
+#include "d_weapons/D_KAR98K.dec"		//Kar98k		-- Main Axis Rifle 1
+#include "d_weapons/D_NAGANT.dec"		//Mosin-Nagant		-- Main Russian Rifle 1
+#include "d_weapons/D_ENFIEL.dec"		//Lee-Enfield		-- Main British Rifle 1
+#include "d_weapons/D_M1GARA.dec"		//M1 Garand		-- Main Allies/British Rifle 2
+#include "d_weapons/D_G43.dec"		//Gewehr 43		-- Main Axis Rifle 2
+#include "d_weapons/D_SVT40.dec"		//SVT-40		-- Main Russian Rifle 2
+
+#include "d_weapons/D_SPRING.dec"		//Springfield		-- Main Allies Sniper
+#include "d_weapons/D_KAR98S.dec"		//Scoped Kar98k		-- Main Axis Sniper
+#include "d_weapons/D_NAGANS.dec"		//Scoped Mosin-Nagant	-- Main Russian Sniper
+#include "d_weapons/D_ENFIES.dec"		//Scoped Lee-Enfield	-- Main British Sniper
+
+#include "d_weapons/D_BAR.dec"		//BAR			-- Main Allies Support
+#include "d_weapons/D_MP44.dec"		//MP44			-- Main Axis Support
+#include "d_weapons/D_PPSh41.dec"		//PPSh-41		-- Main Russian Support
+#include "d_weapons/D_BREN.dec"		//Bren Gun		-- Main British Support
+
+#include "d_misc/D_MONSTE.dec"		//Enemies
+
+#include "d_misc/D_BULLET.dec" //Bullets	
+
+actor WW2Player_Allied : DoomPlayer
+{
+  Radius 10
+  Height 51
+  Player.JumpZ 8
+  Player.AttackZOffset 14
+  player.sidemove 0.44 0.22
+  player.forwardmove 0.44 0.22
+  player.displayname "American All Weaps"
+  player.soundclass "WW2"
+  player.startitem "IsAllied", 1
+  player.startitem "BAR", 1
+  player.startitem "BARAmmo", 80
+  player.startitem "BARClip", 20
+  player.startitem "Springfield", 1
+  player.startitem "SpringfieldAmmo", 20
+  player.startitem "SpringfieldClip", 5
+  player.startitem "SpringfieldClosed", 1
+  player.startitem "M1 Garand", 1
+  player.startitem "M1GarandAmmo", 32
+  player.startitem "M1GarandClip", 8
+  player.startitem "M1A1 Carbine", 1
+  player.startitem "M1CarbineAmmo", 60
+  player.startitem "M1CarbineClip", 15
+  player.startitem "Thompson", 1
+  player.startitem "ThompsonAmmo", 80
+  player.startitem "ThompsonClip", 20
+  player.startitem "M3 Grease Gun", 1
+  player.startitem "M3GGAmmo", 128
+  player.startitem "M3GGClip", 32
+  player.startitem "M1897 Trenchgun", 1
+  player.startitem "TrenchgunAmmo", 30
+  player.startitem "TrenchgunClip", 6
+  player.startitem "TrenchgunPumped", 1
+  player.startitem "Colt .45", 1
+  player.startitem "Colt45Ammo", 28
+  player.startitem "Colt45Clip", 7
+  player.startitem "FragGrenadeAmmo", 1
+  player.startitem "Fragmentation Grenade", 1
+  player.startitem "SmokeGrenadeAmmo", 1
+  player.startitem "Smoke Grenade", 1
+  player.crouchsprite "W2CB"
+  limitedtoteam 0
+  +NOSKIN
+  +QUICKTORETALIATE
+  States
+  {
+  Spawn:
+    WW2B A 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B A 0 A_JumpIfInventory("Crouching",1,"SpawnCrouching")
+    Loop
+  SpawnCrouching:
+    WW2B A 2 A_SpawnItemEx("PlayerHead",-9,0,28)
+    goto Spawn
+  See:
+    WW2B A 0 A_JumpIfInventory("Sprinting",1,"Sprint")
+    WW2B A 0 A_JumpIfInventory("Crouching",1,"Crouching")
+    WW2B A 0 A_JumpIfInventory("Walking",1,"SeeAim1")
+    WW2B A 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2B AAA 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B B 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2B BBB 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B C 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2B C 0 A_JumpIfInventory("Sprinting",1,"Sprint")
+    WW2A A 0 A_JumpIfInventory("Crouching",1,"Crouching")
+    WW2B A 0 A_JumpIfInventory("Walking",1,"SeeAim1")
+    WW2B CCC 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B A 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2B DDD 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B B 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2B A 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+    WW2B A 0 A_JumpIfInventory("Sprinting",1,"Sprint")
+    goto Spawn
+  SeeAim1:
+    WW2B AAAA 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B BBBB 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B C 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2B C 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2B CCCC 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B DDDD 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B A 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+    goto Spawn
+  Crouching:
+    WW2B AAAA 2 A_SpawnItemEx("PlayerHead",2,0,27)
+    WW2B BBBB 2 A_SpawnItemEx("PlayerHead",2,0,27)
+    WW2B CCCC 2 A_SpawnItemEx("PlayerHead",2,0,27)
+    WW2B DDDD 2 A_SpawnItemEx("PlayerHead",2,0,27)
+    goto Spawn
+  Missile:
+    WW2B A 0 A_JumpIfInventory("Crouching",1,"MissileCrouching")
+    WW2B EEE 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    Goto Spawn
+  Melee:
+    WW2B A 0 A_JumpIfInventory("Crouching",1,"MeleeCrouching")
+    WW2B F 2 BRIGHT A_SpawnItemEx("PlayerHead",0,0,43)
+    Goto Missile
+  MissileCrouching:
+    WW2B EEE 2 A_SpawnItemEx("PlayerHead",2,0,27)
+    Goto Spawn
+  MeleeCrouching:
+    WW2B F 2 BRIGHT A_SpawnItemEx("PlayerHead",2,0,27)
+    Goto Missile
+  Pain.Shock:
+    WW2B G 0 ACS_ExecuteAlways(616,0,0,0,0)
+  Pain.Shock2:
+    WW2B G 0 ACS_ExecuteAlways(617,0,0,0,0)
+    goto Pain
+  Pain:
+    WW2B G 0 ACS_ExecuteAlways(600,0,900,900,0)
+    WW2B G 0 ACS_ExecuteAlways(606,0,0,0,0)
+    WW2B G 0 ACS_ExecuteAlways(627,0,0,0,0) //Shot script.
+    WW2B G 1 A_GiveInventory("InCombat",7)
+    WW2B G 0 A_GiveToTarget("HitIndicator",1)
+    WW2B G 0 A_PlaySoundEx("player/hurt","SoundSlot6")
+    WW2B A 0 A_SpawnItemEx("SmallBloodPool2",random(-6,6),random(-6,6),-32,0,0,-4,0,128,128)
+    WW2B GGGGGGGG 1 A_SpawnItemEx("HHBlood2",random(2,5),random(-2,2),random(0,32),0.5,0,0.5,random(0,360),128,0)
+    Goto Spawn
+  Death:
+    WW2B H 0 A_PlaySoundEx("blanksnd","Voice")
+    WW2B H 0 A_PlaySoundEx("blanksnd","SoundSlot7")
+    WW2B H 1 A_PlaySoundEx("player/hurt","SoundSlot6")
+    WW2B G 0 A_JumpIfInventory("WasHeadshot",1,"Death.Decapitated")
+    WW2B H 0 Thing_ChangeTID(0,9999)
+    WW2B H 0 A_TakeInventory("KnifeAttack",1)
+    WW2B H 0 A_TakeInventory("Reloading",1)
+    WW2B H 0 A_TakeInventory("Aiming",1)
+    WW2B H 0 A_JumpIfInventory("ThrowingGrenade",1,"DeathDrop")
+    WW2B A 0 A_SpawnItemEx("Gip1",random(-8,8),random(-8,8),32,0,0,1,0,128,128)
+    WW2B H 0 A_JumpIf(ACS_ExecuteWithResult(609,0,0,0) == 1, "DeathLMS")
+    WW2B H 15 A_GiveToTarget("HitIndicator",1)
+    WW2B I 10 A_PlaySoundEx("generic/bodythump","SoundSlot6") 
+    WW2B J 10 A_NoBlocking
+    WW2B K 0 A_SpawnItemEx("DeadAmerican",0,0,0,0,0,0,0,0,0)
+    WW2B K -1 A_SetTranslucent(0.0,0)
+    Stop
+  DeathLMS:
+    WW2B H 0 A_GiveToTarget("HitIndicator",1)
+    WW2B I 0 
+    WW2B J 0 A_NoBlocking
+    WW2B K 1 A_SpawnItemEx("DyingAmerican",0,0,0,0,0,0,0,0,0)
+    WW2B K -1 A_SetTranslucent(0.0,0)
+    Stop
+  DeathDrop:
+    WW2B H 0 A_CustomMissile("FragGrenadeDropped",8,0,0)
+    WW2B H 0 A_TakeInventory("ThrowingGrenade",1)
+    WW2B H 0 A_TakeInventory("FragGrenadeAmmo",1)
+    goto Death+9
+  XDeath:
+    WW2B O 0
+    goto Death
+  Sprint:   
+    WW2B B 0 A_JumpIfInventory("Tired",1,"Tired")
+    WW2B AAA 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B BBB 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B C 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2B CCC 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B DDD 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B A 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+	goto Spawn
+  Tired:
+    WW2B AAA 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B BBB 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B C 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2B CCC 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B DDD 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2B A 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+	goto Spawn
+  }
+}
+
+
+actor WW2Player_Allied_M3 : WW2Player_Allied
+{
+  //Don't need much more than name and speed
+  player.displayname "American M3"
+  
+  
+}
+
+actor WW2Player_Allied_M1Carbine : WW2Player_Allied
+{
+  player.displayname "American M1 Carbine"
+  
+  
+}
+actor WW2Player_Allied_M1Garand : WW2Player_Allied
+{
+  player.displayname "American M1 Garand"
+  
+  
+}
+actor WW2Player_Allied_Springfield : WW2Player_Allied
+{
+  player.displayname "American Sniper"
+  
+  
+}
+actor WW2Player_Allied_Trenchgun : WW2Player_Allied
+{
+  player.displayname "American Trenchgun"
+  
+  
+}
+actor WW2Player_Allied_BAR : WW2Player_Allied
+{
+  player.displayname "American BAR"
+  
+  
+}
+actor WW2Player_Allied_Thompson : WW2Player_Allied
+{
+  player.displayname "American Thompson"
+  
+  
+}
+
+actor WW2Player_Axis : WW2Player_Allied
+{
+  player.forwardmove 0.44 0.22
+  player.sidemove 0.44 0.22
+  player.displayname "German All Weaps"
+  player.startitem "MP44", 1
+  player.startitem "MP44Ammo", 120
+  player.startitem "MP44Clip", 30
+  player.startitem "IsAxis", 1
+  player.startitem "Scoped Kar98k", 1
+  player.startitem "Gewehr 43", 1
+  player.startitem "G43Ammo", 40
+  player.startitem "G43Clip", 10
+  player.startitem "Kar98k", 1
+  player.startitem "Kar98kAmmo", 20
+  player.startitem "Kar98kClip", 8
+  player.startitem "Kar98kClosed", 1
+  player.startitem "MP40", 1
+  player.startitem "MP40Ammo", 128
+  player.startitem "MP40Clip", 32
+  player.startitem "M1897 Trenchgun", 1
+  player.startitem "TrenchgunAmmo", 30
+  player.startitem "TrenchgunClip", 6
+  player.startitem "TrenchgunPumped", 1
+  player.startitem "Luger", 1
+  player.startitem "LugerAmmo", 32
+  player.startitem "LugerClip", 8
+  player.startitem "Stielhandgranate", 1
+  player.startitem "FragGrenadeAmmo", 1
+  player.crouchsprite "W2CA"
+  limitedtoteam 1
+  States
+  {
+  Spawn:
+    WW2A A 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2A A 0 A_JumpIfInventory("Crouching",1,"SpawnCrouching")
+    Loop
+  SpawnCrouching:
+    WW2A A 2 A_SpawnItemEx("PlayerHead",-2,0,28)
+    goto Spawn
+  See:
+    WW2A A 0 A_JumpIfInventory("Sprinting",1,"Sprint")
+    WW2A A 0 A_JumpIfInventory("Crouching",1,"Crouching")
+    WW2A A 0 A_JumpIfInventory("Walking",1,"SeeAim1")
+    WW2A A 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2A AAA 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2A B 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2A BBB 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2A C 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2A A 0 A_JumpIfInventory("Sprinting",1,"Sprint")
+    WW2A A 0 A_JumpIfInventory("Crouching",1,"Crouching")
+    WW2A A 0 A_JumpIfInventory("Walking",1,"SeeAim1")
+    WW2A CCC 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2A A 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2A DDD 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2A B 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2A A 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+    WW2A A 0 A_JumpIfInventory("Sprinting",1,"Sprint")
+    goto Spawn
+  SeeAim1:
+    WW2A AAAA 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2A BBBB 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2A C 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2A CCCC 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2A DDDD 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2A A 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+    goto Spawn
+  Crouching:
+    WW2A AAAA 2 A_SpawnItemEx("PlayerHead",-2,0,28)
+    WW2A BBBB 2 A_SpawnItemEx("PlayerHead",-2,0,28)
+    WW2A CCCC 2 A_SpawnItemEx("PlayerHead",-2,0,28)
+    WW2A DDDD 2 A_SpawnItemEx("PlayerHead",-2,0,28)
+    goto Spawn
+  Missile:
+    WW2A A 0 A_JumpIfInventory("Crouching",1,"MissileCrouching")
+    WW2A EEE 2 A_SpawnItemEx("PlayerHead",0,0,50)
+    Goto Spawn
+  Melee:
+    WW2A A 0 A_JumpIfInventory("Crouching",1,"MeleeCrouching")
+    WW2A F 2 BRIGHT A_SpawnItemEx("PlayerHead",0,0,50)
+    Goto Missile
+  MissileCrouching:
+    WW2A EEE 2 A_SpawnItemEx("PlayerHead",-2,0,28)
+    Goto Spawn
+  MeleeCrouching:
+    WW2A F 2 BRIGHT A_SpawnItemEx("PlayerHead",-2,0,28)
+    Goto Missile
+  Pain.Shock:
+    WW2A G 0 ACS_ExecuteAlways(616,0,0,0,0)
+  Pain.Shock2:
+    WW2A G 0 ACS_ExecuteAlways(617,0,0,0,0)
+    goto Pain
+  Pain:
+    WW2A G 0 ACS_ExecuteAlways(600,0,900,900,0)
+    WW2A G 0 ACS_ExecuteAlways(606,0,0,0,0)
+    WW2A G 0 ACS_ExecuteAlways(627,0,0,0,0) //Shot script.
+    WW2A G 1 A_GiveInventory("InCombat",7)
+    WW2A G 0 A_GiveToTarget("HitIndicator",1)
+    WW2A G 0 A_PlaySoundEx("player/hurt","SoundSlot6")
+    WW2A A 0 A_SpawnItemEx("SmallBloodPool2",random(-6,6),random(-6,6),-32,0,0,-4,0,128,128)
+    WW2A GGGGGGGG 1 A_SpawnItemEx("HHBlood2",random(2,5),random(-2,2),random(0,32),0.5,0,0.5,random(0,360),128,0)
+    Goto Spawn
+  Death:
+    WW2B H 0 A_PlaySoundEx("blanksnd","Voice")
+    WW2B H 0 A_PlaySoundEx("blanksnd","SoundSlot7")
+    WW2A H 1 A_PlaySoundEx("player/hurt","SoundSlot6")
+    WW2A G 0 A_JumpIfInventory("WasHeadshot",1,"Death.Decapitated")
+    WW2A H 0 Thing_ChangeTID(0,9999)
+    WW2A H 0 A_TakeInventory("KnifeAttack",1)
+    WW2A H 0 A_TakeInventory("Reloading",1)
+    WW2A H 0 A_TakeInventory("Aiming",1)
+    WW2A H 0 A_JumpIfInventory("ThrowingGrenade",1,"DeathDrop")
+    WW2A A 0 A_SpawnItemEx("Gip1",random(-8,8),random(-8,8),32,0,0,1,0,128,128)
+    WW2A H 0 A_JumpIf(ACS_ExecuteWithResult(609,0,0,0) == 1, "DeathLMS")
+    WW2A H 15 A_GiveToTarget("HitIndicator",1)
+    WW2A I 10 A_PlaySoundEx("generic/bodythump","SoundSlot6") 
+    WW2A J 10 A_NoBlocking
+    WW2A K 0 A_SpawnItemEx("DeadGerman",0,0,0,0,0,0,0,0,0)
+    WW2A K -1 A_SetTranslucent(0.0,0)
+    Stop
+  DeathLMS:
+    WW2A H 0 A_GiveToTarget("HitIndicator",1)
+    WW2A I 0 A_SetTranslucent(0.0,0)
+    WW2A J 0 A_NoBlocking
+    WW2A K 1 A_SpawnItemEx("DyingGerman",0,0,0,0,0,0,0,0,0)
+    WW2A K -1 A_SetTranslucent(0.0,0)
+    Stop
+  DeathDrop:
+    WW2A H 0 A_CustomMissile("FragGrenadeDropped",8,0,0)
+    WW2A H 0 A_TakeInventory("ThrowingGrenade",1)
+    WW2A H 0 A_TakeInventory("FragGrenadeAmmo",1)
+    goto Death+9
+  XDeath:
+    WW2A O 0
+    goto Death
+  Sprint:   
+    WW2A B 0 A_JumpIfInventory("Tired",1,"Tired")
+    WW2A AAA 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2A BBB 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2A C 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2A CCC 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2A DDD 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2A A 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+	goto Spawn
+  Tired:
+    WW2A AAA 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2A BBB 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2A C 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2A CCC 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2A DDD 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2A A 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+	goto Spawn
+  }
+}
+
+actor WW2Player_German_MP40 : WW2Player_Axis
+{
+  //Don't need much more than name and speed
+  player.displayname "German MP40"
+  
+  
+}
+actor WW2Player_German_Kar98k : WW2Player_Axis
+{
+  player.displayname "German Kar98k"
+  
+  
+}
+actor WW2Player_German_G43 : WW2Player_Axis
+{
+  player.displayname "German Gewehr 43"
+  
+  
+}
+actor WW2Player_German_ScopedKar98k : WW2Player_Axis
+{
+  player.displayname "German Sniper"
+  
+  
+}
+actor WW2Player_German_Trenchgun : WW2Player_Axis
+{
+  player.displayname "German Trenchgun"
+  
+  
+}
+actor WW2Player_German_MP44 : WW2Player_Axis
+{
+  player.displayname "German MP44"
+  
+  
+}
+actor WW2Player_Russian : WW2Player_Allied
+{
+  player.forwardmove 0.44 0.22
+  player.sidemove 0.44 0.22
+  player.displayname "Russian All Weaps"
+  player.startitem "IsRussian", 1
+  player.startitem "PPSh-41", 1
+  player.startitem "PPSh41Ammo", 142
+  player.startitem "PPSh41Clip", 71
+  player.startitem "Scoped Mosin-Nagant", 1
+  player.startitem "SVT-40", 1
+  player.startitem "SVTAmmo", 40
+  player.startitem "SVTClip", 10
+  player.startitem "Mosin-Nagant", 1
+  player.startitem "NagantAmmo", 20
+  player.startitem "NagantClip", 5
+  player.startitem "NagantClosed", 1
+  player.startitem "PPS-42", 1
+  player.startitem "PPS42Ammo", 140
+  player.startitem "PPS42Clip", 35
+  player.startitem "M1897 Trenchgun", 1
+  player.startitem "TrenchgunAmmo", 30
+  player.startitem "TrenchgunClip", 6
+  player.startitem "TrenchgunPumped", 1
+  player.startitem "TT30", 1
+  player.startitem "TT30Ammo", 32
+  player.startitem "TT30Clip", 8
+  player.startitem "RGD-33 Grenade", 1
+  player.startitem "FragGrenadeAmmo", 1
+  limitedtoteam 0
+  player.crouchsprite "W2CD"
+  States
+  {
+  Spawn:
+    WW2D A 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2D A 0 A_JumpIfInventory("Crouching",1,"SpawnCrouching")
+    Loop
+  SpawnCrouching:
+    WW2D A 2 A_SpawnItemEx("PlayerHead",-2,0,28)
+    goto Spawn
+  See:
+    WW2D A 0 A_JumpIfInventory("Sprinting",1,"Sprint")
+    WW2D A 0 A_JumpIfInventory("Crouching",1,"Crouching")
+    WW2D A 0 A_JumpIfInventory("Walking",1,"SeeAim1")
+    WW2D A 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2D AAA 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2D B 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2D BBB 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2D A 0 A_JumpIfInventory("Sprinting",1,"Sprint")
+    WW2D C 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2D A 0 A_JumpIfInventory("Crouching",1,"Crouching")
+    WW2D A 0 A_JumpIfInventory("Walking",1,"SeeAim1")
+    WW2D CCC 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2D A 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2D DDD 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2D B 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2D A 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+    WW2D A 0 A_JumpIfInventory("Sprinting",1,"Sprint")
+    goto Spawn
+  SeeAim1:
+    WW2D AAAA 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2D BBBB 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2D C 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2D CCCC 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2D DDDD 2 A_SpawnItemEx("PlayerHead",-9,0,50)
+    WW2D A 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+    goto Spawn
+  Crouching:
+    WW2D AAAA 2 A_SpawnItemEx("PlayerHead",-2,0,28)
+    WW2D BBBB 2 A_SpawnItemEx("PlayerHead",-2,0,28)
+    WW2D CCCC 2 A_SpawnItemEx("PlayerHead",-2,0,28)
+    WW2D DDDD 2 A_SpawnItemEx("PlayerHead",-2,0,28)
+    goto Spawn
+  Missile:
+    WW2D A 0 A_JumpIfInventory("Crouching",1,"MissileCrouching")
+    WW2D EEE 2 A_SpawnItemEx("PlayerHead",0,0,50)
+    Goto Spawn
+  Melee:
+    WW2D A 0 A_JumpIfInventory("Crouching",1,"MeleeCrouching")
+    WW2D F 2 BRIGHT A_SpawnItemEx("PlayerHead",0,0,50)
+    Goto Missile
+  MissileCrouching:
+    WW2D EEE 2 A_SpawnItemEx("PlayerHead",-2,0,28)
+    Goto Spawn
+  MeleeCrouching:
+    WW2D F 2 BRIGHT A_SpawnItemEx("PlayerHead",-2,0,28)
+    Goto Missile
+  Pain.Shock:
+    WW2D G 0 ACS_ExecuteAlways(616,0,0,0,0)
+  Pain.Shock2:
+    WW2D G 0 ACS_ExecuteAlways(617,0,0,0,0)
+    goto Pain
+  Pain:
+    WW2D G 0 ACS_ExecuteAlways(600,0,900,900,0)
+    WW2D G 0 ACS_ExecuteAlways(606,0,0,0,0)
+    WW2D G 0 ACS_ExecuteAlways(627,0,0,0,0) //Shot script.
+    WW2D G 1 A_GiveInventory("InCombat",7)
+    WW2D G 0 A_GiveToTarget("HitIndicator",1)
+    WW2D G 0 A_PlaySoundEx("player/hurt","SoundSlot6")
+    WW2D A 0 A_SpawnItemEx("SmallBloodPool2",random(-6,6),random(-6,6),-32,0,0,-4,0,128,128)
+    WW2D GGGGGGGG 1 A_SpawnItemEx("HHBlood2",random(2,5),random(-2,2),random(0,32),0.5,0,0.5,random(0,360),128,0)
+    Goto Spawn
+  Death:
+    WW2B H 0 A_PlaySoundEx("blanksnd","Voice")
+    WW2B H 0 A_PlaySoundEx("blanksnd","SoundSlot7")
+    WW2D H 1 A_PlaySoundEx("player/hurt","SoundSlot6")
+    WW2D G 0 A_JumpIfInventory("WasHeadshot",1,"Death.Decapitated")
+    WW2D H 0 Thing_ChangeTID(0,9999)
+    WW2D H 0 A_TakeInventory("KnifeAttack",1)
+    WW2D H 0 A_TakeInventory("Reloading",1)
+    WW2D H 0 A_TakeInventory("Aiming",1)
+    WW2D H 0 A_JumpIfInventory("ThrowingGrenade",1,"DeathDrop")
+    WW2D A 0 A_SpawnItemEx("Gip1",random(-8,8),random(-8,8),32,0,0,1,0,128,128)
+    WW2D H 0 A_JumpIf(ACS_ExecuteWithResult(609,0,0,0) == 1, "DeathLMS")
+    WW2D H 15 A_GiveToTarget("HitIndicator",1)
+    WW2D I 10 A_PlaySoundEx("generic/bodythump","SoundSlot6") 
+    WW2D J 10 A_NoBlocking
+    WW2D K 0 A_SpawnItemEx("DeadRussian",0,0,0,0,0,0,0,0,0)
+    WW2D K -1 A_SetTranslucent(0.0,0)
+    Stop
+  DeathLMS:
+    WW2D H 0 A_GiveToTarget("HitIndicator",1)
+    WW2D I 0 A_SetTranslucent(0.0,0)
+    WW2D J 0 A_NoBlocking
+    WW2D K 1 A_SpawnItemEx("DyingRussian",0,0,0,0,0,0,0,0,0)
+    WW2D K -1 A_SetTranslucent(0.0,0)
+    Stop
+  DeathDrop:
+    WW2D H 0 A_CustomMissile("FragGrenadeDropped",8,0,0)
+    WW2D H 0 A_TakeInventory("ThrowingGrenade",1)
+    WW2D H 0 A_TakeInventory("FragGrenadeAmmo",1)
+    goto Death+9
+  XDeath:
+    WW2D O 0
+    goto Death
+  Sprint:   
+    WW2D B 0 A_JumpIfInventory("Tired",1,"Tired")
+    WW2D AAA 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2D BBB 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2D C 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2D CCC 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2D DDD 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2D A 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+	goto Spawn
+  Tired:
+    WW2D AAA 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2D BBB 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2D C 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2D CCC 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2D DDD 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2D A 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+	goto Spawn
+  }
+}
+actor WW2Player_Russian_PPS42 : WW2Player_Russian
+{
+  //Don't need much more than name and speed
+  player.displayname "Russian PPS-42"
+  
+  
+}
+actor WW2Player_Russian_Nagant : WW2Player_Russian
+{
+  player.displayname "Russian Mosin-Nagant"
+  
+  
+}
+actor WW2Player_Russian_SVT : WW2Player_Russian
+{
+  player.displayname "Russian SVT-40"
+  
+  
+}
+actor WW2Player_Russian_ScopedNagant : WW2Player_Russian
+{
+  player.displayname "Russian Sniper"
+  
+  
+}
+actor WW2Player_Russian_Trenchgun : WW2Player_Russian
+{
+  player.displayname "Russian Trenchgun"
+  
+  
+}
+actor WW2Player_Russian_PPSh41 : WW2Player_Russian
+{
+  player.displayname "Russian PPSh-41"
+  
+  
+}
+actor WW2Player_British : WW2Player_Allied
+{
+  player.forwardmove 0.44 0.22
+  player.sidemove 0.44 0.22
+  player.displayname "British All Weaps"
+  player.startitem "IsBritish", 1
+  player.startitem "Bren Gun", 1
+  player.startitem "BrenAmmo", 120
+  player.startitem "BrenClip", 30
+  player.startitem "Scoped Lee-Enfield", 1
+  player.startitem "M1 Garand", 1
+  player.startitem "M1GarandAmmo", 32
+  player.startitem "M1GarandClip", 8
+  player.startitem "Lee-Enfield", 1
+  player.startitem "EnfieldAmmo", 20
+  player.startitem "EnfieldClip", 10
+  player.startitem "EnfieldClosed", 1
+  player.startitem "Sten Gun", 1
+  player.startitem "StenAmmo", 128
+  player.startitem "StenClip", 32
+  player.startitem "Thompson", 1
+  player.startitem "ThompsonAmmo", 80
+  player.startitem "ThompsonClip", 20
+  player.startitem "M1897 Trenchgun", 1
+  player.startitem "TrenchgunAmmo", 30
+  player.startitem "TrenchgunClip", 6
+  player.startitem "TrenchgunPumped", 1
+  player.startitem "Webley", 1
+  player.startitem "WebleyAmmo", 30
+  player.startitem "WebleyClip", 6
+  player.startitem "Mills Bomb", 1
+  player.startitem "FragGrenadeAmmo", 1
+  player.crouchsprite "W2CE"
+  limitedtoteam 0
+  States
+  {
+  Spawn:
+    WW2E A 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E A 0 A_JumpIfInventory("Crouching",1,"SpawnCrouching")
+    Loop
+  SpawnCrouching:
+    WW2E A 2 A_SpawnItemEx("PlayerHead",-9,0,28)
+    goto Spawn
+  See:
+	WW2E A 0 A_JumpIfInventory("Sprinting",1,"Sprint")
+    WW2E A 0 A_JumpIfInventory("Crouching",1,"Crouching")
+    WW2E A 0 A_JumpIfInventory("Walking",1,"SeeAim1")
+    WW2E A 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2E AAA 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E B 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2E BBB 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E A 0 A_JumpIfInventory("Sprinting",1,"Sprint")
+    WW2E C 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2E A 0 A_JumpIfInventory("Crouching",1,"Crouching")
+    WW2E A 0 A_JumpIfInventory("Walking",1,"SeeAim1")
+    WW2E CCC 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E A 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2E DDD 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E B 0 A_JumpIfInventory("Aiming",1,"SeeAim1")
+    WW2E A 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+    WW2E A 0 A_JumpIfInventory("Sprinting",1,"Sprint")
+    goto Spawn
+  SeeAim1:
+    WW2E AAAA 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E BBBB 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E C 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2E CCCC 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E DDDD 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E A 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+    goto Spawn
+  Crouching:
+    WW2E AAAA 2 A_SpawnItemEx("PlayerHead",2,0,27)
+    WW2E BBBB 2 A_SpawnItemEx("PlayerHead",2,0,27)
+    WW2E CCCC 2 A_SpawnItemEx("PlayerHead",2,0,27)
+    WW2E DDDD 2 A_SpawnItemEx("PlayerHead",2,0,27)
+    goto Spawn
+  Missile:
+    WW2E A 0 A_JumpIfInventory("Crouching",1,"MissileCrouching")
+    WW2E EEE 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    Goto Spawn
+  Melee:
+    WW2E A 0 A_JumpIfInventory("Crouching",1,"MeleeCrouching")
+    WW2E F 2 BRIGHT A_SpawnItemEx("PlayerHead",0,0,43)
+    Goto Missile
+  MissileCrouching:
+    WW2E EEE 2 A_SpawnItemEx("PlayerHead",2,0,27)
+    Goto Spawn
+  MeleeCrouching:
+    WW2E F 2 BRIGHT A_SpawnItemEx("PlayerHead",2,0,27)
+    Goto Missile
+  Pain.Shock:
+    WW2E G 0 ACS_ExecuteAlways(616,0,0,0,0)
+  Pain.Shock2:
+    WW2E G 0 ACS_ExecuteAlways(617,0,0,0,0)
+    goto Pain
+  Pain:
+    WW2E G 0 ACS_ExecuteAlways(600,0,900,900,0)
+    WW2E G 0 ACS_ExecuteAlways(606,0,0,0,0)
+    WW2E G 0 ACS_ExecuteAlways(627,0,0,0,0) //Shot script.
+    WW2E G 1 A_GiveInventory("InCombat",7)
+    WW2E G 0 A_GiveToTarget("HitIndicator",1)
+    WW2E G 0 A_PlaySoundEx("player/hurt","SoundSlot6")
+    WW2E A 0 A_SpawnItemEx("SmallBloodPool2",random(-6,6),random(-6,6),-32,0,0,-4,0,128,128)
+    WW2E GGGGGGGG 1 A_SpawnItemEx("HHBlood2",random(2,5),random(-2,2),random(0,32),0.5,0,0.5,random(0,360),128,0)
+    Goto Spawn
+  Death:
+    WW2B H 0 A_PlaySoundEx("blanksnd","Voice")
+    WW2B H 0 A_PlaySoundEx("blanksnd","SoundSlot7")
+    WW2E H 1 A_PlaySoundEx("player/hurt","SoundSlot6")
+    WW2E G 0 A_JumpIfInventory("WasHeadshot",1,"Death.Decapitated")
+    WW2E H 0 Thing_ChangeTID(0,9999)
+    WW2E H 0 A_TakeInventory("KnifeAttack",1)
+    WW2E H 0 A_TakeInventory("Reloading",1)
+    WW2E H 0 A_TakeInventory("Aiming",1)
+    WW2E H 0 A_JumpIfInventory("ThrowingGrenade",1,"DeathDrop")
+    WW2E A 0 A_SpawnItemEx("Gip1",random(-8,8),random(-8,8),32,0,0,1,0,128,128)
+    WW2E H 0 A_JumpIf(ACS_ExecuteWithResult(609,0,0,0) == 1, "DeathLMS")
+    WW2E H 15 A_GiveToTarget("HitIndicator",1)
+    WW2E I 10 A_PlaySoundEx("generic/bodythump","SoundSlot6") 
+    WW2E J 10 A_NoBlocking
+    WW2E K 0 A_SpawnItemEx("DeadBritish",0,0,0,0,0,0,0,0,0)
+    WW2E K -1 A_SetTranslucent(0.0,0)
+    Stop
+  DeathLMS:
+    WW2E H 0 A_GiveToTarget("HitIndicator",1)
+    WW2E I 0 A_SetTranslucent(0.0,0)
+    WW2E J 0 A_NoBlocking
+    WW2E K 1 A_SpawnItemEx("DyingBritish",0,0,0,0,0,0,0,0,0)
+    WW2E K -1 A_SetTranslucent(0.0,0)
+    Stop
+  DeathDrop:
+    WW2E H 0 A_CustomMissile("FragGrenadeDropped",8,0,0)
+    WW2E H 0 A_TakeInventory("ThrowingGrenade",1)
+    WW2E H 0 A_TakeInventory("FragGrenadeAmmo",1)
+    goto Death+9
+  XDeath:
+    WW2E O 0
+    goto Death
+  Sprint:   
+    WW2E B 0 A_JumpIfInventory("Tired",1,"Tired")
+    WW2E AAA 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E BBB 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E C 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2E CCC 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E DDD 2 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E A 0 A_SpawnItemEx("PlayerStepSmokePuff", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+	goto Spawn
+  Tired:
+    WW2E AAA 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E BBB 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E C 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, -4, -8, 0, 0, 0, 0, 128, 0)
+    WW2E CCC 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E DDD 4 A_SpawnItemEx("PlayerHead",0,0,43)
+    WW2E A 0 A_SpawnItemEx("PlayerStepSmokePuff2", 0, 4, -8, 0, 0, 0, 0, 128, 0)
+	goto Spawn
+  }
+}
+
+actor WW2Player_British_Sten : WW2Player_British
+{
+  //Don't need much more than name and speed
+  player.displayname "British Sten"
+  
+  
+}
+actor WW2Player_British_Enfield : WW2Player_British
+{
+  player.displayname "British Lee-Enfield"
+  
+  
+}
+actor WW2Player_British_M1Garand : WW2Player_British
+{
+  player.displayname "British M1 Garand"
+  
+  
+}
+actor WW2Player_British_ScopedEnfield : WW2Player_British
+{
+  player.displayname "British Sniper"
+  
+  
+}
+actor WW2Player_British_Trenchgun : WW2Player_British
+{
+  player.displayname "British Trenchgun"
+  
+  
+}
+actor WW2Player_British_Bren : WW2Player_British
+{
+  player.displayname "British Bren"
+  
+  
+}
+actor WW2Player_British_Thompson : WW2Player_British
+{
+  player.displayname "British Thompson"
+  
+  
+}
+actor PlayerStepSmokePuff
+{
+  -RANDOMIZE
+  +NOCLIP
+  PROJECTILE
+  Damage 0
+  -NOGRAVITY
+  states
+  {
+  Spawn:
+    TNT1 A 0
+    TNT1 A 0 A_CheckFloor("Sound")
+    stop
+  Sound:
+    TNT1 A 0 A_SpawnItemEx("PlayerStepSound", 0, 0, 0, 0, 0, 0, 0, 128, 0)
+    TNT1 A 5
+    stop
+  }
+}
+
+actor PlayerStepSound
+{
+ radius 1
+ height 1
+ +noclip
+ States
+ {
+ Spawn:
+  TNT1 A 0
+  TNT1 A 1 A_PlaySound("footstep/stone")
+  stop
+ }
+}
+
+actor PlayerStepSmokePuff2 : PlayerStepSmokePuff
+{
+  -NOGRAVITY
+  states
+  {
+  Spawn:
+    TNT1 A 0
+    TNT1 A 0 A_CheckFloor("Sound")
+    stop
+  Sound:
+    TNT1 A 0 A_SpawnItemEx("PlayerStepSound2", 0, 0, 0, 0, 0, 0, 0, 128, 0)
+    TNT1 A 5
+    stop
+  }
+}
+
+actor PlayerStepSound2
+{
+ radius 1
+ height 1
+ +noclip
+ States
+ {
+ Spawn:
+  TNT1 A 0
+  TNT1 A 1 A_PlaySound("footstep/stones2")
+  stop
+ }
+}
+
+actor HitIndicator : CustomInventory
+{
+  inventory.maxamount 9999
+  +ALWAYSPICKUP
+  states
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    TNT1 A 0 A_Jump(12,"Die")
+    stop
+  Die:
+    TNT1 A 0 ACS_ExecuteAlways(615,0,2,0,0)
+    stop
+  }
+}
+ACTOR DyingAmerican
+{
+  Game Doom
+  States
+  {
+  Spawn:
+    WW2B H 15
+    WW2B I 10
+    WW2B J 10 A_PlaySoundEx("generic/bodythump","SoundSlot6")
+    WW2B K 1
+    Stop
+  }
+}
+ACTOR DyingGerman
+{
+  Game Doom
+  States
+  {
+  Spawn:
+    WW2A H 15
+    WW2A I 10
+    WW2A J 10 A_PlaySoundEx("generic/bodythump","SoundSlot6")
+    WW2A K 1
+    Stop
+  }
+}
+ACTOR DyingRussian
+{
+  Game Doom
+  States
+  {
+  Spawn:
+    WW2C H 15
+    WW2C I 10
+    WW2C J 10 A_PlaySoundEx("generic/bodythump","SoundSlot6")
+    WW2C K 1
+    Stop
+  }
+}
+ACTOR DyingBritish
+{
+  Game Doom
+  States
+  {
+  Spawn:
+    WW2E H 15
+    WW2E I 10
+    WW2E J 10 A_PlaySoundEx("generic/bodythump","SoundSlot6")
+    WW2E K 1
+    Stop
+  }
+}
+ACTOR DeadAmerican replaces DeadMarine
+{
+  Game Doom
+  States
+  {
+  Spawn:
+    WW2B K 10500 //5 Minutes for now until another more controlled solution is established.
+    Stop
+  }
+}
+ACTOR DeadGerman replaces DeadZombieman
+{
+  Game Doom
+  States
+  {
+  Spawn:
+    WW2A K 10500
+    Stop
+  }
+}
+ACTOR DeadGerman2 replaces DeadDoomImp
+{
+  Game Doom
+  States
+  {
+  Spawn:
+    WW2C K 10500
+    Stop
+  }
+}
+ACTOR DeadRussian replaces DeadCacodemon
+{
+  Game Doom
+  States
+  {
+  Spawn:
+    WW2D K 10500
+    Stop
+  }
+}
+ACTOR DeadBritish replaces DeadDemon
+{
+  Game Doom
+  States
+  {
+  Spawn:
+    WW2E K 10500
+    Stop
+  }
+}

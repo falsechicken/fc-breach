@@ -1,0 +1,1762 @@
+#library "RGWW2ACO"
+#include "zcommon.acs"
+#import "ww2realismlib.acs"
+
+int Talking;
+
+bool HardcoreMode;
+bool StandOffMode;
+
+//STATUS CONSTANTS
+
+#define SPRINT_TIRED_GAIN_DELAY 3
+#define SPRINT_TIRED_GAIN 1
+	
+#define TIRED_RECOVERY_DELAY 15
+#define TIRED_RECOVERY_DELAY_CROUCH 12
+#define TIRED_RECOVERY_AMOUNT 1
+#define TIRED_LEVEL_CONSIDERED_TIRED 95
+	
+#define BREATH_HOLDING_GAIN 1
+#define BREATH_HOLDING_GAIN_DELAY 4
+	
+#define HEART_BEAT_DELAY 24
+
+//END STATUS CONSTANTS
+
+//SPEED CONSTANTS
+
+#define PLAYER_SPRINT_SPEED 1.8
+#define PLAYER_SPRINT_JUMP_HEIGHT 8.0
+	
+#define PLAYER_TIRED_SPEED 0.5
+#define PLAYER_TIRED_JUMP_HEIGHT 0.0
+	
+#define PLAYER_AIMING_SPEED 0.25
+#define PLAYER_AIMING_JUMP_HEIGHT 0.0
+	
+#define PLAYER_NORMAL_SPEED 1.0
+#define PLAYER_NORMAL_JUMP_HEIGHT 6.0
+
+//END SPEED CONSTANTS
+
+//PEEK CONSTANTS
+
+#define PEEK_DELAY 7
+#define PEEK_SPEED 5
+
+//END PEEK CONSTANTS
+
+//AIM SWAY CONSTANTS
+
+#define AIM_SWAY_AMOUNT_ADD 2
+#define AIM_SWAY_CROUCH_AMOUNT_SUB 2 //How fast the sway reduces when crouching.
+#define AIM_SWAY_HOLD_MULTI_MAX 55
+#define AIM_SWAY_HOLD_MULTI_MIN 20
+#define AIM_SWAY_HOLD_PASSES 1 //How many passes to make with aim sway.
+#define AIM_SWAY_UPDATE_DELAY 2 //How long to wait before updating the aim away amount.
+#define AIM_SWAY_TIRED_MULTI 400
+#define AIM_SWAY_TIRED_PASSES 25 //How many times to loop through the tired sway.
+
+//END AIM SWAY CONSTANTS
+
+//SLIDE CONSTANTS
+
+#define SLIDE_DELAY 30 //How long until the player is force stopped.
+#define SLIDE_SPEED 13
+#define SLIDE_LATENCY 5 //How long after the player releases sprint can they slide.
+#define SLIDE_REQ_MOMENTUM 40 //How long the player has to have been sprinting to slide.
+
+//END SLIDE CONSTANTS
+
+//STORY MODE CONSTANTS
+
+#define STORY_RESUPPLY_DELAY 1500 //How long until players get resupplied in story mode.
+
+//END STORY MODE CONSTANTS
+
+//SUPPRESSION SYSTEM CONSTANTS
+
+#define SUPPRESSION_RECOVERY_DELAY 8
+#define SUPPRESSION_RECOVERY_AMOUNT 2
+#define SUPPRESSION_EFFECT_GIVEN 13
+#define SUPPRESSION_EFFECT_MULTIPLIER 0.8
+#define SUPPRESSION_EFFECT_DELAY 10
+#define SUPPRESSION_HEARTBEAT_DELAY 27
+#define SUPPRESSION_VIEW_IMPACT_MULT 250 //How much to alter the players view when a shot lands next to them.
+#define SUPPRESSION_HIP_SWAY_DELAY 3
+
+//END SUPPRESSION SYSTEM CONSTANTS
+
+//ATTACKED CONSTANTS
+
+#define ATTACKED_STAMINA_PENALTY 10
+
+//END ATTACKED CONSTANTS
+
+script 517 OPEN
+{
+	if(GetCVAR("timelimit") == 0)
+		Terminate;
+
+	delay(35*(GetCVAR("timelimit")*60));
+	
+}
+
+//Play Headshot Sound
+script 509 (int mode) 
+{
+	LocalAmbientSound("generic/headshot",127);
+}
+
+//Whizby noise
+script 508 (void)
+{
+	LocalAmbientSound("generic/whizby",127);
+} 
+
+//Set player movement status for checking later.
+script 506 (void)
+{
+	int PLAYER_TID = PlayerNumber() + 500;
+
+	int tiredGainDelayCounter; //Used to delay the gain of tiredness.
+	int tiredRecoveryDelayCounter; //Used to delay the recovery of the sprint indicator.
+	int breathHoldingDelayCounter; //Used to delay the gaining of tiredness from holding breath.
+	int heartBeatDelayCounter; //Used to delay the heartbeat sound.
+	int slideLatencyCounter; //Used to allow the player to slide if they press crouch after sprinting.
+	int slideMomentumCounter; //Used to time how long the players has been running to enable a slide.
+	int suppressionRecoveryCounter;
+	int suppressionEffectCounter;
+	int suppressionHeartBeatCounter;
+	int suppressionHipAimSwayCounter;
+	
+	while(GetActorProperty(0,APROP_Health) > 0)
+	{
+		delay(1);
+		
+		tiredRecoveryDelayCounter++; //Increment delay timers.
+		tiredGainDelayCounter++;
+		breathHoldingDelayCounter++;
+		heartBeatDelayCounter++;
+		slideLatencyCounter++;
+		suppressionRecoveryCounter++;
+		suppressionEffectCounter++;
+		suppressionHeartBeatCounter++;
+		suppressionHipAimSwayCounter++;
+				
+		int buttons = GetPlayerInput(-1, INPUT_BUTTONS);
+				
+		if(buttons & BT_CROUCH ) //If we are crouching.
+		{	
+			if(slideMomentumCounter > SLIDE_REQ_MOMENTUM && CheckInventory("Tired") == 0 && buttons & BT_FORWARD) //If we have enough momentum to slide and are not tired.
+			{
+				ACS_ExecuteAlways(625,0,0,0,0); //Execute slide script.
+				slideMomentumCounter = 0;
+			}
+			
+			SetClientCrouchingSettings();
+			GiveInventory("Crouching",1);
+			TakeInventory("Walking", 1);
+			
+		}
+		else
+		{
+			TakeInventory("Crouching",1);
+		}
+		
+		if(buttons & BT_SPEED && CheckInventory("Crouching") == 0 && CheckInventory("Aiming") == 0 && CheckInventory("Peeking") == 0) //If we are sprinting.
+		{
+			
+			if(buttons & BT_FORWARD || buttons & BT_BACK || buttons & BT_MOVELEFT || buttons & BT_MOVERIGHT) //Make sure we are actually moving.
+			{
+				GiveInventory("Sprinting",1);
+				TakeInventory("Walking", 1);
+				SetClientSprintingSettings();
+				
+				slideMomentumCounter++; //Increment momentum counter to time how long the player has been running.
+				slideLatencyCounter = 0; //We have sprinted so the latency is zero.
+			}
+			else
+			{
+				TakeInventory("Sprinting", 1);
+				GiveInventory("Walking", 1);
+			}
+		}
+		else
+		{
+			TakeInventory("Sprinting", 1);
+			GiveInventory("Walking", 1);
+		}
+		
+		if(buttons & BT_JUMP) //If we jump reset slide momentum counter. Prevents "slide diving".
+		{
+			slideMomentumCounter = 0;
+		}
+		
+		if(CheckInventory("Sprinting") == 0 && CheckInventory("Crouching") == 0 && CheckInventory("HoldBreath") == 0) //Not sprinting, crouching, or holding our breath then we are walking.
+		{
+			GiveInventory("Walking",1);
+			SetClientWalkingSettings();
+		}
+		
+		if(CheckInventory("Aiming") == 1) //If we are aiming
+		{
+			SetClientAimingSettings();
+			
+			if(CheckInventory("Tired") == 1)
+			{
+				TakeInventory("HoldBreath", 1);
+				
+				if(tiredRecoveryDelayCounter > TIRED_RECOVERY_DELAY)
+				{
+					TakeInventory("TiredLevel", TIRED_RECOVERY_AMOUNT);
+					tiredRecoveryDelayCounter = 0;
+				}
+			}
+			else if(buttons & BT_SPEED) //If we are aiming and holding speed key.
+			{
+				
+				if(CheckInventory("HoldBreath") == 0)
+				{
+					GiveInventory("HoldBreath", 1);
+					TakeInventory("Walking", 1);
+					ActivatorSound("player/holdbreath",50);
+				}
+				
+				if(heartBeatDelayCounter > HEART_BEAT_DELAY)
+				{
+					LocalAmbientSound("player/heartbeat",127);		
+					heartBeatDelayCounter = 0;
+					
+				}
+				
+					
+				if(breathHoldingDelayCounter > BREATH_HOLDING_GAIN_DELAY)
+				{
+					GiveInventory("TiredLevel", BREATH_HOLDING_GAIN);
+					breathHoldingDelayCounter = 0;
+				}
+			}
+			else
+			{
+				if(CheckInventory("HoldBreath") == 1)
+				{
+					TakeInventory("HoldBreath", 1);
+					ActivatorSound("player/exhale3",50);
+				}
+			}
+						
+		}
+		
+		if(CheckInventory("Aiming") == 0 && CheckInventory("HoldBreath") == 1) //If we are no longer aiming but still holding breath/shift. To fix problem of still holding breath after zooming out.
+		{
+			TakeInventory("HoldBreath", 1);
+			GiveInventory("Walking", 1);
+		}
+		
+		if(GetActorProperty(0,APROP_Health) > 100) //Disable allowing health to go above 100
+		{
+			SetActorProperty(0,APROP_Health, 100);
+		}
+		
+		if(CheckInventory("Armor") > 0) //Disable armor all together.
+		{
+			int armor_level = CheckInventory("Armor");
+			
+			TakeInventory("Armor", armor_level);
+		}
+				
+		if(CheckInventory("Sprinting") == 1)
+		{	
+			if(tiredGainDelayCounter > SPRINT_TIRED_GAIN_DELAY)
+			{
+				GiveInventory("TiredLevel",SPRINT_TIRED_GAIN);
+				tiredGainDelayCounter = 0;
+			}
+		}
+		
+		if (CheckInventory("Crouching") == 1 && CheckInventory("HoldBreath") == 0)
+		{
+			if(tiredRecoveryDelayCounter > TIRED_RECOVERY_DELAY_CROUCH)
+			{
+				TakeInventory("TiredLevel", TIRED_RECOVERY_AMOUNT);
+				tiredRecoveryDelayCounter = 0;
+			}
+		}
+		
+		if (CheckInventory("Walking") == 1 && CheckInventory("HoldBreath") == 0)
+		{
+			if(tiredRecoveryDelayCounter > TIRED_RECOVERY_DELAY)
+			{
+				TakeInventory("TiredLevel", TIRED_RECOVERY_AMOUNT);
+				tiredRecoveryDelayCounter = 0;
+			}
+		}
+		
+		if (CheckInventory("TiredLevel") < TIRED_LEVEL_CONSIDERED_TIRED) //When we get to less than 95 TiredLevel remove the tired effects.
+			TakeInventory("Tired",1);
+			
+		if (CheckInventory("TiredLevel") == 100 && CheckInventory("Tired") == 0) //If our tired level is at 100 make the player tired.
+		{
+			ActivatorSound("player/exhale1",127);
+			GiveInventory("Tired",1);
+		}
+				
+		if(slideLatencyCounter > SLIDE_LATENCY)
+		{
+			slideMomentumCounter = 0; //We no longer are building momentum.
+			slideLatencyCounter = SLIDE_LATENCY + 1; //Prevent overflow if we go a while without sprinting. (Unlikely)
+		}
+		
+		//ConsoleCommand("screenblocks 11"); //Hack to disable doom default hud.
+
+		if(CheckInventory("SuppressedLevel") > 0) //Apply suppression effects.
+		{ 
+			int suppressionAmount = CheckInventory("SuppressedLevel");
+			
+			if(suppressionEffectCounter > SUPPRESSION_EFFECT_DELAY && CheckInventory("Shellshock") == 0) //Prevent overlap with shellshock.
+			{
+				if (suppressionAmount > 50)
+				{
+					Radius_Quake(1, 20, 0, 1, 0);
+					FadeTo(255,255,255,0.50,0.1);
+				}
+				else
+					FadeTo(255,255,255, 0.01*suppressionAmount,0.1);
+					
+				suppressionEffectCounter = 0;
+			}
+			
+			if(CheckInventory("Aiming") == 0 && suppressionHipAimSwayCounter > SUPPRESSION_HIP_SWAY_DELAY) //Sway hip aim when suppressed.
+			{	
+				ACS_ExecuteAlways(628,0,1,suppressionAmount,0);
+				suppressionHipAimSwayCounter = 0;
+			}
+				
+			if(suppressionHeartBeatCounter > SUPPRESSION_HEARTBEAT_DELAY && CheckInventory("HoldBreath") == 0 && GetActorProperty(0,APROP_Health) > 35) //Make sure we are after the delay but not overlapping with other heartbeat causing things.
+			{
+				if (suppressionAmount > 60)
+					LocalAmbientSound("player/heartbeat", 127);
+				else
+					LocalAmbientSound("player/heartbeat",2 * suppressionAmount);
+					
+				suppressionHeartBeatCounter = 0;
+			}
+			else
+				suppressionHeartBeatCounter++;
+			
+			if(suppressionRecoveryCounter > SUPPRESSION_RECOVERY_DELAY)
+			{
+				TakeInventory("SuppressedLevel", SUPPRESSION_RECOVERY_AMOUNT);
+				suppressionRecoveryCounter = 0;
+			}
+					
+		}
+
+	}
+}
+
+//Server settings...
+script 505 OPEN
+{
+	bool LMS = GetCVAR("lastmanstanding") || GetCVAR("teamlms") || GetCVAR("fakelms");
+
+	HardcoreMode = GetCVAR("sv_hardcore");
+	StandOffMode = GetCVAR("sv_standoff");
+
+	//if(GetCVAR("sv_nodrop") == 0)
+		//ConsoleCommand("sv_nodrop 1"); //WHY?!
+
+	if(GetCVAR("sv_doubleammo") == 1)
+		ConsoleCommand("sv_doubleammo 0");
+
+	if(GetCVAR("sv_respawnsuper") == 0)
+		ConsoleCommand("sv_respawnsuper 1");
+		
+	if(GetCVAR("alwaysapplydmflags") == 0)
+		ConsoleCommand("alwaysapplydmflags 1");
+		
+	if(GetCVAR("compat_soundslots") == 1)
+		ConsoleCommand("compat_soundslots 0");
+		
+	if(GetCVAR("compat_instantrespawn") == 1) 
+		ConsoleCommand("compat_instantrespawn 0");
+		
+	if(GetCVAR("sv_nocrouch") == 1)
+		ConsoleCommand("sv_nocrouch 0");
+
+	if(GetCVAR("compat_nocrosshair") == 0)
+		ConsoleCommand("compat_nocrosshair 1");
+
+	if(GetCVAR("compat_clientssendfullbuttoninfo") == 0)
+		ConsoleCommand("compat_clientssendfullbuttoninfo 1");
+
+	if(GetCVAR("sv_noautoaim") == 0)
+		ConsoleCommand("sv_noautoaim 1");
+
+	if(GetCVAR("sv_weapondrop") == 0 && LMS)
+		ConsoleCommand("sv_weapondrop 1");
+
+	if(GetCVAR("fakelms") == 0)
+		ConsoleCommand("set fakelms 0");
+		
+	if(GetCVAR("SV_NoIdentifyTarget") == 0)
+		ConsoleCommand("SV_NoIdentifyTarget 1"); 
+	
+	if(GetCVAR("SV_NoMedals") == 0)
+		ConsoleCommand("SV_NoMedals 1");
+	
+	if(GetCVAR("SV_NoCoopInfo") == 0)
+		ConsoleCommand("SV_NoCoopInfo 1");
+	
+	if(GetCVAR("sv_useteamstartsindm") == 0)
+		ConsoleCommand("sv_useteamstartsindm 1");
+		
+	ConsoleCommand("cl_run false"); //Disable run key and set run to false. Reduces view bobbing while crouched.
+		
+	delay(35*10);
+	restart;
+}
+
+//Bot stuff
+script 507 (void) NET
+{
+	while(GetActorProperty(0,APROP_Health) > 0)
+	{
+		GiveInventory("AIStuff",1);
+		delay(6);
+	}
+}
+
+script 500 (void) 
+{
+	if(PlayerIsBot(PlayerNumber()))
+	{
+		GiveInventory("IsBot",1);
+		if(CheckInventory("IsAllied") == 1)
+		{
+			if(random(0,7) == 1)
+				SetWeapon("Colt .45");
+			else if(random(0,7) == 2)
+				SetWeapon("M3 Grease Gun");
+			else if(random(0,7) == 3)
+				SetWeapon("M1 Garand");
+			else if(random(0,7) == 4)
+				SetWeapon("M1A1 Carbine");
+			else if(random(0,7) == 5)
+				SetWeapon("M1897 Trenchgun");
+			else if(random(0,7) == 6)
+				SetWeapon("Springfield");
+			else if(random(0,7) == 7)
+				SetWeapon("Thompson");
+		}
+		if(CheckInventory("IsAxis") == 1)
+		{
+			if(random(0,6) == 1)
+				SetWeapon("Luger");
+			else if(random(0,6) == 2)
+				SetWeapon("MP40");
+			else if(random(0,6) == 3)
+				SetWeapon("Kar98k");
+			else if(random(0,6) == 4)
+				SetWeapon("Gewehr 43");
+			else if(random(0,6) == 5)
+				SetWeapon("M1897 Trenchgun");
+			else if(random(0,6) == 6)
+				SetWeapon("Scoped Kar98k");
+		}
+		if(CheckInventory("IsRussian") == 1)
+		{
+			if(random(0,6) == 1)
+				SetWeapon("TT30");
+			else if(random(0,6) == 2)
+				SetWeapon("PPS-42");
+			else if(random(0,6) == 3)
+				SetWeapon("Mosin-Nagant");
+			else if(random(0,6) == 4)
+				SetWeapon("SVT-40");
+			else if(random(0,6) == 5)
+				SetWeapon("M1897 Trenchgun");
+			else if(random(0,6) == 6)
+				SetWeapon("Scoped Mosin-Nagant");
+		}
+		if(CheckInventory("IsBritish") == 1)
+		{
+			if(random(0,7) == 1)
+				SetWeapon("Webley");
+			else if(random(0,7) == 2)
+				SetWeapon("Sten Gun");
+			else if(random(0,7) == 3)
+				SetWeapon("M1 Garand");
+			else if(random(0,7) == 4)
+				SetWeapon("Lee-Enfield");
+			else if(random(0,7) == 5) 
+				SetWeapon("M1897 Trenchgun");
+			else if(random(0,7) == 6)
+				SetWeapon("Scoped Lee-Enfield");
+			else if(random(0,7) == 7)
+				SetWeapon("Thompson");
+		}
+		ACS_ExecuteAlways(507,0,0,0,0);
+	}
+
+	Thing_ChangeTID(0,PlayerNumber()+500);
+    SetThingSpecial(0,226,502,0,0,0,0);
+    SetActorProperty(0,APROP_SpawnHealth,100);
+    
+    if(GameType() == GAME_NET_COOPERATIVE || GameType() == GAME_SINGLE_PLAYER)
+		ACS_ExecuteAlways(619,0,0,0,0); //Story mode rearm script.
+
+	ACS_ExecuteAlways(506,0,0,0,0); //Start status setting script.
+
+}
+
+script 501 RESPAWN
+{
+	if(PlayerIsBot(PlayerNumber()))
+	{
+		GiveInventory("IsBot",1);
+		ACS_ExecuteAlways(500,0,0,0,0);
+	}
+
+	Thing_ChangeTID(0,PlayerNumber()+500);
+    SetThingSpecial(0,226,502,0,0,0,0);
+    SetActorProperty(0,APROP_SpawnHealth,100);
+	
+
+	//ACS_ExecuteAlways(506,0,0,0,0);// Movement status script
+	
+	if(GameType() == GAME_NET_COOPERATIVE || GameType() == GAME_SINGLE_PLAYER)
+	{	
+		if(GetActorProperty(0,APROP_HEALTH) < 100)
+			ACS_ExecuteAlways(606,0,0,0,0);
+
+		SetActorProperty(0,APROP_Invulnerable,0);
+		
+		ACS_ExecuteAlways(619,0,0,0,0); //Story mode rearm script.
+
+	}
+	
+}
+
+//Play tango down sound
+script 502 (void)
+{
+	ACS_ExecuteAlways(615,0,0,0,0); //Got kill voice
+	Delay(20);
+}
+
+//Give stuff, fix minor bugs, and so on
+script 597 ENTER
+{
+	TakeInventory("ReadyRegen",1);
+
+	if(GameType() == GAME_NET_COOPERATIVE || GameType() == GAME_SINGLE_PLAYER)
+	{	
+		if(GetActorProperty(0,APROP_HEALTH) < 100)
+			ACS_ExecuteAlways(606,0,0,0,0);
+
+		SetActorProperty(0,APROP_Invulnerable,0);
+
+	}
+
+	ACS_ExecuteAlways(608,0,0,0,0);
+
+    //Welcome Message
+	HudMessage(s:"\cd== \cqWelcome To False_Chicken's WWII Realsim Beta\cd=="; HUDMSG_FADEOUT,0,CR_BLUE,0.5,0.6,4.0,2.0);
+	SetFont("DOOMFONT");
+	
+}
+
+//Kickback/Sway Script
+script 600 (int Strength, int Reverse, int Mode) NET CLIENTSIDE
+{
+	
+	if(Strength == 0)
+	{
+		Strength = 600;
+		Reverse = 600;
+		Mode = 0;
+	}
+
+	int Counter;
+	if(Mode == 0) //Actual fire recoil mode.
+	{
+		
+		if(CheckInventory("Crouching") == 1) //If we are crouching reduce recoil by 25%
+		{
+			Strength = FixedMul(Strength, 0.75);
+		}
+		
+		while(Counter < Strength)
+		{
+			SetActorAngle(0,GetActorAngle(0)+50);
+			SetActorPitch(0,GetActorPitch(0)-150);
+			Counter += 150;
+		}
+		Counter = 0;
+		while(Counter < Reverse)
+		{
+			SetActorAngle(0,GetActorAngle(0)-50);
+			SetActorPitch(0,GetActorPitch(0)+150);
+			Counter += 150;
+			Delay(1);
+		}
+	}
+	else if(Mode == 1) //Melee from right
+	{
+		while(Counter < Strength)
+		{
+			SetActorAngle(0,GetActorAngle(0)-500);
+			SetActorPitch(0,GetActorPitch(0)-500);
+			Counter += 150;
+			Delay(1);
+		}
+
+		Counter = 0;
+		while(Counter < Reverse)
+		{
+			SetActorAngle(0,GetActorAngle(0)+500);
+			SetActorPitch(0,GetActorPitch(0)+500);
+			Counter += 150;
+			Delay(1);
+		}
+	}
+	else if(Mode == 2) //Melee to left
+	{
+		while(Counter < Strength)
+		{
+			SetActorAngle(0,GetActorAngle(0)+500);
+			SetActorPitch(0,GetActorPitch(0)-500);
+			Counter += 150;
+			Delay(1);
+		}
+
+		Counter = 0;
+		while(Counter < Reverse)
+		{
+			SetActorAngle(0,GetActorAngle(0)-500);
+			SetActorPitch(0,GetActorPitch(0)+500);
+			Counter += 150;
+			Delay(1);
+		}
+	}
+	else if(Mode == 3) //Weapon Sway mode.
+	{
+		int aimSwayHoldMultiplyer; //Aim sway gets worse the longer you aim. Crouching reduces it.
+		int aimSwayUpdateCounter;
+		int aimSwayTiredCounter;
+		
+		int suppressionLevel; //Level of suppression. Messes up aim more when a high level.
+		
+		while(CheckInventory("Aiming") == 1)
+		{
+			Counter = 0; 
+						
+			suppressionLevel = CheckInventory("SuppressedLevel");
+			
+			if(suppressionLevel > 0)
+				Strength = FixedMul(suppressionLevel, SUPPRESSION_EFFECT_MULTIPLIER);
+				
+			while(Counter < AIM_SWAY_HOLD_PASSES && CheckInventory("HoldBreath") == 0)
+			{
+				if(aimSwayUpdateCounter >= AIM_SWAY_UPDATE_DELAY)
+				{
+					if(CheckInventory("Crouching") == 0) //If we are not crouching increase sway.
+						aimSwayHoldMultiplyer += AIM_SWAY_AMOUNT_ADD;
+					else
+						aimSwayHoldMultiplyer -= AIM_SWAY_CROUCH_AMOUNT_SUB;
+						
+					aimSwayUpdateCounter = 0;
+				}
+				
+				SetActorAngle(0,GetActorAngle(0)+random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength)); //Sway aim.
+				SetActorPitch(0,GetActorPitch(0)-random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
+				delay(1);
+				SetActorAngle(0,GetActorAngle(0)+random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
+				SetActorPitch(0,GetActorPitch(0)-random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
+				delay(1);
+				SetActorAngle(0,GetActorAngle(0)+random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
+				SetActorPitch(0,GetActorPitch(0)-random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
+				delay(1);
+				SetActorAngle(0,GetActorAngle(0)+random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
+				SetActorPitch(0,GetActorPitch(0)-random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
+				
+				Counter += 1;
+			}
+			
+			if(CheckInventory("Tired") == 1 ) //If we are tired while aiming sway the aim.
+			{
+				while(AIM_SWAY_TIRED_PASSES > aimSwayTiredCounter)
+				{
+					SetActorAngle(0,GetActorAngle(0)+random(-AIM_SWAY_TIRED_MULTI,AIM_SWAY_TIRED_MULTI)+(random(-10,10)));
+					SetActorPitch(0,GetActorPitch(0)-random(-AIM_SWAY_TIRED_MULTI,AIM_SWAY_TIRED_MULTI)+(random(-10,10)));
+					delay(1);
+					SetActorAngle(0,GetActorAngle(0)+random(-AIM_SWAY_TIRED_MULTI,AIM_SWAY_TIRED_MULTI)+(random(-10,10)));
+					SetActorPitch(0,GetActorPitch(0)-random(-AIM_SWAY_TIRED_MULTI,AIM_SWAY_TIRED_MULTI)+(random(-10,10)));
+					delay(1);
+					SetActorAngle(0,GetActorAngle(0)+random(-AIM_SWAY_TIRED_MULTI,AIM_SWAY_TIRED_MULTI)+(random(-10,10)));
+					SetActorPitch(0,GetActorPitch(0)-random(-AIM_SWAY_TIRED_MULTI,AIM_SWAY_TIRED_MULTI)+(random(-10,10)));
+					delay(1);
+					SetActorAngle(0,GetActorAngle(0)+random(-AIM_SWAY_TIRED_MULTI,AIM_SWAY_TIRED_MULTI)+(random(-10,10)));
+					SetActorPitch(0,GetActorPitch(0)-random(-AIM_SWAY_TIRED_MULTI,AIM_SWAY_TIRED_MULTI)+(random(-10,10)));
+					
+					aimSwayTiredCounter++;
+				}
+				
+				aimSwayTiredCounter = 0;
+				
+			}
+			
+			delay(1);
+			
+			if (CheckInventory("HoldBreath") == 1 && suppressionLevel > 0) //If we are suppressed while holding breath.
+			{
+				SetActorAngle(0,GetActorAngle(0)+random(-1,1)*Strength);
+				SetActorPitch(0,GetActorPitch(0)-random(-1,1)*Strength);
+				delay(1);
+				SetActorAngle(0,GetActorAngle(0)+random(-1,1)*Strength);
+				SetActorPitch(0,GetActorPitch(0)-random(-1,1)*Strength);
+				delay(1);
+				SetActorAngle(0,GetActorAngle(0)+random(-1,1)*Strength);
+				SetActorPitch(0,GetActorPitch(0)-random(-1,1)*Strength);
+				delay(1);
+				SetActorAngle(0,GetActorAngle(0)+random(-1,1)*Strength);
+				SetActorPitch(0,GetActorPitch(0)-random(-1,1)*Strength);
+			}
+			
+			if(aimSwayHoldMultiplyer > AIM_SWAY_HOLD_MULTI_MAX) //If the aim multiplier gets too high set it to the max.
+				aimSwayHoldMultiplyer = AIM_SWAY_HOLD_MULTI_MAX;
+				
+			if(aimSwayHoldMultiplyer < AIM_SWAY_HOLD_MULTI_MIN) //If the aim multiplier falls below the min set it to the min.
+				aimSwayHoldMultiplyer = AIM_SWAY_HOLD_MULTI_MIN;
+				
+			aimSwayUpdateCounter++;
+		}
+		
+		aimSwayHoldMultiplyer = 0;
+	}
+	else if(Mode == 4)
+	{
+		while(Counter < Strength)
+		{
+			SetActorAngle(0,GetActorAngle(0)-100);
+			SetActorPitch(0,GetActorPitch(0)-800);
+			Counter += 800;
+			Delay(1);
+		}
+		Counter = 0;
+		while(Counter < Reverse)
+		{
+			SetActorAngle(0,GetActorAngle(0)+100);
+			SetActorPitch(0,GetActorPitch(0)+800);
+			Counter += 800;
+			Delay(1);
+		}
+	}
+	else if(Mode == 5)
+	{
+		while(Counter < Strength)
+		{
+			SetActorAngle(0,GetActorAngle(0)+1200);
+			SetActorPitch(0,GetActorPitch(0)-2000);
+			Counter += 2000;
+			Delay(1);
+		}
+		Counter = 0;
+		while(Counter < Reverse)
+		{
+			SetActorAngle(0,GetActorAngle(0)-300);
+			SetActorPitch(0,GetActorPitch(0)+400);
+			Counter += 400;
+			Delay(1);
+		}
+	}
+}
+
+//Reload Script
+script 601 (void) NET
+{
+	//------------------------------------------
+	//------- Checks if weapon is true, or attachment-weapon is true, then checks if clip is not full, then checks if reserve is not 0.
+	if((((CheckWeapon("Colt .45") == 1) && CheckInventory("Colt45Clip") < 7 && CheckInventory("Colt45Ammo") != 0) ||
+	((CheckWeapon("Luger") == 1) && CheckInventory("LugerClip") < 8 && CheckInventory("LugerAmmo") != 0) ||
+	((CheckWeapon("TT30") == 1) && CheckInventory("TT30Clip") < 8 && CheckInventory("TT30Ammo") != 0) ||
+	((CheckWeapon("Webley") == 1) && CheckInventory("WebleyClip") < 6 && CheckInventory("WebleyAmmo") != 0) ||
+	((CheckWeapon("M1897 Trenchgun") == 1) && CheckInventory("TrenchgunClip") < 6 && CheckInventory("TrenchgunAmmo") != 0) ||
+	((CheckWeapon("Gewehr 43") == 1) && CheckInventory("G43Clip") < 10 && CheckInventory("G43Ammo") != 0) ||
+	((CheckWeapon("SVT-40") == 1) && CheckInventory("SVTClip") < 10 && CheckInventory("SVTAmmo") != 0) ||
+	((CheckWeapon("M1A1 Carbine") == 1) && CheckInventory("M1CarbineClip") < 15 && CheckInventory("M1CarbineAmmo") != 0) ||
+	((CheckWeapon("Kar98k") == 1 || CheckWeapon("Scoped Kar98k") == 1) && CheckInventory("Kar98KClip") < 5 && CheckInventory("Kar98KAmmo") != 0) ||
+	((CheckWeapon("Mosin-Nagant") == 1 || CheckWeapon("Scoped Mosin-Nagant") == 1) && CheckInventory("NagantClip") < 5 && CheckInventory("NagantAmmo") != 0) ||
+	((CheckWeapon("Lee-Enfield") == 1 || CheckWeapon("Scoped Lee-Enfield") == 1) && CheckInventory("EnfieldClip") == 5 && CheckInventory("EnfieldAmmo") != 0) ||
+	((CheckWeapon("Springfield") == 1) && CheckInventory("SpringfieldClip") < 5 && CheckInventory("SpringfieldAmmo") != 0) ||
+	((CheckWeapon("BAR") == 1) && CheckInventory("BARClip") < 20 && CheckInventory("BARAmmo") != 0) ||
+	((CheckWeapon("MP44") == 1) && CheckInventory("MP44Clip") < 30 && CheckInventory("MP44Ammo") != 0) ||
+	((CheckWeapon("PPSh-41") == 1) && CheckInventory("PPSh41Clip") < 71 && CheckInventory("PPSh41Ammo") != 0) ||
+	((CheckWeapon("Bren Gun") == 1) && CheckInventory("BrenClip") < 30 && CheckInventory("BrenAmmo") != 0) ||
+	((CheckWeapon("Thompson") == 1) && CheckInventory("ThompsonClip") < 20 && CheckInventory("ThompsonAmmo") != 0) ||
+	((CheckWeapon("M3 Grease Gun") == 1) && CheckInventory("M3GGClip") < 32 && CheckInventory("M3GGAmmo") != 0) ||
+	((CheckWeapon("PPS-42") == 1) && CheckInventory("PPS42Clip") < 35 && CheckInventory("PPS42Ammo") != 0) ||
+	((CheckWeapon("Sten Gun") == 1) && CheckInventory("StenClip") < 32 && CheckInventory("StenAmmo") != 0) ||
+	((CheckWeapon("MP40") == 1) && CheckInventory("MP40Clip") < 32 && CheckInventory("MP40Ammo") != 0)) && CheckInventory("Reloading") == 0)
+	{
+		GiveInventory("Reloading",1);
+		ACS_ExecuteAlways(615,0,1,0,0); //Reload voice
+		
+	}
+	else if(CheckWeapon("M1 Garand") == 1)
+	{
+		SetFont("CONFONT");
+		HudMessage(s:"\ccCan only reload this weapon when emptied"; HUDMSG_FADEINOUT,0,CR_WHITE,0.5,0.55,0.0,0.25,0.75);
+	}
+	else if(CheckWeapon("Lee-Enfield") == 1 || CheckWeapon("Scoped Lee-Enfield") == 1)
+	{
+		SetFont("CONFONT");
+		HudMessage(s:"\ccCan only reload this weapon empty or at 5"; HUDMSG_FADEINOUT,0,CR_WHITE,0.5,0.55,0.0,0.25,0.75);
+	}
+}
+
+//Set Player Speed
+//script 602 (int mode)
+script 699 (int mode)
+{	
+	while(GetActorProperty(0,APROP_Health) > 0)
+	{
+		
+		if (CheckInventory("Aiming") == 1)
+		{
+			SetActorProperty(0,APROP_Speed, PLAYER_AIMING_SPEED);
+			SetActorProperty(0,APROP_JumpZ, PLAYER_AIMING_JUMP_HEIGHT);
+		}
+		else if (CheckInventory("Sprinting") == 1 && CheckInventory("Tired") == 0) //If we are sprinting and are not too tired to.
+		{
+			SetActorProperty(0,APROP_Speed, PLAYER_SPRINT_SPEED);
+			SetActorProperty(0,APROP_JumpZ, PLAYER_SPRINT_JUMP_HEIGHT);
+			
+		}
+		else if (CheckInventory("Tired") == 1) //If we are tired, Lower our speed
+		{
+			SetActorProperty(0,APROP_Speed, PLAYER_TIRED_SPEED);
+			SetActorProperty(0,APROP_JumpZ, PLAYER_TIRED_JUMP_HEIGHT);
+		}		
+		else //If our status is good and we are doing nothing (Just walking)
+		{
+			SetActorProperty(0,APROP_Speed, PLAYER_NORMAL_SPEED);
+			SetActorProperty(0,APROP_JumpZ, PLAYER_NORMAL_JUMP_HEIGHT);
+		}
+		
+		delay(1);
+	}
+}
+
+//Throw grenade
+script 603 (void) NET
+{
+	if((CheckInventory("FragGrenadeAmmo") != 0 && CheckInventory("ThrowingGrenade") == 0 && CheckWeapon("Smoke Grenade") == 0  && CheckWeapon("Smoke Grenade ") == 0 ) || (PlayerIsBot(PlayerNumber()) || GetCvar("sv_infiniteammo") == 1))
+	{
+		GiveInventory("ThrowingGrenade",1);
+		GiveInventory("KnifeAttack",1);
+		ACS_ExecuteAlways(615,0,4,0,0); //Grenade out voice
+	}
+	else if(CheckInventory("SmokeGrenadeAmmo") != 0 && CheckInventory("ThrowingGrenade") == 0)
+	{
+		SetWeapon("Smoke Grenade");
+		SetWeapon("Smoke Grenade ");
+		Delay(15);
+		ACS_ExecuteAlways(615,0,5,0,0); //Smoke out voice
+		GiveInventory("ThrowingGrenade",1);
+		GiveInventory("KnifeAttack",1);
+	}
+}
+
+//Use Knife
+script 604 (void) NET
+{
+	GiveInventory("KnifeAttack",1); //Hack, refer to decorate coding.
+}
+
+//Regeneration
+script 606 (void)
+{
+	
+	if(CheckInventory("ReadyRegen") == 0)
+	{
+		GiveInventory("ReadyRegen",1);
+		While(GetActorProperty(0,APROP_Health) < GetActorProperty(0,APROP_SpawnHealth) && GetActorProperty(0,APROP_Health) > 0)
+		{
+			if(CheckInventory("InCombat") > 0)
+			{
+				TakeInventory("InCombat",1);
+
+				if(GetActorProperty(0,APROP_Health) < 35 || (CheckInventory("HardcoreMode") == 1 && GetActorProperty(0,APROP_Health) < 50))
+				{
+					LocalAmbientSound("player/hurtlow",127);
+					LocalAmbientSound("player/heartbeat",127);
+				}
+				else if(GetActorProperty(0,APROP_Health) < 75)
+					LocalAmbientSound("player/hurtnormal",127);
+
+				if(CheckInventory("InCombat") == 0)
+				{
+					if(GetActorProperty(0,APROP_Health) < 35 || (CheckInventory("HardcoreMode") == 1 && GetActorProperty(0,APROP_Health) < 50))
+						LocalAmbientSound("player/heartbeat",127);
+					Delay(25);
+					ActivatorSound("player/okay",127);
+					GiveInventory("Health",1);
+				}
+				Delay(25);
+			}
+			else if(GetActorProperty(0,APROP_Health) < GetActorProperty(0,APROP_SpawnHealth) && GetActorProperty(0,APROP_Health) > 0)
+			{
+				if(GetActorProperty(0,APROP_Health) < 35)
+				{
+					LocalAmbientSound("player/heartbeat",127);
+				}
+
+				GiveInventory("Health",1);
+
+				if(GetActorProperty(0,APROP_Health) < 100) //Regen delay
+					Delay(35);
+			}
+		}
+		TakeInventory("ReadyRegen",1);
+		if(GetActorProperty(0,APROP_Health) <= GetActorProperty(0,APROP_SpawnHealth) && GetActorProperty(0,APROP_Health) > 0)
+			ActivatorSound("player/okay",127);
+	}
+}
+
+//Class Script
+script 608 RESPAWN 
+{	
+	bool LMS = GetCVAR("lastmanstanding") || GetCVAR("teamlms") || GetCVAR("fakelms");
+
+		delay(1);
+		
+		ClearInventory();
+		
+		if(PlayerClass(PlayerNumber()) == 0) //American M3
+		{
+			Delay(6);
+			GiveInventory("IsAllied",1);
+			GiveInventory("M3 Grease Gun",1);
+			GiveInventory("M3GGAmmo",160);
+			GiveInventory("M3GGClip",32);
+			GiveInventory("Colt .45",1);
+			GiveInventory("Colt45Ammo",21);
+			GiveInventory("Colt45Clip",7);
+			GiveInventory("Fragmentation Grenade",1);
+			TakeInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccGrease Gun\n1 frag\n1 smoke"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("M3 Grease Gun");
+		}
+		else if(PlayerClass(PlayerNumber()) == 1) //American M1A1 Carbine
+		{
+			Delay(6);
+			GiveInventory("IsAllied",1);
+			GiveInventory("M1A1 Carbine",1);
+			GiveInventory("M1CarbineAmmo",60);
+			GiveInventory("M1CarbineClip",15);
+			GiveInventory("Colt .45",1);
+			GiveInventory("Colt45Ammo",21);
+			GiveInventory("Colt45Clip",7);
+			GiveInventory("Fragmentation Grenade",1);
+			GiveInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccM1A1 Carbine\n3 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("M1A1 Carbine");
+		}
+		else if(PlayerClass(PlayerNumber()) == 2) //American M1 Garand
+		{
+			Delay(6);
+			GiveInventory("IsAllied",1);
+			GiveInventory("M1 Garand",1);
+			GiveInventory("M1GarandAmmo",48);
+			GiveInventory("M1GarandClip",8);
+			GiveInventory("Colt .45",1);
+			GiveInventory("Colt45Ammo",21);
+			GiveInventory("Colt45Clip",7);
+			GiveInventory("Fragmentation Grenade",1);
+			GiveInventory("Smoke Grenade",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccM1 Garand\n2 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("M1 Garand");
+		}
+		else if(PlayerClass(PlayerNumber()) == 3) //American Springfield
+		{
+			Delay(6);
+			GiveInventory("IsAllied",1);
+			GiveInventory("Springfield",1);
+			GiveInventory("SpringfieldAmmo",50);
+			GiveInventory("SpringfieldClip",5);
+			GiveInventory("SpringfieldClosed",1);
+			GiveInventory("Colt .45",1);
+			GiveInventory("Colt45Ammo",21);
+			GiveInventory("Colt45Clip",7);
+			GiveInventory("Fragmentation Grenade",1);
+			GiveInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccSpringfield\n3 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("Springfield");
+		}
+		else if(PlayerClass(PlayerNumber()) == 4) //American Trenchgun
+		{
+			Delay(6);
+			GiveInventory("IsAllied",1);
+			GiveInventory("M1897 Trenchgun",1);
+			GiveInventory("TrenchgunAmmo",36);
+			GiveInventory("TrenchgunClip",6);
+			GiveInventory("TrenchgunPumped",1);
+			GiveInventory("Colt .45",1);
+			GiveInventory("Colt45Ammo",21);
+			GiveInventory("Colt45Clip",7);
+			GiveInventory("Fragmentation Grenade",1);
+			TakeInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccM1897 Trenchgun\n1 frag\n1 smoke"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("M1897 Trenchgun");
+		}		
+		else if(PlayerClass(PlayerNumber()) == 5) //American BAR
+		{
+			Delay(6);
+			GiveInventory("IsAllied",1);
+			GiveInventory("BAR",1);
+			GiveInventory("BARAmmo",140);
+			GiveInventory("BARClip",20);
+			GiveInventory("Colt .45",1);
+			GiveInventory("Colt45Ammo",21);
+			GiveInventory("Colt45Clip",7);
+			GiveInventory("Fragmentation Grenade",1);
+			GiveInventory("Smoke Grenade",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccBAR\n2 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("BAR");
+		}
+		else if(PlayerClass(PlayerNumber()) == 6) //American Thompson
+		{
+			Delay(6);
+			GiveInventory("IsAllied",1);
+			GiveInventory("Thompson",1);
+			GiveInventory("ThompsonAmmo",120);
+			GiveInventory("ThompsonClip",20);
+			GiveInventory("Colt .45",1);
+			GiveInventory("Colt45Ammo",21);
+			GiveInventory("Colt45Clip",7);
+			GiveInventory("Fragmentation Grenade",1);
+			TakeInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccThompson\n1 frag\n1 smoke"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("Thompson");
+		}		
+
+		else if(PlayerClass(PlayerNumber()) == 14) //German MP40
+		{
+			Delay(6);
+			GiveInventory("IsAxis",1);
+			GiveInventory("MP40",1);
+			GiveInventory("MP40Ammo",160);
+			GiveInventory("MP40Clip",32);
+			GiveInventory("Luger",1);
+			GiveInventory("LugerAmmo",24);
+			GiveInventory("LugerClip",8);
+			GiveInventory("Stielhandgranate",1);
+			TakeInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccMP40\n1 frag\n1 smoke"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("MP40");
+		}
+		else if(PlayerClass(PlayerNumber()) == 15) //German Kar98K
+		{
+			Delay(6);
+			GiveInventory("IsAxis",1);
+			GiveInventory("Kar98k",1);
+			GiveInventory("Kar98kAmmo",50);
+			GiveInventory("Kar98kClip",5);
+			GiveInventory("Kar98kClosed",1);
+			GiveInventory("Luger",1);
+			GiveInventory("LugerAmmo",24);
+			GiveInventory("LugerClip",8);
+			GiveInventory("Stielhandgranate",1);
+			GiveInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccKar98K\n3 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("Kar98k");
+		}
+		else if(PlayerClass(PlayerNumber()) == 16) //German G43
+		{
+			Delay(6);
+			GiveInventory("IsAxis",1);
+			GiveInventory("Gewehr 43",1);
+			GiveInventory("G43Ammo",50);
+			GiveInventory("G43Clip",10);
+			GiveInventory("Luger",1);
+			GiveInventory("LugerAmmo",24);
+			GiveInventory("LugerClip",8);
+			GiveInventory("Stielhandgranate",1);
+			GiveInventory("Smoke Grenade",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccGewehr 43\n2 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("Gewehr 43");
+		}
+		else if(PlayerClass(PlayerNumber()) == 17) //German Scoped Kar98K
+		{
+			Delay(6);
+			GiveInventory("IsAxis",1);
+			GiveInventory("Scoped Kar98k",1);
+			GiveInventory("Kar98kAmmo",50);
+			GiveInventory("Kar98kClip",5);
+			GiveInventory("Kar98kClosed",1);
+			GiveInventory("Luger",1);
+			GiveInventory("LugerAmmo",24);
+			GiveInventory("LugerClip",8);
+			GiveInventory("Stielhandgranate",1);
+			GiveInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccScoped Kar98K\n3 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("Scoped Kar98k");
+		}
+		else if(PlayerClass(PlayerNumber()) == 18) //German Trenchgun
+		{
+			Delay(6);
+			GiveInventory("IsAxis",1);
+			GiveInventory("M1897 Trenchgun",1);
+			GiveInventory("TrenchgunAmmo",36);
+			GiveInventory("TrenchgunClip",6);
+			GiveInventory("TrenchgunPumped",1);
+			GiveInventory("Luger",1);
+			GiveInventory("LugerAmmo",24);
+			GiveInventory("LugerClip",8);
+			GiveInventory("Stielhandgranate",1);
+			TakeInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccM1897 Trenchgun\n1 frag\n1 smoke"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("M1897 Trenchgun");
+		}		
+		else if(PlayerClass(PlayerNumber()) == 19) //German MP44
+		{
+			Delay(6);
+			GiveInventory("IsAxis",1);
+			GiveInventory("MP44",1);
+			GiveInventory("MP44Clip",30);
+			GiveInventory("MP44Ammo",180);
+			GiveInventory("Luger",1);
+			GiveInventory("LugerAmmo",24);
+			GiveInventory("LugerClip",8);
+			GiveInventory("Stielhandgranate",1);
+			GiveInventory("Smoke Grenade",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccMP44\n2 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("MP44");
+		}
+		
+		else if(PlayerClass(PlayerNumber()) == 20) //Russian PPS-42
+		{
+			Delay(6);
+			GiveInventory("IsRussian",1);
+			GiveInventory("PPS-42",1);
+			GiveInventory("PPS42Ammo",140);
+			GiveInventory("PPS42Clip",35);
+			GiveInventory("TT30",1);
+			GiveInventory("TT30Ammo",24);
+			GiveInventory("TT30Clip",8);
+			GiveInventory("RGD-33 Grenade",1);
+			TakeInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade ",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccPPS-42\n1 frag\n1 smoke"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("PPS-42");
+		}
+		else if(PlayerClass(PlayerNumber()) == 21) //Russian Mosin-Nagant
+		{
+			Delay(6);
+			GiveInventory("IsRussian",1);
+			GiveInventory("Mosin-Nagant",1);
+			GiveInventory("NagantAmmo",50);
+			GiveInventory("NagantClip",5);
+			GiveInventory("NagantClosed",1);
+			GiveInventory("TT30",1);
+			GiveInventory("TT30Ammo",24);
+			GiveInventory("TT30Clip",8);
+			GiveInventory("RGD-33 Grenade",1);
+			GiveInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade ",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccMosin-Nagant\n3 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("Mosin-Nagant");
+		}
+		else if(PlayerClass(PlayerNumber()) == 22) //Russian SVT
+		{
+			Delay(6);
+			GiveInventory("IsRussian",1);
+			GiveInventory("SVT-40",1);
+			GiveInventory("SVTAmmo",50);
+			GiveInventory("SVTClip",10);
+			GiveInventory("TT30",1);
+			GiveInventory("TT30Ammo",24);
+			GiveInventory("TT30Clip",8);
+			GiveInventory("RGD-33 Grenade",1);
+			GiveInventory("Smoke Grenade ",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccSVT-40\n2 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("SVT-40");
+		}
+		else if(PlayerClass(PlayerNumber()) == 23) //Russian Scoped Mosin
+		{
+			Delay(6);
+			GiveInventory("IsRussian",1);
+			GiveInventory("Scoped Mosin-Nagant",1);
+			GiveInventory("NagantAmmo",50);
+			GiveInventory("NagantClip",5);
+			GiveInventory("NagantClosed",1);
+			GiveInventory("TT30",1);
+			GiveInventory("TT30Ammo",24);
+			GiveInventory("TT30Clip",8);
+			GiveInventory("RGD-33 Grenade",1);
+			GiveInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade ",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccScoped Mosin-Nagant\n3 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("Scoped Mosin-Nagant");
+		}
+		else if(PlayerClass(PlayerNumber()) == 24) //Russian Trenchgun
+		{
+			Delay(6);
+			GiveInventory("IsRussian",1);
+			GiveInventory("M1897 Trenchgun",1);
+			GiveInventory("TrenchgunAmmo",36);
+			GiveInventory("TrenchgunClip",6);
+			GiveInventory("TrenchgunPumped",1);
+			GiveInventory("TT30",1);
+			GiveInventory("TT30Ammo",24);
+			GiveInventory("TT30Clip",8);
+			GiveInventory("RGD-33 Grenade",1);
+			TakeInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade ",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccM1897 Trenchgun\n1 frag\n1 smoke"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("M1897 Trenchgun");
+		}		
+		else if(PlayerClass(PlayerNumber()) == 25) //Russian PPSh-41
+		{
+			Delay(6);
+			GiveInventory("IsRussian",1);
+			GiveInventory("PPSh-41",1);
+			GiveInventory("PPSh41Ammo",71);
+			GiveInventory("PPSh41Clip",71);
+			GiveInventory("TT30",1);
+			GiveInventory("TT30Ammo",24);
+			GiveInventory("TT30Clip",8);
+			GiveInventory("RGD-33 Grenade",1);
+			GiveInventory("Smoke Grenade ",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccPPSh-41\n2 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("PPSh-41");
+		}
+		
+		else if(PlayerClass(PlayerNumber()) == 7) //British Sten
+		{
+			Delay(6);
+			GiveInventory("IsBritish",1);
+			GiveInventory("Sten Gun",1);
+			GiveInventory("StenAmmo",160);
+			GiveInventory("StenClip",32);
+			GiveInventory("Webley",1);
+			GiveInventory("WebleyAmmo",18);
+			GiveInventory("WebleyClip",6);
+			GiveInventory("Mills Bomb",1);
+			TakeInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccSten Gun\n1 frag\n1 smoke"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("Sten Gun");
+		}
+		else if(PlayerClass(PlayerNumber()) == 8) //British Lee-Enfield
+		{
+			Delay(6);
+			GiveInventory("IsBritish",1);
+			GiveInventory("Lee-Enfield",1);
+			GiveInventory("EnfieldAmmo",50);
+			GiveInventory("EnfieldClip",10);
+			GiveInventory("EnfieldClosed",1);
+			GiveInventory("Webley",1);
+			GiveInventory("WebleyAmmo",18);
+			GiveInventory("WebleyClip",6);
+			GiveInventory("Mills Bomb",1);
+			GiveInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccLee-Enfield\n3 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("Lee-Enfield");
+		}
+		else if(PlayerClass(PlayerNumber()) == 9) //British M1 Garand
+		{
+			Delay(6);
+			GiveInventory("IsBritish",1);
+			GiveInventory("M1 Garand",1);
+			GiveInventory("M1GarandAmmo",48);
+			GiveInventory("M1GarandClip",8);
+			GiveInventory("Webley",1);
+			GiveInventory("WebleyAmmo",18);
+			GiveInventory("WebleyClip",6);
+			GiveInventory("Mills Bomb",1);
+			GiveInventory("Smoke Grenade",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccM1 Garand\n2 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("M1 Garand");
+		}
+		else if(PlayerClass(PlayerNumber()) == 10) //British Scoped Lee-Enfield
+		{
+			Delay(6);
+			GiveInventory("IsBritish",1);
+			GiveInventory("Scoped Lee-Enfield",1);
+			GiveInventory("EnfieldAmmo",50);
+			GiveInventory("EnfieldClip",10);
+			GiveInventory("EnfieldClosed",1);
+			GiveInventory("Webley",1);
+			GiveInventory("WebleyAmmo",18);
+			GiveInventory("WebleyClip",6);
+			GiveInventory("Mills Bomb",1);
+			GiveInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccScoped Lee-Enfield\n3 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("Scoped Lee-Enfield");
+		}
+		else if(PlayerClass(PlayerNumber()) == 11) //British Trenchgun
+		{
+			Delay(6);
+			GiveInventory("IsBritish",1);
+			GiveInventory("M1897 Trenchgun",1);
+			GiveInventory("TrenchgunAmmo",36);
+			GiveInventory("TrenchgunClip",6);
+			GiveInventory("TrenchgunPumped",1);
+			GiveInventory("Webley",1);
+			GiveInventory("WebleyAmmo",18);
+			GiveInventory("WebleyClip",6);
+			GiveInventory("Mills Bomb",1);
+			TakeInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccM1897 Trenchgun\n1 frag\n1 smoke"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);
+			Delay(6);
+			SetWeapon("M1897 Trenchgun");
+		}		
+		else if(PlayerClass(PlayerNumber()) == 12) //British Bren
+		{
+			Delay(6);
+			GiveInventory("IsBritish",1);
+			GiveInventory("Bren Gun",1);
+			GiveInventory("BrenAmmo",150);
+			GiveInventory("BrenClip",30);
+			GiveInventory("Webley",1);
+			GiveInventory("WebleyAmmo",18);
+			GiveInventory("WebleyClip",6);
+			GiveInventory("Mills Bomb",1);
+			GiveInventory("Smoke Grenade",1);
+			TakeInventory("SmokeGrenadeAmmo",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccBren Gun\n2 frag"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);
+			Delay(6);
+			SetWeapon("Bren Gun");
+		}
+		else if(PlayerClass(PlayerNumber()) == 13) //British Thompson
+		{
+			Delay(6);
+			GiveInventory("IsBritish",1);
+			GiveInventory("Thompson",1);
+			GiveInventory("ThompsonAmmo",120);
+			GiveInventory("ThompsonClip",20);
+			GiveInventory("Webley",1);
+			GiveInventory("WebleyAmmo",18);
+			GiveInventory("WebleyClip",6);
+			GiveInventory("Mills Bomb",1);
+			TakeInventory("FragGrenadeAmmo",1);
+			GiveInventory("Smoke Grenade",1);
+			SetFont("BIGFONT");
+			HudMessage(s:"\ccThompson\n1 frag\n1 smoke"; HUDMSG_FADEOUT,0,CR_YELLOW,0.0,0.3,5.0,2.0);			
+			Delay(6);
+			SetWeapon("Thompson");
+		}	
+
+		if(CheckInventory("IsAllied") == 1 && random(0,2) > 0)
+			GiveInventory("Voice",random(1,2));
+		if(CheckInventory("IsAxis") == 1 && random(0,1) == 1)
+			GiveInventory("Voice",1);
+			
+		if(LMS) //To give normal health during LMS
+		{
+			SetActorProperty(0,APROP_SpawnHealth,100);
+			SetActorProperty(0,APROP_Health,100);
+		}
+			
+		ACS_ExecuteAlways(500,0,0,0,0);
+		ACS_ExecuteAlways(699,0,0,0,0);
+		
+		delay(1);
+}
+
+//Get If LMS Script
+script 609 (void)
+{
+	if(GetCVAR("lastmanstanding") == 1 || GetCVAR("teamlms") == 1 || GetCVAR("fakelms") == 1)
+		SetResultValue(1);
+	else
+		SetResultValue(0);
+}
+
+//LMS Sudden Death Script
+script 610 OPEN
+{
+	if(GetCVAR("teamlms") == 1)
+	{
+		if(BlueScore() == GetCvar("winlimit")-1 && RedScore() == GetCvar("winlimit")-1)
+		{
+			ConsoleCommand("changemus D_SIBBOS");		
+			SetFont("BIGFONT");
+			HudMessage(s:"\cdSUDDEN DEATH"; HUDMSG_FADEOUT,0,CR_BLUE,0.5,0.4,4.0,2.0);
+		}
+	}
+}
+
+//Check if a headshot should award an indication and XP
+script 613 (int Team) //TODO Possibly remove?
+{
+	if(Team == 0 && PlayerTeam() != TEAM_BLUE)
+		SetResultValue(1);
+	else if(Team == 1 && PlayerTeam() != TEAM_RED)
+		SetResultValue(1);
+	else
+		SetResultValue(0);
+}
+
+//Talk Script
+script 615 (int Mode)
+{
+	Talking++;
+
+	if(Mode != 3)
+		Delay(15);
+	if(GetActorProperty(0,APROP_Health) > 0 && CheckInventory("Talking") == 0 && Talking != 3 && CheckInventory("Silence") != 1)
+	{
+		if(Mode == 0) //Got kill
+			GiveInventory("Voice_Kill",1);
+		if(Mode == 1) //Reloading
+			GiveInventory("Voice_Reload",1);
+		if(Mode == 2) //Frustration with killing someone
+			GiveInventory("Voice_Jugg",1);
+		if(Mode == 3) //Grenade incoming
+			GiveInventory("Voice_GrenadeInc",1);
+		if(Mode == 4) //Grenade out
+			GiveInventory("Voice_GrenadeOut",1);
+		if(Mode == 5) //Smoke out
+			GiveInventory("Voice_SmokeOut",1);
+
+		Delay(35*2);
+		Talking--;
+		Delay(35*2);
+		TakeInventory("Talking",1);
+	}
+}
+
+//Shellshock
+script 616 (void)
+{
+		if(CheckInventory("Shellshocked") == 1)
+			terminate;
+		GiveInventory("Shellshocked",1);
+		LocalAmbientSound("game/shellshock",127);
+		LocalAmbientSound("game/shellshock",127);
+		GiveInventory("ShellshockSpeed",1);
+		GiveInventory("InCombat",20);
+		ACS_ExecuteAlways(606,0,0,0,0);
+		delay(1);
+		Radius_Quake(random(4,9),random(10,30),0,1,0);
+		FadeRange(255,255,255,0.6,0,0,0,0.0,1.5);
+		delay(25);
+		Radius_Quake(random(4,9),random(10,30),0,1,0);
+		FadeRange(255,255,255,0.6,0,0,0,0.0,1.5);
+		delay(25);
+		Radius_Quake(random(4,9),random(10,30),0,1,0);
+		FadeRange(255,255,255,0.6,0,0,0,0.0,1.5);
+		delay(25);
+		Radius_Quake(random(4,9),random(10,30),0,1,0);
+		FadeRange(255,255,255,0.6,0,0,0,0.0,1.5);
+		delay(25);
+		Radius_Quake(random(4,9),random(10,30),0,1,0);
+		FadeRange(255,255,255,0.6,0,0,0,0.0,1.5);
+		delay(25);
+		Radius_Quake(random(4,9),random(10,30),0,1,0);
+		FadeRange(255,255,255,0.6,0,0,0,0.0,1.5);
+		delay(25);
+		TakeInventory("Shellshocked",1);
+		Radius_Quake(random(4,9),random(10,30),0,1,0);
+		FadeRange(255,255,255,0.6,0,0,0,0.0,1.5);
+		delay(25);
+}
+
+//Gas grenade slowdown
+script 617 (void)
+{
+		if(CheckInventory("Shellshocked") == 1)
+			terminate;
+		GiveInventory("Shellshocked",1);
+		GiveInventory("ShellshockSpeed",1);
+		GiveInventory("InCombat",20);
+		ACS_ExecuteAlways(606,0,0,0,0);
+		delay(1);
+		Radius_Quake(random(4,9),random(10,30),0,1,0);
+		FadeRange(255,255,255,0.6,0,0,0,0.0,1.5);
+		delay(25);
+		Radius_Quake(random(4,9),random(10,30),0,1,0);
+		FadeRange(255,255,255,0.6,0,0,0,0.0,1.5);
+		delay(25);
+		Radius_Quake(random(4,9),random(10,30),0,1,0);
+		FadeRange(255,255,255,0.6,0,0,0,0.0,1.5);
+		delay(25);
+		Radius_Quake(random(4,9),random(10,30),0,1,0);
+		FadeRange(255,255,255,0.6,0,0,0,0.0,1.5);
+		delay(25);
+		TakeInventory("Shellshocked",1);
+		Radius_Quake(random(4,9),random(10,30),0,1,0);
+		FadeRange(255,255,255,0.6,0,0,0,0.0,1.5);
+		delay(25);
+}
+
+//Silence Mode script
+script 618 (void) NET
+{
+	if(CheckInventory("Silence") == 1)
+	{
+		TakeInventory("Silence",1);
+		delay(10);
+	}
+	else
+	{
+		GiveInventory("Silence",1);
+		delay(10);
+	}
+}
+
+//Story Resupply
+script 619 (void)
+{
+	int time;
+	
+	while (GetActorProperty(0,APROP_Health) > 0)
+	{
+		delay(1);
+		if (time > STORY_RESUPPLY_DELAY)
+		{
+			ResupplyAllInstant();
+			time = 0;
+		}
+		else
+		{
+			time++;
+		}
+	}
+}
+
+//Death
+script 620 DEATH
+{
+	Thing_ChangeTID(0, 0);
+}
+
+//Peek Script;
+script 621 (void)
+{
+	
+	int PLAYER_TID = 0;
+		
+	int angle = GetActorAngle(PLAYER_TID) >> 8;
+	
+	int peekingLeft;
+	int peekingRight;
+	
+	int buttons;
+			
+	Thing_Stop(PLAYER_TID);
+	SetPlayerProperty(PLAYER_TID, 1, PROP_FROZEN);	
+		
+	while(GetActorProperty(PLAYER_TID,APROP_Health) > 0)
+	{
+		buttons = GetPlayerInput(-1, INPUT_BUTTONS);
+					
+		if(buttons & BT_MOVELEFT && peekingRight == 0)
+		{
+			if(peekingLeft == 0)
+			{
+				ThrustThing(angle + 64, PEEK_SPEED, 0, PLAYER_TID);
+				delay(PEEK_DELAY);
+				Thing_Stop(PLAYER_TID);
+				peekingLeft = 1;
+			}
+		}
+		else if (buttons & BT_MOVERIGHT && peekingLeft == 0)
+		{
+			if(peekingRight == 0)
+			{
+				ThrustThing(angle + 192, PEEK_SPEED, 0, PLAYER_TID);
+				delay(PEEK_DELAY);
+				Thing_Stop(PLAYER_TID);
+				peekingRight = 1;
+			}
+		}
+		else
+		{
+			if(peekingLeft == 1)
+			{
+				ThrustThing(angle + 192, PEEK_SPEED, 0, PLAYER_TID);
+				delay(PEEK_DELAY);
+				Thing_Stop(PLAYER_TID);
+				peekingLeft = 0;
+			}
+			else if(peekingRight == 1)
+			{
+				ThrustThing(angle + 64, PEEK_SPEED, 0, PLAYER_TID);
+				delay(PEEK_DELAY);
+				Thing_Stop(PLAYER_TID);
+				peekingRight = 0;
+			}
+		}
+		
+		if (buttons & BT_BACK || buttons & BT_FORWARD) //Leave peeking mode if forward or back are pressed.
+		{
+			SetPlayerProperty(PLAYER_TID, 0, PROP_FROZEN);
+			TakeInventory("Peeking", 1);
+			terminate;
+		}
+		delay(1);
+	}
+	
+	TakeInventory("Peeking", 1); //If the player dies while peeking remove item.
+}
+
+script 622 (void) NET //Kick off the peek script.
+{
+	if (CheckInventory("Peeking") == 1 || CheckInventory("Sliding") == 1) //Abort if we are already peeking or sliding.
+		terminate;
+		
+	GiveInventory("Peeking", 1);
+	
+	ACS_ExecuteAlways(621,0,0,0,0);
+}
+
+//Kick off MG deployment script.
+script 623 (void) NET
+{
+	if(CheckInventory("Deployed") == 1)
+	{
+		HudMessage(s:"Weapon Already Deployed!"; HUDMSG_FADEOUT,0,CR_WHITE,0.5,0.6,4.0,0.5);
+		terminate;
+	}
+}
+
+//Slide script.
+script 625 (void)
+{
+	if(CheckInventory("Sliding") == 1 || CheckInventory("Peeking") == 1 || CheckInventory("Aiming" == 1)) //Make sure we are not already sliding, peeking, or aiming.
+	{
+		terminate;
+	}
+	
+	GiveInventory("Sliding", 1);
+		
+	int angle = GetActorAngle(0) >> 8;
+
+	ActivatorSound("misc/slide",75); //Sound for everyone else at an appropriate volume.
+	LocalAmbientSound("misc/slide", 127); //Sound for player sliding at max volume.
+	
+	SetPlayerProperty(0, 1, PROP_FROZEN);
+	ThrustThing(angle, SLIDE_SPEED, 0, 0);
+	delay(SLIDE_DELAY);
+	SetPlayerProperty(0, 0, PROP_FROZEN);
+	
+	TakeInventory("Sliding", 1);
+}
+
+//Give suppression script. Also alters the players aim when shot at.
+script 626 (void)
+{
+	GiveInventory("SuppressedLevel", SUPPRESSION_EFFECT_GIVEN);
+	
+	LocalAmbientSound("generic/whizby",127);
+	
+	ACS_ExecuteAlways(628,0,0,0,0); //Execute aim jerk script
+}
+
+//Shot script. Activated when the player is attacked.
+script 627 (void)
+{
+	FadeRange(255,0,0,0.6,0,0,0,0.0,0.2);
+	
+	GiveInventory("TiredLevel", ATTACKED_STAMINA_PENALTY);
+	
+	ACS_ExecuteAlways(626,0,0,0,0); //Execute Suppression script.
+	
+}
+
+//Suppression impact view script. Three modes. One for when shot, one for when a suppression shot hits, and one for suppression hip sway.
+script 628 (int _mode, int _suppressionAmount) CLIENTSIDE
+{
+	if (_mode == 0)
+	{
+		SetActorAngle(0,GetActorAngle(0)+random(-500,500)+(random(-10,10)*SUPPRESSION_VIEW_IMPACT_MULT));
+		SetActorPitch(0,GetActorPitch(0)-random(-500,500)+(random(-10,10)*SUPPRESSION_VIEW_IMPACT_MULT));
+	}
+	else if (_mode == 1)
+	{
+		SetActorAngle(0,GetActorAngle(0)+random(-AIM_SWAY_HOLD_MULTI_MIN,AIM_SWAY_HOLD_MULTI_MAX)+(random(-10,10)*_suppressionAmount));
+		SetActorPitch(0,GetActorPitch(0)-random(-AIM_SWAY_HOLD_MULTI_MIN,AIM_SWAY_HOLD_MULTI_MAX)+(random(-10,10)*_suppressionAmount));
+	}
+}

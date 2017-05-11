@@ -1,0 +1,805 @@
+
+ACTOR PlayerHead
+{
+  RenderStyle None
+  Height 8
+  Health 5
+  Radius 11
+  speed 0
+  +NOGRAVITY
+  +NORADIUSDMG
+  +SERVERSIDEONLY
+  +NOCLIP
+  -SOLID
+  +NOBLOOD
+  +SHOOTABLE
+  +GHOST
+  damagetype "Decapitated"
+  damagefactor "Monster", 0.0
+  Painchance 256
+  obituary "\cf%k \cc>> \cvheadshot \cc>> \cf%o"
+  states
+  {
+  Spawn:
+    SPRK A 3
+    stop
+  Nothing:
+    SPRK A 0
+    stop
+  Death:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK A 1 A_Explode(40,32,0)
+    Stop
+  Death.Colt:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Colt",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.M3:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_M3",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Garand:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Garand",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.M1Carbine:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Carbine",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Trenchgun:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_TrenchGun",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Springfield:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Springfield",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Springfield2:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Springfield2",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.BAR:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_BAR",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Thompson:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Thompson",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Luger:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Luger",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.MP40:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_MP40",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Kar98:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Kar98k",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.G43:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_G43",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Kar982:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Kar98k2",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.Kar983:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Kar98k3",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.MP44:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_MP44",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.TT30:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_TT30",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.PPS42:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_PPS42",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Nagant:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Nagant",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.SVT:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_SVT",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Nagant2:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Nagant2",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.Nagant3:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Nagant3",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.PPSh41:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_PPSh41",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.Webley:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Webley",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Sten:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Sten",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Enfield:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Enfield",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Enfield2:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Enfield2",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Enfield3:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Enfield3",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Bren:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Bren",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+  Death.Melee:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Melee",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  }
+}
+
+actor HeadshotIndicator : CustomInventory
+{
+  inventory.maxamount 9999
+  +ALWAYSPICKUP
+  states
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    TNT1 A 0 A_JumpIf(ACS_ExecuteWithResult(613,0,0,0) == 1, "Go")
+    stop
+  Go:
+    TNT1 A 0 ACS_ExecuteAlways(509,0,1,0,0)
+    stop
+  }
+}
+
+actor HeadshotIndicator2 : CustomInventory
+{
+  inventory.maxamount 9999
+  +ALWAYSPICKUP
+  states
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    TNT1 A 0 A_JumpIf(ACS_ExecuteWithResult(613,0,0,0) == 1, "Go")
+    stop
+  Go:
+    TNT1 A 0 ACS_ExecuteAlways(509,0,1,0,0)
+    stop
+  }
+}
+
+actor HeadshotSound
+{
+ radius 1
+ height 1
+ +noclip
+ States
+ {
+ Spawn:
+  TNT1 A 0
+  TNT1 A 1 A_PlaySound("generic/headshot")
+  stop
+ }
+}
+
+actor HeadDamage_Colt
+{
+  RenderStyle None
+  Height 10
+  Health 5
+  Radius 16
+  speed 0
+  +NOGRAVITY
+  +NOCLIP
+  -SOLID
+  +SHOOTABLE
+  obituary "\cf%k \cc>> \ciColt .45 \cvheadshot \cc>> \cf%o"
+  states
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Death:
+    TNT1 AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,128,0)
+    TNT1 A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    TNT1 A 2 A_Explode(40,32,0)
+    Stop
+  }
+}
+actor HeadDamage_M3 : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \cdM3 \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_Thompson : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \cdThompson \cvheadshot \cc>> \cf%o"
+}
+
+actor HeadDamage_Garand : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \crM1 Garand \cvheadshot \cc>> \cf%o"
+  states
+  {
+  Death:
+    TNT1 AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,128,0)
+    TNT1 A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    TNT1 A 2 A_Explode(100,32,0)
+    Stop
+  }
+}
+
+actor HeadDamage_Carbine : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \csM1A1 Carbine \cvheadshot \cc>> \cf%o"
+  states
+  {
+  Death:
+    TNT1 AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,128,0)
+    TNT1 A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    TNT1 A 2 A_Explode(75,32,0)
+    Stop
+  }
+}
+actor HeadDamage_Springfield : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \cgSpringfield \cvheadshot \cc>> \cf%o"
+  states
+  {
+  Death:
+    TNT1 AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,128,0)
+    TNT1 A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    TNT1 A 2 A_Explode(350,32,0)
+    Stop
+  }
+}
+actor HeadDamage_BAR : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \cqBAR \cvheadshot \cc>> \cf%o"
+  states
+  {
+  Death:
+    TNT1 AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,128,0)
+    TNT1 A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    TNT1 A 2 A_Explode(55,32,0)
+    Stop
+  }
+}
+
+actor HeadDamage_Luger : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \ciLuger \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_MP40 : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \cdMP40 \cvheadshot \cc>> \cf%o"
+}
+
+actor HeadDamage_G43 : HeadDamage_Garand 
+{
+  obituary "\cf%k \cc>> \crGewehr 43 \cvheadshot \cc>> \cf%o"
+}
+
+actor HeadDamage_Kar98k : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \csKar98k \cvheadshot \cc>> \cf%o"
+  states
+  {
+  Death:
+    TNT1 AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,128,0)
+    TNT1 A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    TNT1 A 2 A_Explode(250,32,0)
+    Stop
+  }
+}
+actor HeadDamage_Kar98k2 : HeadDamage_Springfield
+{
+  obituary "\cf%k \cc>> \cgScoped Kar98k \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_Kar98k3 : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \csKar98k \cvheadshot \cc>> \cf%o"
+  states
+  {
+  Death:
+    TNT1 AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,128,0)
+    TNT1 A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    TNT1 A 0 A_JumpIf(ACS_ExecuteWithResult(609,0,0,0) == 1, 2)
+    TNT1 A 2 A_Explode(100,32,0)
+    Stop
+    TNT1 A 2 A_Explode(150,32,0)
+    Stop
+  }
+}
+actor HeadDamage_Springfield2 : HeadDamage_Kar98k3
+{
+  obituary "\cf%k \cc>> \csSpringfield \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_MP44 : HeadDamage_BAR
+{
+  obituary "\cf%k \cc>> \cqMP44 \cvheadshot \cc>> \cf%o"
+}
+
+
+actor HeadDamage_TT30 : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \ciTT30 \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_PPS42 : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \cdPPS-42 \cvheadshot \cc>> \cf%o"
+}
+
+actor HeadDamage_SVT : HeadDamage_Garand 
+{
+  obituary "\cf%k \cc>> \crSVT-40 \cvheadshot \cc>> \cf%o"
+}
+
+actor HeadDamage_Nagant : HeadDamage_Kar98k
+{
+  obituary "\cf%k \cc>> \csMosin-Nagant \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_Nagant2 : HeadDamage_Springfield
+{
+  obituary "\cf%k \cc>> \cgScoped Mosin-Nagant \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_Nagant3 : HeadDamage_Kar98k3
+{
+  obituary "\cf%k \cc>> \csMosin-Nagant \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_PPSh41 : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \cqPPSh-41 \cvheadshot \cc>> \cf%o"
+}
+
+actor HeadDamage_Trenchgun : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \caTrenchgun \cvheadshot \cc>> \cf%o"
+  states
+  {
+  Death:
+    TNT1 AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,128,0)
+    TNT1 A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    TNT1 A 2 A_Explode(45,32,0)
+    Stop
+  }
+}
+
+actor HeadDamage_Webley : HeadDamage_BAR
+{
+  obituary "\cf%k \cc>> \ciWebley \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_Sten : HeadDamage_Colt
+{
+  obituary "\cf%k \cc>> \cdSten Gun \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_Enfield : HeadDamage_Kar98k
+{
+  obituary "\cf%k \cc>> \csLee-Enfield \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_Enfield2 : HeadDamage_Springfield
+{
+  obituary "\cf%k \cc>> \cgScoped Lee-Enfield \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_Enfield3 : HeadDamage_Kar98k3
+{
+  obituary "\cf%k \cc>> \csLee-Enfield \cvheadshot \cc>> \cf%o"
+}
+actor HeadDamage_Bren : HeadDamage_Carbine
+{
+  obituary "\cf%k \cc>> \cqBren Gun \cvheadshot \cc>> \cf%o"
+  states
+  {
+  Death:
+    TNT1 AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,128,0)
+    TNT1 A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    TNT1 A 2 A_Explode(65,32,0)
+    Stop
+  }
+}
+actor HeadDamage_Melee : HeadDamage_Springfield
+{
+  obituary "\cf%k \cc>> \cgMelee \cvheadshot \cc>> \cf%o"
+}
+
+ACTOR O_PlayerHead
+{
+  RenderStyle None
+  Height 10
+  Health 5
+  Radius 16
+  speed 0
+  +NOGRAVITY
+  +NORADIUSDMG
+  +SERVERSIDEONLY
+  +NOCLIP
+  -SOLID
+  +NOBLOOD
+  +SHOOTABLE
+  +GHOST
+  damagetype "Decapitated"
+  damagefactor "Monster", 0.0
+  damagefactor "Melee", 0.0
+  Painchance 256
+  obituary "\cf%k \cc>> \cvheadshot \cc>> \cf%o"
+  states
+  {
+  Spawn:
+    SPRK A 3
+    stop
+  Nothing:
+    SPRK A 0
+    stop
+  Death:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK A 1 A_Explode(40,32,0)
+    Stop
+  Death.Colt:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Colt",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.M3:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_M3",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Garand:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Garand",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.M1Carbine:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Carbine",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Trenchgun:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_TrenchGun",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Springfield:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Springfield",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Springfield2:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Springfield2",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.BAR:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_BAR",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Thompson:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Thompson",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Luger:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Luger",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.MP40:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_MP40",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Kar98:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Kar98k",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.G43:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_G43",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Kar982:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Kar98k2",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.Kar983:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Kar98k3",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.MP44:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_MP44",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.TT30:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_TT30",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.PPS42:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_PPS42",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Nagant:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Nagant",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.SVT:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_SVT",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Nagant2:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Nagant2",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.Nagant3:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Nagant3",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.PPSh41:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_PPSh41",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop  
+  Death.Webley:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Webley",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Sten:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Sten",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Enfield:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Enfield",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Enfield2:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Enfield2",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator2",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Enfield3:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Enfield3",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  Death.Bren:
+    TNT1 A 0 A_JumpIfCloser(16,"Nothing")
+    SPRK A 0 A_SpawnItemEx("HeadDamage_Bren",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("O_HeadshotIndicator",1)
+    SPRK AA 1 A_Explode(5,4,0)
+    Stop
+  }
+}
+
+actor O_HeadshotIndicator : CustomInventory
+{
+  inventory.maxamount 9999
+  +ALWAYSPICKUP
+  states
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    TNT1 A 0 A_JumpIf(ACS_ExecuteWithResult(613,1,0,0) == 1, "Go")
+    stop
+  Go:
+    TNT1 A 0 ACS_ExecuteAlways(509,0,1,0,0)
+    stop
+  }
+}
+
+actor O_HeadshotIndicator2 : CustomInventory
+{
+  inventory.maxamount 9999
+  +ALWAYSPICKUP
+  states
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    TNT1 A 0 A_JumpIf(ACS_ExecuteWithResult(613,1,0,0) == 1, "Go")
+    stop
+  Go:
+    TNT1 A 0 ACS_ExecuteAlways(509,0,1,0,0)
+    stop
+  }
+}
+
+ACTOR MonsterHead
+{
+  RenderStyle None
+  Height 10
+  Health 5
+  Radius 16
+  speed 0
+  +NOGRAVITY
+  +NORADIUSDMG
+  +SERVERSIDEONLY
+  +NOCLIP
+  -SOLID
+  +NOBLOOD
+  +SHOOTABLE
+  +GHOST
+  damagetype "Decapitated"
+  damagefactor "Monster", 0.0
+  Painchance 256
+  obituary "\cf%k \cc>> \cvheadshot \cc>> \cf%o"
+  states
+  {
+  Spawn:
+    SPRK A 5
+    stop
+  Death:
+    SPRK A 1 
+    Stop
+  Death.Colt:
+    SPRK AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK A 1 A_Explode(40,32,0)
+    Stop
+  Death.Garand:
+    SPRK AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK A 1 A_Explode(100,32,0)
+    Stop
+  Death.M1Carbine:
+    SPRK AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK A 1 A_Explode(80,32,0)
+    Stop
+  Death.Kar98:
+    SPRK AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator2",1)
+    SPRK A 1 A_Explode(250,32,0)
+    Stop
+  Death.Trenchgun:
+    SPRK AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK A 1 A_Explode(60,32,0)
+    Stop
+  Death.Springfield:
+    SPRK AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator2",1)
+    SPRK A 1 A_Explode(350,32,0)
+    Stop
+  Death.BAR:
+    SPRK AAA 0 A_SpawnItemEx("HHBlood",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_SpawnItemEx("HeadshotSound",0,0,0,0,0,0,0,0,0)
+    SPRK A 0 A_GiveToTarget("HeadshotIndicator",1)
+    SPRK A 1 A_Explode(55,32,0)
+    Stop
+  }
+}

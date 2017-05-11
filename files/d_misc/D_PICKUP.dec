@@ -1,0 +1,374 @@
+
+actor SMGPickup : CustomInventory
+{
+  inventory.pickupmessage "SMG"
+  inventory.pickupsound "misc/w_pkup"
+  +INVENTORY.AUTOACTIVATE
+  inventory.respawntics 35
+  scale 1.0
+  States
+  {
+  Spawn:
+    BKPK A -1
+    stop
+  Pickup:
+    BKPK A 0
+    BKPK A 0 A_JumpIfInventory("M3 Grease Gun",1,"FailPickup") // If the player already has this weapon
+    BKPK A 0 A_JumpIfInventory("MP40",1,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("PPS-42",1,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("IsAllied",1,"Pickup1") //American - give M3
+    BKPK A 0 A_JumpIfInventory("IsAxis",1,"Pickup2") //Axis - give MP40
+    BKPK A 0 A_JumpIfInventory("IsRussian",1,"Pickup3") //Russian - give PPS-42
+    BKPK A 0 A_JumpIfInventory("IsBritish",1,"Pickup4") //British - give Sten
+    stop
+  Pickup1:
+    BKPK A 0 A_GiveInventory("M3 Grease Gun",1)
+    BKPK A 0 A_GiveInventory("M3GGAmmo",32)
+    fail
+  Pickup2:
+    BKPK A 0 A_GiveInventory("MP40",1)
+    BKPK A 0 A_GiveInventory("MP40Ammo",32)
+    fail
+  Pickup3:
+    BKPK A 0 A_GiveInventory("PPS-42",1)
+    BKPK A 0 A_GiveInventory("PPS42Ammo",35)
+    fail
+  Pickup4:
+    BKPK A 0 A_GiveInventory("Sten Gun",1)
+    BKPK A 0 A_GiveInventory("StenAmmo",32)
+    fail
+  FailPickup:
+    BKPK A 1
+    fail
+  }
+}
+
+actor SMGPickup2 : CustomInventory
+{
+  inventory.pickupmessage "SMG"
+  inventory.pickupsound "misc/w_pkup"
+  +INVENTORY.AUTOACTIVATE
+  inventory.respawntics 0
+  States
+  {
+  Spawn:
+    BKPK A -1
+    stop
+  Pickup:
+    BKPK A 0
+    BKPK A 0 A_JumpIfInventory("M3GGAmmo",0,"FailPickup") // If the player already has this weapon
+    BKPK A 0 A_JumpIfInventory("MP40Ammo",0,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("PPS42Ammo",0,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("StenAmmo",0,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("IsAllied",1,"Pickup1") //American - give M3
+    BKPK A 0 A_JumpIfInventory("IsAxis",1,"Pickup2") //Axis - give MP40
+    BKPK A 0 A_JumpIfInventory("IsRussian",1,"Pickup3") //Russian - give PPS-42
+    BKPK A 0 A_JumpIfInventory("IsBritish",1,"Pickup4") //British - give Sten
+    stop
+  Pickup1:
+    BKPK A 0 A_GiveInventory("M3GGAmmo",32)
+    stop
+  Pickup2:
+    BKPK A 0 A_GiveInventory("MP40Ammo",32)
+    stop
+  Pickup3:
+    BKPK A 0 A_GiveInventory("PPS42Ammo",35)
+    stop
+  Pickup4:
+    BKPK A 0 A_GiveInventory("StenAmmo",32)
+    stop
+  FailPickup:
+    BKPK A 1
+    fail
+  }
+}
+actor Rifle1Pickup : CustomInventory
+{
+  inventory.pickupmessage "Rifle"
+  inventory.pickupsound "misc/w_pkup"
+  +INVENTORY.AUTOACTIVATE
+  inventory.respawntics 35
+  scale 1.0
+  States
+  {
+  Spawn:
+    BKPK A -1
+    stop
+  Pickup:
+    BKPK A 0
+    BKPK A 0 A_JumpIfInventory("M1A1 Carbine",1,"FailPickup") // If the player already has this weapon
+    BKPK A 0 A_JumpIfInventory("Kar98k",1,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("Mosin-Nagant",1,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("IsAllied",1,"Pickup1") //American - give M1
+    BKPK A 0 A_JumpIfInventory("IsAxis",1,"Pickup2") //Axis - give Kar
+    BKPK A 0 A_JumpIfInventory("IsRussian",1,"Pickup3") //Russian - give Mosin
+    BKPK A 0 A_JumpIfInventory("IsBritish",1,"Pickup4") //British - give Enfield
+    stop
+  Pickup1:
+    BKPK A 0 A_GiveInventory("M1A1 Carbine",1)
+    BKPK A 0 A_GiveInventory("M1CarbineAmmo",15)
+    fail
+  Pickup2:
+    BKPK A 0 A_GiveInventory("Kar98k",1)
+    BKPK A 0 A_GiveInventory("Kar98kAmmo",5)
+    fail
+  Pickup3:
+    BKPK A 0 A_GiveInventory("Mosin-Nagant",1)
+    BKPK A 0 A_GiveInventory("NagantAmmo",5)
+    fail
+  Pickup4:
+    BKPK A 0 A_GiveInventory("Lee-Enfield",1)
+    BKPK A 0 A_GiveInventory("EnfieldAmmo",5)
+    fail
+  FailPickup:
+    BKPK A 1
+    fail
+  }
+}
+actor Rifle1Pickup2 : CustomInventory
+{
+  inventory.pickupmessage "Rifle"
+  inventory.pickupsound "misc/w_pkup"
+  +INVENTORY.AUTOACTIVATE
+  inventory.respawntics 0
+  States
+  {
+  Spawn:
+    BKPK A -1
+    stop
+  Pickup:
+    BKPK A 0
+    BKPK A 0 A_JumpIfInventory("M1CarbineAmmo",0,"FailPickup") // If the player already has this weapon
+    BKPK A 0 A_JumpIfInventory("Kar98kAmmo",0,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("NagantAmmo",0,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("EnfieldAmmo",0,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("IsAllied",1,"Pickup1") //American - give M1
+    BKPK A 0 A_JumpIfInventory("IsAxis",1,"Pickup2") //Axis - give Kar
+    BKPK A 0 A_JumpIfInventory("IsRussian",1,"Pickup3") //Russian - give Mosin
+    BKPK A 0 A_JumpIfInventory("IsBritish",1,"Pickup4") //British - give Enfield
+    stop
+  Pickup1:
+    BKPK A 0 A_GiveInventory("M1CarbineAmmo",15)
+    stop
+  Pickup2:
+    BKPK A 0 A_GiveInventory("Kar98kAmmo",5)
+    stop
+  Pickup3:
+    BKPK A 0 A_GiveInventory("NagantAmmo",5)
+    stop
+  Pickup4:
+    BKPK A 0 A_GiveInventory("EnfieldAmmo",5)
+    stop
+  FailPickup:
+    BKPK A 1
+    fail
+  }
+}
+actor Rifle2Pickup : CustomInventory
+{
+  inventory.pickupmessage "Rifle"
+  inventory.pickupsound "misc/w_pkup"
+  +INVENTORY.AUTOACTIVATE
+  inventory.respawntics 35
+  scale 1.0
+  States
+  {
+  Spawn:
+    BKPK A -1
+    stop
+  Pickup:
+    BKPK A 0
+    BKPK A 0 A_JumpIfInventory("M1 Garand",1,"FailPickup") // If the player already has this weapon
+    BKPK A 0 A_JumpIfInventory("Gewehr 43",1,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("SVT-40",1,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("IsAllied",1,"Pickup1") //American - give M1
+    BKPK A 0 A_JumpIfInventory("IsBritish",1,"Pickup1") //British - give M1
+    BKPK A 0 A_JumpIfInventory("IsAxis",1,"Pickup2") //Axis - give G43
+    BKPK A 0 A_JumpIfInventory("IsRussian",1,"Pickup3") //Russian - give SVT
+    stop
+  Pickup1:
+    BKPK A 0 A_GiveInventory("M1 Garand",1)
+    BKPK A 0 A_GiveInventory("M1GarandAmmo",15)
+    fail
+  Pickup2:
+    BKPK A 0 A_GiveInventory("Gewehr 43",1)
+    BKPK A 0 A_GiveInventory("G43Ammo",10)
+    fail
+  Pickup3:
+    BKPK A 0 A_GiveInventory("SVT-40",1)
+    BKPK A 0 A_GiveInventory("SVTAmmo",10)
+    fail
+  FailPickup:
+    BKPK A 1
+    fail
+  }
+}
+
+
+actor SniperRiflePickup : CustomInventory
+{
+  inventory.pickupmessage "Sniper Rifle"
+  inventory.pickupsound "misc/w_pkup"
+  +INVENTORY.AUTOACTIVATE
+  inventory.respawntics 35
+  scale 1.0
+  States
+  {
+  Spawn:
+    BKPK A -1
+    stop
+  Pickup:
+    BKPK A 0
+    BKPK A 0 A_JumpIfInventory("Springfield",1,"FailPickup") // If the player already has this weapon
+    BKPK A 0 A_JumpIfInventory("Scoped Kar98k",1,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("Scoped Mosin-Nagant",1,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("IsAllied",1,"Pickup1") //American - give M1
+    BKPK A 0 A_JumpIfInventory("IsAxis",1,"Pickup2") //Axis - give Kar
+    BKPK A 0 A_JumpIfInventory("IsRussian",1,"Pickup3") //Russian - give Mosin
+    BKPK A 0 A_JumpIfInventory("IsBritish",1,"Pickup4") //British - give Enfield
+    stop
+  Pickup1:
+    BKPK A 0 A_GiveInventory("Springfield",1)
+    BKPK A 0 A_GiveInventory("SpringfieldAmmo",5)
+    fail
+  Pickup2:
+    BKPK A 0 A_GiveInventory("Scoped Kar98k",1)
+    BKPK A 0 A_GiveInventory("Kar98kAmmo",5)
+    fail
+  Pickup3:
+    BKPK A 0 A_GiveInventory("Scoped Mosin-Nagant",1)
+    BKPK A 0 A_GiveInventory("NagantAmmo",5)
+    fail
+  Pickup4:
+    BKPK A 0 A_GiveInventory("Scoped Lee-Enfield",1)
+    BKPK A 0 A_GiveInventory("EnfieldAmmo",5)
+    fail
+  FailPickup:
+    BKPK A 1
+    fail
+  Kill:
+    BKPK A 0
+    stop
+  }
+}
+actor SniperRiflePickup2 : SniperRiflePickup
+{
+}
+
+actor LMGPickup : CustomInventory
+{
+  inventory.pickupmessage "LMG"
+  inventory.pickupsound "misc/w_pkup"
+  +INVENTORY.AUTOACTIVATE
+  inventory.respawntics 35
+  scale 1.0
+  States
+  {
+  Spawn:
+    BKPK A -1
+    stop
+  Pickup:
+    BKPK A 0
+    BKPK A 0 A_JumpIfInventory("BAR",1,"FailPickup") // If the player already has this weapon
+    BKPK A 0 A_JumpIfInventory("MP44",1,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("PPSh-41",1,"FailPickup")
+    BKPK A 0 A_JumpIfInventory("IsAllied",1,"Pickup1") //American - give BAR
+    BKPK A 0 A_JumpIfInventory("IsAxis",1,"Pickup2") //Axis - give MP44
+    BKPK A 0 A_JumpIfInventory("IsRussian",1,"Pickup3") //Russian - give PPSh
+    BKPK A 0 A_JumpIfInventory("IsBritish",1,"Pickup4") //British - give Bren
+    stop
+  Pickup1:
+    BKPK A 0 A_GiveInventory("BAR",1)
+    BKPK A 0 A_GiveInventory("BARAmmo",20)
+    fail
+  Pickup2:
+    BKPK A 0 A_GiveInventory("MP44",1)
+    BKPK A 0 A_GiveInventory("MP44Ammo",30)
+    fail
+  Pickup3:
+    BKPK A 0 A_GiveInventory("PPSh-41",1)
+    BKPK A 0 A_GiveInventory("PPSh41Ammo",71)
+    fail
+  Pickup4:
+    BKPK A 0 A_GiveInventory("Bren Gun",1)
+    BKPK A 0 A_GiveInventory("BrenAmmo",30)
+    fail
+  FailPickup:
+    BKPK A 1
+    fail
+  }
+}
+actor Nothing1 replaces Chainsaw
+{
+  states
+  {
+  Spawn:
+    TNT1 A 1
+    stop
+  }
+}
+
+actor Nothing2 : Nothing1 replaces Pistol
+{
+}
+actor Nothing3 : Nothing1 replaces Shotgun
+{
+}
+actor Nothing4 : Nothing1 replaces SuperShotgun
+{
+}
+actor Nothing5 : Nothing1 replaces Chaingun
+{
+}
+actor Nothing7 : Nothing1 replaces RocketLauncher
+{
+}
+actor Nothing9 : Nothing1 replaces PlasmaRifle
+{
+}
+actor Nothing11 : Nothing1 replaces BFG9000
+{
+}
+
+ACTOR StimpackPickup : CustomInventory replaces Stimpack
+{
+  +FORCEXYBILLBOARD
+  +AUTOACTIVATE
+  Inventory.Amount 1
+  Inventory.MaxAmount 999999
+  Inventory.PickupSound "misc/health_pkup"
+  Inventory.PickupMessage "Picked up a stimpack."
+  States
+  {
+  Spawn:
+    STIM A -1
+    loop
+  Pickup:
+    TREA A 0 A_GiveInventory("Health",10)
+    stop
+  Use:
+    TREA A 0 A_TakeInventory("InCombat",4)
+    Stop
+  }
+}
+ACTOR MedikitPickup : CustomInventory replaces Medikit
+{
+  +FORCEXYBILLBOARD
+  +AUTOACTIVATE
+  Inventory.Amount 1
+  Inventory.MaxAmount 999999
+  Inventory.PickupSound "misc/health_pkup"
+  Inventory.PickupMessage "Picked up a Medikit."
+  States
+  {
+  Spawn:
+    MEDI A -1
+    loop
+  Pickup:
+    TREA A 0 A_GiveInventory("Health",25)
+    stop
+  Use:
+    TREA A 0 A_TakeInventory("InCombat",8)
+    Stop
+  }
+}

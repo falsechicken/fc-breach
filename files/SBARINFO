@@ -1,0 +1,135 @@
+
+// Fullscreen HUD
+
+statusbar fullscreen, forcescaled
+{
+	InInventory Not HardcoreMode
+	{
+	drawswitchableimage BlueSkull, "nullimage", "BLUSKLL", 12, 165;
+	drawswitchableimage YellowSkull, "nullimage", "YELSKLL", 24, 165;
+	drawswitchableimage RedSkull, "nullimage", "REDSKLL", 36, 165;
+	drawswitchableimage BlueCard, "nullimage", "BLUCARD", 60, 165;
+	drawswitchableimage YellowCard, "nullimage", "YELCARD", 72, 165;
+	drawswitchableimage RedCard, "nullimage", "REDCARD", 84, 165;
+	
+	drawswitchableimage Silence, "nullimage", "SILENCE", 6, 165;
+	drawswitchableimage Peeking, "nullimage", "NOMOVEL", 260, 165;
+
+ 	drawbar "HEALBAR", "HEALBAR2", Health, horizontal, reverse, 8, 185;
+ 	drawbar "ARMRBAR", "ARMRBAR2", TiredLevel, horizontal, 8, 191; //Draw TiredLevel Bar.
+        drawimage "HEALBAR3", 6, 183;
+        drawnumber 3, CONFONT, Yellow, Health, 44,  184, 0, Red, 33, Green, 66;
+        drawnumber 3, CONFONT, Yellow, TiredLevel, whennotzero, 98,  187, 0, Green, 40, Red, 80; //Draw TiredLevel number.
+
+        drawnumber 3, HUDFONT_DOOM, Gray, ammo2, 285,  180;
+        
+	IsSelected Not "Fragmentation Grenade", "Stielhandgranate"
+	{
+		IsSelected Not "RGD-33 Grenade", "Mills Bomb"
+		{
+			IsSelected Not "Smoke Grenade", "Smoke Grenade "
+			{
+    	    			drawnumber 3, HUDFONT_DOOM, White, ammo1, 235,  180;
+    			}
+		}
+        }
+	IsSelected "Fragmentation Grenade", "Stielhandgranate"
+	{
+            	drawstring BIGFONT, White, "%", 247, 182;
+    	    	drawnumber 3, HUDFONT_DOOM, White, ammo ThrowPower, 235,  180;
+        }
+	IsSelected "RGD-33 Grenade", "Mills Bomb"
+	{
+            	drawstring BIGFONT, White, "%", 247, 182;
+    	    	drawnumber 3, HUDFONT_DOOM, White, ammo ThrowPower, 235,  180;
+        }
+	IsSelected "Smoke Grenade", "Smoke Grenade "
+	{
+            	drawstring BIGFONT, White, "%", 247, 182;
+    	    	drawnumber 3, HUDFONT_DOOM, White, ammo ThrowPower, 235,  180;
+        }
+
+	drawselectedinventory INDEXFON, 126, 170;
+
+        drawnumber 1, CONFONT, Green, ammo FragGrenadeAmmo, whennotzero, 166,  185;
+	InInventory IsAllied
+	{
+       		 DrawSwitchableImage FragGrenadeAmmo, "", "FRAGAMMO", 166, 183;
+        }
+	InInventory IsAxis
+	{
+       		 DrawSwitchableImage FragGrenadeAmmo, "", "STIKAMMO", 166, 183;
+        }
+	InInventory IsRussian
+	{
+       		 DrawSwitchableImage FragGrenadeAmmo, "", "STI2AMMO", 166, 183;
+        }
+	InInventory IsBritish
+	{
+       		 DrawSwitchableImage FragGrenadeAmmo, "", "MILLAMMO", 166, 183;
+        }
+
+        drawnumber 1, CONFONT, Green, ammo SmokeGrenadeAmmo, whennotzero, 131,  185;
+        DrawSwitchableImage SmokeGrenadeAmmo, "", "SMOKAMMO", 131, 183;
+        }
+}
+
+statusbar inventoryfullscreen
+{
+	drawinventorybar Doom, 7, INDEXFON, 80, 150;
+}
+
+statusbar normal
+{
+	drawimage "STBAR", 0, 168;
+
+	InInventory Not HardcoreMode
+	{
+	drawimage "STTPRCNT", 90, 171;
+	drawimage "STTPRCNT", 221, 171;
+	drawnumber 3, HUDFONT_DOOM, red, ammo1, 44, 171;
+	drawnumber 3, HUDFONT_DOOM, red, health, 90, 171;
+	drawnumber 3, HUDFONT_DOOM, red, armor, 221, 171;
+	//keys
+	drawswitchableimage BlueCard && BlueSkull, "nullimage", "STKEYS0", "STKEYS3", "STKEYS6", 239, 171;
+	drawswitchableimage YellowCard && YellowSkull, "nullimage", "STKEYS1", "STKEYS4", "STKEYS7", 239, 181;
+	drawswitchableimage RedCard && RedSkull, "nullimage", "STKEYS2", "STKEYS5", "STKEYS8", 239, 191;
+
+	drawnumber 3, INDEXFON, gold, ammo Clip, 288, 173;
+	drawnumber 3, INDEXFON, gold, ammo Shell, 288, 179;
+	drawnumber 3, INDEXFON, gold, ammo RocketAmmo, 288, 185;
+	drawnumber 3, INDEXFON, gold, ammo Cell, 288, 191;
+
+	drawnumber 3, INDEXFON, gold, ammocapacity Clip, 314, 173;
+	drawnumber 3, INDEXFON, gold, ammocapacity Shell, 314, 179;
+	drawnumber 3, INDEXFON, gold, ammocapacity RocketAmmo, 314, 185;
+	drawnumber 3, INDEXFON, gold, ammocapacity Cell, 314, 191;
+	gamemode deathmatch, teamgame
+	{
+		drawnumber 2, HUDFONT_DOOM, red, frags, 138, 171;
+	}
+	gamemode cooperative, singleplayer
+	{
+		drawimage "STARMS", 104, 168;
+		drawswitchableimage weaponslot 2, "STGNUM2", "STYSNUM2", 111, 172; 
+		drawswitchableimage weaponslot 3, "STGNUM3", "STYSNUM3", 123, 172;
+		drawswitchableimage weaponslot 4, "STGNUM4", "STYSNUM4", 135, 172;
+		drawswitchableimage weaponslot 5, "STGNUM5", "STYSNUM5", 111, 182;
+		drawswitchableimage weaponslot 6, "STGNUM6", "STYSNUM6", 123, 182;
+		drawswitchableimage weaponslot 7, "STGNUM7", "STYSNUM7", 135, 182;
+	}
+	gamemode cooperative, deathmatch, teamgame
+	{
+		drawimage translatable "STFBANY", 144, 169;
+	}
+	drawselectedinventory alternateonempty, INDEXFON, 143, 168
+	{
+		drawmugshot "STF", 5, 143, 168;
+	}
+	}
+}
+
+statusbar inventory
+{
+	drawinventorybar Doom, 7, INDEXFON, 50, 170;
+}

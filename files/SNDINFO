@@ -1,0 +1,930 @@
+us0/kill1			us0_kil1
+us0/kill2			us0_kil2
+us0/kill3			us0_kil3
+us0/kill4			us0_kil4
+us0/kill5			us0_kil5
+us0/kill6			us0_kil6
+us0/kill7			us0_kil7
+us0/kill8			us0_kil8
+us0/kill9			us0_kil9
+us0/kill10			us0_kl10
+$rolloff us0/kill2		500 3500
+$rolloff us0/kill4		500 3500
+$rolloff us0/kill6		500 3500
+$rolloff us0/kill8		500 3500
+$rolloff us0/kill10		500 3500
+us0/reload1			us0_rel1
+us0/reload2			us0_rel2
+us0/reload3			us0_rel3
+us0/reload4			us0_rel4
+$rolloff us0/reload2		500 3500
+$rolloff us0/reload4		500 3500
+us0/killstreak1			us0_pbk1
+us0/killstreak2			us0_pbk2
+us0/killstreak3			us0_pbk3
+us0/killstreak4			us0_pbk4
+us0/killstreak5			us0_pbk5
+us0/killstreak6			us0_pbk6
+$rolloff us0/killstreak2	500 3500
+$rolloff us0/killstreak4	500 3500
+$rolloff us0/killstreak6	500 3500
+us0/jugg1			us0_jug1
+us0/jugg2			us0_jug2
+us0/jugg3			us0_jug3
+us0/jugg4			us0_jug4
+us0/jugg5			us0_jug5
+us0/jugg6			us0_jug6
+$rolloff us0/jugg2		500 3500
+$rolloff us0/jugg4		500 3500
+$rolloff us0/jugg6		500 3500
+us0/greninc1			us0_gri1
+us0/greninc2			us0_gri2
+us0/greninc3			us0_gri3
+us0/greninc4			us0_gri4
+us0/greninc5			us0_gri5
+us0/greninc6			us0_gri6
+$rolloff us0/greninc2		500 3500
+$rolloff us0/greninc4		500 3500
+$rolloff us0/greninc6		500 3500
+us0/grenade1			us0_grn1
+us0/grenade2			us0_grn2
+us0/grenade3			us0_grn3
+us0/grenade4			us0_grn4
+us0/grenade5			us0_grn5
+us0/grenade6			us0_grn6
+$rolloff us0/grenade2		500 3500
+$rolloff us0/grenade4		500 3500
+$rolloff us0/grenade6		500 3500
+us0/smoke1			us0_smk1
+us0/smoke2			us0_smk2
+us0/smoke3			us0_smk3
+us0/smoke4			us0_smk4
+us0/smoke5			us0_smk5
+us0/smoke6			us0_smk6
+$rolloff us0/smoke2		500 3500
+$rolloff us0/smoke4		500 3500
+$rolloff us0/smoke6		500 3500
+
+us1/kill1			us1_kil1
+us1/kill2			us1_kil2
+us1/kill3			us1_kil3
+us1/kill4			us1_kil4
+us1/kill5			us1_kil5
+us1/kill6			us1_kil6
+us1/kill7			us1_kil7
+us1/kill8			us1_kil8
+us1/kill9			us1_kil9
+us1/kill10			us1_kl10
+$rolloff us1/kill2		500 3500
+$rolloff us1/kill4		500 3500
+$rolloff us1/kill6		500 3500
+$rolloff us1/kill8		500 3500
+$rolloff us1/kill10		500 3500
+us1/reload1			us1_rel1
+us1/reload2			us1_rel2
+us1/reload3			us1_rel3
+us1/reload4			us1_rel4
+$rolloff us1/reload2		500 3500
+$rolloff us1/reload4		500 3500
+us1/killstreak1			us1_pbk1
+us1/killstreak2			us1_pbk2
+us1/killstreak3			us1_pbk3
+us1/killstreak4			us1_pbk4
+us1/killstreak5			us1_pbk5
+us1/killstreak6			us1_pbk6
+$rolloff us1/killstreak2	500 3500
+$rolloff us1/killstreak4	500 3500
+$rolloff us1/killstreak6	500 3500
+us1/jugg1			us1_jug1
+us1/jugg2			us1_jug2
+us1/jugg3			us1_jug3
+us1/jugg4			us1_jug4
+us1/jugg5			us1_jug5
+us1/jugg6			us1_jug6
+$rolloff us1/jugg2		500 3500
+$rolloff us1/jugg4		500 3500
+$rolloff us1/jugg6		500 3500
+us1/greninc1			us1_gri1
+us1/greninc2			us1_gri2
+us1/greninc3			us1_gri3
+us1/greninc4			us1_gri4
+us1/greninc5			us1_gri5
+us1/greninc6			us1_gri6
+$rolloff us1/greninc2		500 3500
+$rolloff us1/greninc4		500 3500
+$rolloff us1/greninc6		500 3500
+us1/grenade1			us1_grn1
+us1/grenade2			us1_grn2
+us1/grenade3			us1_grn3
+us1/grenade4			us1_grn4
+us1/grenade5			us1_grn5
+us1/grenade6			us1_grn6
+$rolloff us1/grenade2		500 3500
+$rolloff us1/grenade4		500 3500
+$rolloff us1/grenade6		500 3500
+us1/smoke1			us1_smk1
+us1/smoke2			us1_smk2
+us1/smoke3			us1_smk3
+us1/smoke4			us1_smk4
+us1/smoke5			us1_smk5
+us1/smoke6			us1_smk6
+$rolloff us1/smoke2		500 3500
+$rolloff us1/smoke4		500 3500
+$rolloff us1/smoke6		500 3500
+
+us2/kill1			us2_kil1
+us2/kill2			us2_kil2
+us2/kill3			us2_kil3
+us2/kill4			us2_kil4
+us2/kill5			us2_kil5
+us2/kill6			us2_kil6
+us2/kill7			us2_kil7
+us2/kill8			us2_kil8
+us2/kill9			us2_kil9
+us2/kill10			us2_kl10
+$rolloff us2/kill2		500 3500
+$rolloff us2/kill4		500 3500
+$rolloff us2/kill6		500 3500
+$rolloff us2/kill8		500 3500
+$rolloff us2/kill10		500 3500
+us2/reload1			us2_rel1
+us2/reload2			us2_rel2
+us2/reload3			us2_rel3
+us2/reload4			us2_rel4
+$rolloff us2/reload2		500 3500
+$rolloff us2/reload4		500 3500
+us2/killstreak1			us2_pbk1
+us2/killstreak2			us2_pbk2
+us2/killstreak3			us2_pbk3
+us2/killstreak4			us2_pbk4
+us2/killstreak5			us2_pbk5
+us2/killstreak6			us2_pbk6
+$rolloff us2/killstreak2	500 3500
+$rolloff us2/killstreak4	500 3500
+$rolloff us2/killstreak6	500 3500
+us2/jugg1			us2_jug1
+us2/jugg2			us2_jug2
+us2/jugg3			us2_jug3
+us2/jugg4			us2_jug4
+us2/jugg5			us2_jug5
+us2/jugg6			us2_jug6
+$rolloff us2/jugg2		500 3500
+$rolloff us2/jugg4		500 3500
+$rolloff us2/jugg6		500 3500
+us2/greninc1			us2_gri1
+us2/greninc2			us2_gri2
+us2/greninc3			us2_gri3
+us2/greninc4			us2_gri4
+us2/greninc5			us2_gri5
+us2/greninc6			us2_gri6
+$rolloff us2/greninc2		500 3500
+$rolloff us2/greninc4		500 3500
+$rolloff us2/greninc6		500 3500
+us2/grenade1			us2_grn1
+us2/grenade2			us2_grn2
+us2/grenade3			us2_grn3
+us2/grenade4			us2_grn4
+us2/grenade5			us2_grn5
+us2/grenade6			us2_grn6
+$rolloff us2/grenade2		500 3500
+$rolloff us2/grenade4		500 3500
+$rolloff us2/grenade6		500 3500
+us2/smoke1			us2_smk1
+us2/smoke2			us2_smk2
+us2/smoke3			us2_smk3
+us2/smoke4			us2_smk4
+us2/smoke5			us2_smk5
+us2/smoke6			us2_smk6
+$rolloff us2/smoke2		500 3500
+$rolloff us2/smoke4		500 3500
+$rolloff us2/smoke6		500 3500
+
+ge0/kill1			ge0_kil1
+ge0/kill2			ge0_kil2
+ge0/kill3			ge0_kil3
+ge0/kill4			ge0_kil4
+ge0/kill5			ge0_kil5
+ge0/kill6			ge0_kil6
+ge0/kill7			ge0_kil7
+ge0/kill8			ge0_kil8
+ge0/kill9			ge0_kil9
+ge0/kill10			ge0_kl10
+$rolloff ge0/kill2		500 3500
+$rolloff ge0/kill4		500 3500
+$rolloff ge0/kill6		500 3500
+$rolloff ge0/kill8		500 3500
+$rolloff ge0/kill10		500 3500
+ge0/reload1			ge0_rel1
+ge0/reload2			ge0_rel2
+ge0/reload3			ge0_rel3
+ge0/reload4			ge0_rel4
+$rolloff ge0/reload2		500 3500
+$rolloff ge0/reload4		500 3500
+ge0/killstreak1			ge0_pbk1
+ge0/killstreak2			ge0_pbk2
+ge0/killstreak3			ge0_pbk3
+ge0/killstreak4			ge0_pbk4
+ge0/killstreak5			ge0_pbk5
+ge0/killstreak6			ge0_pbk6
+$rolloff ge0/killstreak2	500 3500
+$rolloff ge0/killstreak4	500 3500
+$rolloff ge0/killstreak6	500 3500
+ge0/jugg1			ge0_jug1
+ge0/jugg2			ge0_jug2
+ge0/jugg3			ge0_jug3
+ge0/jugg4			ge0_jug4
+ge0/jugg5			ge0_jug5
+ge0/jugg6			ge0_jug6
+$rolloff ge0/jugg2		500 3500
+$rolloff ge0/jugg4		500 3500
+$rolloff ge0/jugg6		500 3500
+ge0/greninc1			ge0_gri1
+ge0/greninc2			ge0_gri2
+ge0/greninc3			ge0_gri3
+ge0/greninc4			ge0_gri4
+ge0/greninc5			ge0_gri5
+ge0/greninc6			ge0_gri6
+$rolloff ge0/greninc2		500 3500
+$rolloff ge0/greninc4		500 3500
+$rolloff ge0/greninc6		500 3500
+ge0/grenade1			ge0_grn1
+ge0/grenade2			ge0_grn2
+ge0/grenade3			ge0_grn3
+ge0/grenade4			ge0_grn4
+ge0/grenade5			ge0_grn5
+ge0/grenade6			ge0_grn6
+$rolloff ge0/grenade2		500 3500
+$rolloff ge0/grenade4		500 3500
+$rolloff ge0/grenade6		500 3500
+ge0/smoke1			ge0_smk1
+ge0/smoke2			ge0_smk2
+ge0/smoke3			ge0_smk3
+ge0/smoke4			ge0_smk4
+ge0/smoke5			ge0_smk5
+ge0/smoke6			ge0_smk6
+$rolloff ge0/smoke2		500 3500
+$rolloff ge0/smoke4		500 3500
+$rolloff ge0/smoke6		500 3500
+
+ge1/kill1			ge1_kil1
+ge1/kill2			ge1_kil2
+ge1/kill3			ge1_kil3
+ge1/kill4			ge1_kil4
+ge1/kill5			ge1_kil5
+ge1/kill6			ge1_kil6
+ge1/kill7			ge1_kil7
+ge1/kill8			ge1_kil8
+ge1/kill9			ge1_kil9
+ge1/kill10			ge1_kl10
+$rolloff ge1/kill2		500 3500
+$rolloff ge1/kill4		500 3500
+$rolloff ge1/kill6		500 3500
+$rolloff ge1/kill8		500 3500
+$rolloff ge1/kill10		500 3500
+ge1/reload1			ge1_rel1
+ge1/reload2			ge1_rel2
+ge1/reload3			ge1_rel3
+ge1/reload4			ge1_rel4
+$rolloff ge1/reload2		500 3500
+$rolloff ge1/reload4		500 3500
+ge1/killstreak1			ge1_pbk1
+ge1/killstreak2			ge1_pbk2
+ge1/killstreak3			ge1_pbk3
+ge1/killstreak4			ge1_pbk4
+ge1/killstreak5			ge1_pbk5
+ge1/killstreak6			ge1_pbk6
+$rolloff ge1/killstreak2	500 3500
+$rolloff ge1/killstreak4	500 3500
+$rolloff ge1/killstreak6	500 3500
+ge1/jugg1			ge1_jug1
+ge1/jugg2			ge1_jug2
+ge1/jugg3			ge1_jug3
+ge1/jugg4			ge1_jug4
+ge1/jugg5			ge1_jug5
+ge1/jugg6			ge1_jug6
+$rolloff ge1/jugg2		500 3500
+$rolloff ge1/jugg4		500 3500
+$rolloff ge1/jugg6		500 3500
+ge1/greninc1			ge1_gri1
+ge1/greninc2			ge1_gri2
+ge1/greninc3			ge1_gri3
+ge1/greninc4			ge1_gri4
+ge1/greninc5			ge1_gri5
+ge1/greninc6			ge1_gri6
+$rolloff ge1/greninc2		500 3500
+$rolloff ge1/greninc4		500 3500
+$rolloff ge1/greninc6		500 3500
+ge1/grenade1			ge1_grn1
+ge1/grenade2			ge1_grn2
+ge1/grenade3			ge1_grn3
+ge1/grenade4			ge1_grn4
+ge1/grenade5			ge1_grn5
+ge1/grenade6			ge1_grn6
+$rolloff ge1/grenade2		500 3500
+$rolloff ge1/grenade4		500 3500
+$rolloff ge1/grenade6		500 3500
+ge1/smoke1			ge1_smk1
+ge1/smoke2			ge1_smk2
+ge1/smoke3			ge1_smk3
+ge1/smoke4			ge1_smk4
+ge1/smoke5			ge1_smk5
+ge1/smoke6			ge1_smk6
+$rolloff ge1/smoke2		500 3500
+$rolloff ge1/smoke4		500 3500
+$rolloff ge1/smoke6		500 3500
+
+
+$playersound	ww2	male	*death		blanksnd
+$playersound	ww2	male	*xdeath		blanksnd
+$playersound	ww2	male	*gibbed		blanksnd
+$playersound	ww2	male	*pain100	blanksnd
+$playersounddup	ww2	male	*pain75		*pain100
+$playersounddup	ww2	male	*pain50		*pain100
+$playersounddup	ww2	male	*pain25		*pain100
+$playeralias	ww2	male	*grunt		footstep/crunch
+$playersound	ww2	male	*land		landstn1
+$playersound	ww2	male	*jump		dsjump
+$playersound	ww2	male	*fist		dspunch
+$playersound	ww2	male	*usefail	dsnoway
+
+$playersound	ww2	female	*death		blanksnd
+$playersound	ww2	female	*xdeath		blanksnd
+$playersound	ww2	female	*gibbed		blanksnd
+$playersound	ww2	female	*pain100	blanksnd
+$playersounddup	ww2	female	*pain75		*pain100
+$playersounddup	ww2	female	*pain50		*pain100
+$playersounddup	ww2	female	*pain25		*pain100
+$playeralias	ww2	female	*grunt		footstep/crunch
+$playersound	ww2	female	*land		landstn1
+$playersound	ww2	female	*jump		dsjump
+$playersound	ww2	female	*fist		dspunch
+$playersound	ww2	female	*usefail	dsnoway
+
+
+$random colt45/fire		{colt45/fire1 colt45/fire2}
+colt45/fire1			coltfir1
+colt45/fire2			coltfir2
+colt45/firex			coltfirx 	//distant sound
+colt45/clipout			coltclpo
+colt45/clipin			coltclpi
+colt45/slide			coltslid
+$rolloff colt45/fire		500 1000
+$rolloff colt45/firex		500 3500
+$limit	 colt45/fire		0
+$limit	 colt45/firex		0
+$volume	 colt45/fire		0.75
+
+m3gg/fire1			m3ggfir1
+m3gg/fire2			m3ggfir2
+m3gg/fire3			m3ggfir3 	//distant sound
+m3gg/fire4			m3ggfir4 	//distant sound
+m3gg/clipout			m3ggclpo
+m3gg/clipin			m3ggclpi
+m3gg/bolt			m3ggbolt
+$rolloff m3gg/fire1		500 1000
+$rolloff m3gg/fire2		500 1000
+$rolloff m3gg/fire3		500 3500
+$rolloff m3gg/fire4		500 3500
+$limit	 m3gg/fire1		0
+$limit	 m3gg/fire2		0
+$limit	 m3gg/fire3		0
+$limit	 m3gg/fire4		0
+$volume	 m3gg/fire1		0.75
+$volume	 m3gg/fire2		0.75
+
+luger/fire1			lugafir1
+luger/fire2			lugafir2
+luger/fire3			lugafir3 	//distant sound
+luger/fire4			lugafir4 	//distant sound
+luger/clipout			lugaclpo
+luger/clipin			lugaclpi
+luger/bolt			lugabolt
+$rolloff luger/fire1		500 1000
+$rolloff luger/fire2		500 1000
+$rolloff luger/fire3		500 3500
+$rolloff luger/fire4		500 3500
+$limit	 luger/fire1		0
+$limit	 luger/fire2		0
+$limit	 luger/fire3		0
+$limit	 luger/fire4		0
+$volume	 luger/fire1		0.75
+$volume	 luger/fire2		0.75
+
+mp40/fire1			mp40fir1
+mp40/fire2			mp40fir2
+mp40/fire3			mp40fir3 	//distant sound
+mp40/fire4			mp40fir4 	//distant sound
+mp40/clipout			mp40clpo
+mp40/clipin			mp40clpi
+mp40/bolt			mp40bolt
+$rolloff mp40/fire1		500 1000
+$rolloff mp40/fire2		500 1000
+$rolloff mp40/fire3		500 3500
+$rolloff mp40/fire4		500 3500
+$limit	 mp40/fire1		0
+$limit	 mp40/fire2		0
+$limit	 mp40/fire3		0
+$limit	 mp40/fire4		0
+$volume	 mp40/fire1		0.75
+$volume	 mp40/fire2		0.75
+
+m1garand/fire1			m1grfir1
+m1garand/fire2			m1grfir2
+m1garand/fire3			m1grfir3 	//distant sound
+m1garand/fire4			m1grfir4 	//distant sound
+m1garand/empty1			m1gremp1
+m1garand/empty2			m1gremp2	//distant sound
+m1garand/clipin			m1grclpi
+$rolloff m1garand/fire1		500 1000
+$rolloff m1garand/fire2		500 1000
+$rolloff m1garand/empty1	500 750
+$rolloff m1garand/fire3		500 3500
+$rolloff m1garand/fire4		500 3500
+$rolloff m1garand/empty2	500 1500
+$limit	 m1garand/fire1		0
+$limit	 m1garand/fire2		0
+$limit	 m1garand/fire3		0
+$limit	 m1garand/fire4		0
+$limit	 m1garand/empty1	0
+$limit	 m1garand/empty2	0
+$volume	 m1garand/fire1		0.75
+$volume	 m1garand/fire2		0.75
+$volume	 m1garand/empty1	0.75
+
+kar98k/fire1			k98kfir1
+kar98k/fire2			k98kfir2
+kar98k/fire3			k98kfir3 	//distant sound
+kar98k/fire4			k98kfir4 	//distant sound
+kar98k/chamber			k98kcham
+kar98k/clipin			k98kclpi
+kar98k/open			k98kopen
+kar98k/close			k98kclos
+$rolloff kar98k/fire1		500 1250
+$rolloff kar98k/fire2		500 1250
+$rolloff kar98k/fire3		500 3500
+$rolloff kar98k/fire4		500 3500
+$limit	 kar98k/fire1		0
+$limit	 kar98k/fire2		0
+$limit	 kar98k/fire3		0
+$limit	 kar98k/fire4		0
+$volume	 kar98k/fire3		0.75
+$volume	 kar98k/fire4		0.75
+kar98k/sniper1			k98sfir1
+kar98k/sniper2			k98sfir2
+kar98k/sniper3			k98sfir3 	//distant sound
+kar98k/sniper4			k98sfir4 	//distant sound
+$rolloff kar98k/sniper1		500 2250
+$rolloff kar98k/sniper2		500 2250
+$rolloff kar98k/sniper3		2500 9000
+$rolloff kar98k/sniper4		2500 9000
+$limit	 kar98k/sniper1		0
+$limit	 kar98k/sniper2		0
+$limit	 kar98k/sniper3		0
+$limit	 kar98k/sniper4		0
+$volume	 kar98k/sniper3		0.75
+$volume	 kar98k/sniper4		0.75
+
+carbine/fire1			m1crfir1
+carbine/fire2			m1crfir2
+carbine/fire3			m1crfir3 	//distant sound
+carbine/fire4			m1crfir4 	//distant sound
+carbine/hit			m1crhit
+carbine/clipin			m1crclpi
+carbine/clipout			m1crclpo
+carbine/bolt			m1crbolt
+$rolloff carbine/fire1		500 1000
+$rolloff carbine/fire2		500 1000
+$rolloff carbine/fire3		500 3500
+$rolloff carbine/fire4		500 3500
+$limit	 carbine/fire1		0
+$limit	 carbine/fire2		0
+$limit	 carbine/fire3		0
+$limit	 carbine/fire4		0
+$volume	 carbine/fire3		0.75
+$volume	 carbine/fire4		0.75
+
+g43/fire1			g43rfir1
+g43/fire2			g43rfir2
+g43/fire3			g43rfir3 	//distant sound
+g43/fire4			g43rfir4 	//distant sound
+g43/clipout			g43rclpo
+g43/clipin			g43rclpi
+$rolloff g43/fire1		500 1000
+$rolloff g43/fire2		500 1000
+$rolloff g43/fire3		500 3500
+$rolloff g43/fire4		500 3500
+$limit	 g43/fire1		0
+$limit	 g43/fire2		0
+$limit	 g43/fire3		0
+$limit	 g43/fire4		0
+$volume	 g43/fire1		0.75
+$volume	 g43/fire2		0.75
+
+trenchgun/fire1			trncfir1
+trenchgun/fire2			trncfir2
+trenchgun/fire3			trncfir3 	//distant sound
+trenchgun/fire4			trncfir4 	//distant sound
+$random	trenchgun/pump		{ trenchgun/pump1 trenchgun/pump2 }
+trenchgun/pump1			trncpmp1
+trenchgun/pump2			trncpmp2
+$random	trenchgun/shell		{ trenchgun/shell1 trenchgun/shell2 trenchgun/shell3 }
+trenchgun/shell1		trncshl1
+trenchgun/shell2		trncshl2
+trenchgun/shell3		trncshl3
+$rolloff trenchgun/fire1	500 1000
+$rolloff trenchgun/fire2	500 1000
+$rolloff trenchgun/fire3	500 3500
+$rolloff trenchgun/fire4	500 3500
+$limit	 trenchgun/fire1	0
+$limit	 trenchgun/fire2	0
+$limit	 trenchgun/fire3	0
+$limit	 trenchgun/fire4	0
+$volume	 trenchgun/fire1	0.75
+$volume	 trenchgun/fire2	0.75
+
+spring/fire1			sprifir1
+spring/fire2			sprifir2
+spring/fire3			sprifir3 	//distant sound
+spring/fire4			sprifir4 	//distant sound
+$random	spring/shell		{ spring/shell1 spring/shell2 spring/shell3 }
+spring/shell1			sprishl1
+spring/shell2			sprishl2
+spring/shell3			sprishl3
+$rolloff spring/fire1		500 2250
+$rolloff spring/fire2		500 2250
+$rolloff spring/fire3		2500 9000
+$rolloff spring/fire4		2500 9000
+$limit	 spring/fire1		0
+$limit	 spring/fire2		0
+$limit	 spring/fire3		0
+$limit	 spring/fire4		0
+$volume	 spring/fire1		0.75
+$volume	 spring/fire2		0.75
+
+bar/fire1			barffir1
+bar/fire2			barffir2
+bar/fire3			barffir3 	//distant sound
+bar/fire4			barffir4 	//distant sound
+bar/hit				barfhit
+bar/clipin			barfclpi
+bar/clipout			barfclpo
+bar/bolt			barfbolt
+$rolloff bar/fire1		500 1200
+$rolloff bar/fire2		500 1200
+$rolloff bar/fire3		500 4000
+$rolloff bar/fire4		500 4000
+$limit	 bar/fire1		0
+$limit	 bar/fire2		0
+$limit	 bar/fire3		0
+$limit	 bar/fire4		0
+$volume	 bar/fire3		0.75
+$volume	 bar/fire4		0.75
+
+mp44/fire1			mp44fir1
+mp44/fire2			mp44fir2
+mp44/fire3			mp44fir3 	//distant sound
+mp44/fire4			mp44fir4 	//distant sound
+mp44/clipout			mp44clpo
+mp44/clipin			mp44clpi
+mp44/bolt			mp44bolt
+$rolloff mp44/fire1		500 1200
+$rolloff mp44/fire2		500 1200
+$rolloff mp44/fire3		500 4000
+$rolloff mp44/fire4		500 4000
+$limit	 mp44/fire1		0
+$limit	 mp44/fire2		0
+$limit	 mp44/fire3		0
+$limit	 mp44/fire4		0
+$volume	 mp44/fire1		0.75
+$volume	 mp44/fire2		0.75
+
+thom/fire1			thomfir1
+thom/fire2			thomfir2
+thom/fire3			thomfir3 	//distant sound
+thom/fire4			thomfir4 	//distant sound
+thom/clipout			thomclpo
+thom/clipin			thomclpi
+thom/bolt			thombolt
+$rolloff thom/fire1		500 1000
+$rolloff thom/fire2		500 1000
+$rolloff thom/fire3		500 3500
+$rolloff thom/fire4		500 3500
+$limit	 thom/fire1		0
+$limit	 thom/fire2		0
+$limit	 thom/fire3		0
+$limit	 thom/fire4		0
+$volume	 thom/fire1		0.75
+$volume	 thom/fire2		0.75
+
+ppsh/fire1			ppshfir1
+ppsh/fire2			ppshfir2
+ppsh/fire3			ppshfir3 	//distant sound
+ppsh/fire4			ppshfir4 	//distant sound
+ppsh/clipout			ppshclpo
+ppsh/clipin			ppshclpi
+ppsh/bolt			ppshbolt
+pps2/clipout			pps2clpo
+pps2/clipin			pps2clpi
+pps2/bolt			pps2bolt
+$rolloff ppsh/fire1		500 1000
+$rolloff ppsh/fire2		500 1000
+$rolloff ppsh/fire3		500 3500
+$rolloff ppsh/fire4		500 3500
+$limit	 ppsh/fire1		0
+$limit	 ppsh/fire2		0
+$limit	 ppsh/fire3		0
+$limit	 ppsh/fire4		0
+$volume	 ppsh/fire1		0.75
+$volume	 ppsh/fire2		0.75
+
+nagant/fire1			nagafir1
+nagant/fire2			nagafir2
+nagant/fire3			nagafir3 	//distant sound
+nagant/fire4			nagafir4 	//distant sound
+nagant/clipin			nagaclpi
+nagant/open			nagaopen
+nagant/close			nagaclos
+$rolloff nagant/fire1		500 1250
+$rolloff nagant/fire2		500 1250
+$rolloff nagant/fire3		500 3500
+$rolloff nagant/fire4		500 3500
+$limit	 nagant/fire1		0
+$limit	 nagant/fire2		0
+$limit	 nagant/fire3		0
+$limit	 nagant/fire4		0
+$volume	 nagant/fire3		0.75
+$volume	 nagant/fire4		0.75
+nagant/sniper1			nagsfir1
+nagant/sniper2			nagsfir2
+nagant/sniper3			nagsfir3 	//distant sound
+nagant/sniper4			nagsfir4 	//distant sound
+$rolloff nagant/sniper1		500 2250
+$rolloff nagant/sniper2		500 2250
+$rolloff nagant/sniper3		2500 9000
+$rolloff nagant/sniper4		2500 9000
+$limit	 nagant/sniper1		0
+$limit	 nagant/sniper2		0
+$limit	 nagant/sniper3		0
+$limit	 nagant/sniper4		0
+$volume	 nagant/sniper3		0.75
+$volume	 nagant/sniper4		0.75
+
+svt/fire1			svt4fir1
+svt/fire2			svt4fir2
+svt/fire3			svt4fir3 	//distant sound
+svt/fire4			svt4fir4 	//distant sound
+svt/clipout			svt4clpo
+svt/clipin			svt4clpi
+$rolloff svt/fire1		500 1000
+$rolloff svt/fire2		500 1000
+$rolloff svt/fire3		500 3500
+$rolloff svt/fire4		500 3500
+$limit	 svt/fire1		0
+$limit	 svt/fire2		0
+$limit	 svt/fire3		0
+$limit	 svt/fire4		0
+$volume	 svt/fire1		0.75
+$volume	 svt/fire2		0.75
+
+webley/fire1			weblfir1
+webley/fire2			weblfir2
+webley/fire3			weblfir3 	//distant sound
+webley/fire4			weblfir4 	//distant sound
+webley/clipout			weblclpo
+webley/clipin			weblclpi
+webley/open			weblopen
+webley/close			weblclos
+$rolloff webley/fire1		500 1000
+$rolloff webley/fire2		500 1000
+$rolloff webley/fire3		500 3500
+$rolloff webley/fire4		500 3500
+$limit	 webley/fire1		0
+$limit	 webley/fire2		0
+$limit	 webley/fire3		0
+$limit	 webley/fire4		0
+$volume	 webley/fire1		0.75
+$volume	 webley/fire2		0.75
+
+sten/fire1			stenfir1
+sten/fire2			stenfir2
+sten/fire3			stenfir3 	//distant sound
+sten/fire4			stenfir4 	//distant sound
+sten/clipout			stenclpo
+sten/clipin			stenclpi
+sten/bolt			stenbolt
+$rolloff sten/fire1		500 1000
+$rolloff sten/fire2		500 1000
+$rolloff sten/fire3		500 3500
+$rolloff sten/fire4		500 3500
+$limit	 sten/fire1		0
+$limit	 sten/fire2		0
+$limit	 sten/fire3		0
+$limit	 sten/fire4		0
+$volume	 sten/fire1		0.75
+$volume	 sten/fire2		0.75
+
+enfield/fire1			leenfir1
+enfield/fire2			leenfir2
+enfield/fire3			leenfir3 	//distant sound
+enfield/fire4			leenfir4 	//distant sound
+$rolloff enfield/fire1		500 1250
+$rolloff enfield/fire2		500 1250
+$rolloff enfield/fire3		500 3500
+$rolloff enfield/fire4		500 3500
+$limit	 enfield/fire1		0
+$limit	 enfield/fire2		0
+$limit	 enfield/fire3		0
+$limit	 enfield/fire4		0
+$volume	 enfield/fire3		0.75
+$volume	 enfield/fire4		0.75
+enfield/sniper1			leesfir1
+enfield/sniper2			leesfir2
+enfield/sniper3			leesfir3 	//distant sound
+enfield/sniper4			leesfir4 	//distant sound
+$rolloff enfield/sniper1	500 2250
+$rolloff enfield/sniper2	500 2250
+$rolloff enfield/sniper3	2500 9000
+$rolloff enfield/sniper4	2500 9000
+$limit	 enfield/sniper1	0
+$limit	 enfield/sniper2	0
+$limit	 enfield/sniper3	0
+$limit	 enfield/sniper4	0
+$volume	 enfield/sniper3	0.75
+$volume	 enfield/sniper4	0.75
+
+bren/fire1			brenfir1
+bren/fire2			brenfir2
+bren/fire3			brenfir3 	//distant sound
+bren/fire4			brenfir4 	//distant sound
+bren/hit			brenhit
+bren/clipin			brenclpi
+bren/clipout			brenclpo
+bren/bolt			brenbolt
+$rolloff bren/fire1		500 1200
+$rolloff bren/fire2		500 1200
+$rolloff bren/fire3		500 4000
+$rolloff bren/fire4		500 4000
+$limit	 bren/fire1		0
+$limit	 bren/fire2		0
+$limit	 bren/fire3		0
+$limit	 bren/fire4		0
+$volume	 bren/fire3		0.75
+$volume	 bren/fire4		0.75
+
+$random grenade/lob		{ grenade/lob1 grenade/lob2 grenade/lob3 grenade/lob4 }
+grenade/lob1			grenlob1
+grenade/lob2			grenlob2
+grenade/lob3			grenlob3
+grenade/lob4			grenlob4
+
+grenade/pinpull			fragpin
+grenade/throw			fragthro
+$random stick/throw		{ stick/throw1 stick/throw2 stick/throw3 }
+stick/throw1			stikthr1
+stick/throw2			stikthr2
+stick/throw3			stikthr3
+
+$random melee/swing	        {  melee/swing1 melee/swing2 melee/swing3 }
+$random melee/hit	        {  melee/hit1 melee/hit1 }
+melee/swing1			buttswg1
+melee/swing2			buttswg2
+melee/swing3			buttswg3
+melee/hit1			butthit1
+melee/hit2			butthit2
+
+$random grenade/explosion	{ grenade/explosion1 grenade/explosion2 grenade/explosion3 }
+grenade/explosion1		grenexp1
+grenade/explosion2		grenexp2
+grenade/explosion3		grenexp3
+$random distant/explosion	{ distant/explosion1 distant/explosion2 distant/explosion3 }
+distant/explosion1		distexp1
+distant/explosion2		distexp2
+distant/explosion3		distexp3
+$rolloff grenade/explosion	1000 3000
+$rolloff distant/explosion	4000 11000
+$limit	 grenade/explosion	0
+$limit	 distant/explosion	0
+
+$random grenade/smoke		{ grenade/smoke1 grenade/smoke2 }
+grenade/smoke1			smokeo1
+grenade/smoke2			smokeo2
+$rolloff grenade/smoke		1000 3000
+
+weapon/dryfire			dry_fire
+$volume	 weapon/dryfire		0.3
+
+$random generic/fleshhit	{  flesh/hit1 flesh/hit2 flesh/hit3 flesh/hit4 }
+flesh/hit1			fleshit1
+flesh/hit2			fleshit2
+flesh/hit3			fleshit3
+flesh/hit4			fleshit4
+
+$random generic/ricochet	{  world/hit1 world/hit2 world/hit3 world/hit4 world/hit5 world/hit6 world/hit7 }
+world/hit1     			bullhit1
+world/hit2     			bullhit2
+world/hit3     			bullhit3
+world/hit4     			bullhit4
+world/hit5     			bullhit5
+world/hit6     			bullhit6
+world/hit7    			bullhit7
+
+$random player/okay		{ player/okay1 player/okay2 player/okay3 }
+$random player/hurt		{ player/hurt1 player/hurt2 player/hurt3 player/hurt4 player/hurt5 player/hurt6 player/hurt7 }
+$random player/hurtlow		{ player/hurt blanksnd }
+$random player/hurtnormal	{ player/hurt blanksnd blanksnd blanksnd }
+player/okay1			playoky1
+player/okay2			playoky2
+player/okay3			playoky3
+player/hurt1			playpn1
+player/hurt2			playpn2
+player/hurt3			playpn3
+player/hurt4			playpn4
+player/hurt5			playpn5
+player/hurt6			playpn6
+player/hurt7			playpn7
+player/heartbeat		playhart
+$random player/holdbreath	{ player/holdbreath1 player/holdbreath2 }
+player/holdbreath1		plyrhol1
+player/holdbreath2		plyrhol2
+player/exhale1			plyrexh1
+player/exhale2			plyrexh2
+player/exhale3			plyrexh3
+
+$random generic/bodythump	{ generic/bodythump1 generic/bodythump2 generic/bodythump3 generic/bodythump4 generic/bodythump5 }
+generic/bodythump1		bodystn1
+generic/bodythump2		bodystn2
+generic/bodythump3		bodystn3
+generic/bodythump4		bodystn4
+generic/bodythump5		bodystn5
+
+$alias weapon/select		footstep/gear
+$random footstep/crunch		{ footstep/crunch1 footstep/crunch2 }
+$random footstep/gear		{ footstep/gear2 footstep/gear3  }
+$random footstep/stone		{ footstep/stone1 footstep/stone2 footstep/stone3 }
+$random footstep/stones2	{ footstep/stone1 footstep/stone2 footstep/stone3 }
+footstep/crunch1		crunch01
+footstep/crunch2		crunch02
+footstep/gear1			stepger1
+footstep/gear2			stepger2
+footstep/gear3			stepger3
+footstep/stone1			stepstn1
+footstep/stone2			stepstn2
+footstep/stone3			stepstn3
+footstep/stone4			stepstn4
+
+$volume	footstep/stone		0.8
+$volume	footstep/stones2	0.3
+$volume	footstep/gear		0.6
+$rolloff footstep/stone		200 700
+$rolloff footstep/stones2	50 150
+$rolloff footstep/gear		200 600
+$limit footstep/stone		0
+$limit footstep/stones2		0
+
+$random generic/whizby		{ generic/whizby1 generic/whizby2 generic/whizby3 generic/whizby4 generic/whizby5 generic/whizby6 generic/whizby7 generic/whizby8 generic/whizby9 generic/whizby10 }
+generic/whizby1			whizby01
+generic/whizby2			whizby02
+generic/whizby3			whizby03
+generic/whizby4			whizby04
+generic/whizby5			whizby05
+generic/whizby6			whizby06
+generic/whizby7			whizby07
+generic/whizby8			whizby08
+generic/whizby9			whizby09
+generic/whizby10		whizby10
+$volume	generic/whizby		0.65
+
+$random generic/headshot	{ generic/headshot1 generic/headshot2 }
+generic/headshot1		hedshot1
+generic/headshot2		hedshot2
+$limit generic/headshot		0
+
+generic/hitindicator		hitsound
+blanksnd        		blanksnd
+$limit	blanksnd		0
+world/quake			blanksnd
+
+
+$random	german/sight		{ german/sight1 german/sight2 german/sight3 german/sight4 german/sight5 german/sight6 }
+german/sight1			gersit1
+german/sight2			gersit2
+german/sight3			gersit3
+german/sight4			gersit4
+german/sight5			gersit5
+german/sight6			gersit6
+$limit german/sight		2
+
+$random	german/grenade		{ german/grenade1 german/grenade2 }
+german/grenade1			gergrn1
+german/grenade2			gergrn2
+
+$random	misc/weaponup		{ misc/weaponup1 misc/weaponup2 }
+misc/weaponup1			weapup1
+misc/weaponup2			weapup2
+misc/grenadeup			grenup
+
+game/rank			mp_level
+game/challenge			mp_chall
+$volume	game/challenge		0.75
+game/shellshock			shelshok
+misc/slide				slide

@@ -1,0 +1,943 @@
+actor "Fragmentation Grenade" : RGUWeapon
+{
+  inventory.pickupmessage "Grenade ammo"  
+  inventory.pickupsound "misc/grenadeup"
+  Weapon.SelectionOrder 22
+  Weapon.AmmoUse 1
+  Weapon.AmmoGive 1
+  Weapon.AmmoType "FragGrenadeAmmo"
+  +WEAPON.WIMPY_WEAPON
+  -NOAUTOFIRE
+  States
+  {
+  Spawn:
+    TNT1 A -1
+    stop
+  Select:
+    TNT1 A 0 A_Raise
+    Loop
+  Ready:
+    TNT1 A 0 A_GiveInventory("Weight",1)	//Determines player speed - 1 means normal speed
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 4 A_PlayWeaponSound("weapon/select")
+    //goto InHand 				-- intentional drop to next state
+  InHand: 					//Ready state
+    FRGA J 0 A_JumpIfNoAmmo(5)
+    FRGA J 0 A_JumpIfInventory("ThrowingGrenade",1,"FragGrenade")
+    FRGA J 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    FRGA J 0 A_TakeInventory("ThrowPower",100)
+    FRGA J 1 A_WeaponReady
+    loop 
+    TNT1 A 0 A_CheckReload
+    TNT1 A 1 A_WeaponReady
+    loop 
+  Deselect:
+    TNT1 A 0 A_TakeInventory("Weight",1)	//Determines player speed - 1 means normal speed
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 A_ZoomFactor(1.0)
+    TNT1 AAA 2
+  DeselectFull: 				//Deselect
+    TNT1 AA 0 A_Lower
+    TNT1 A 1 A_Lower
+    loop
+  Fire:
+    FRGA I 0 A_JumpIfInventory("IsBot",1,"ThrowBot")
+    FRGA A 1 ACS_ExecuteAlways(603,0,0,0,0)
+    FRGA I 0 A_GiveInventory("ThrowingGrenade",1)
+    FRGA ABCDEF 3
+    FRGA G 3 A_PlaySoundEx("grenade/pinpull","SoundSlot5")
+    TNT1 A 15 A_Refire
+    FRGA H 3
+    FRGA I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    FRGA I 0 A_TakeInventory("ThrowingGrenade",1)
+    FRGA I 0 A_TakeInventory("KnifeAttack",1)
+    FRGA I 0 A_JumpIfInventory("ThrowPower",20,"Throw1")
+    FRGA I 3 A_FireCustomMissile("FragGrenade0",0,0,0,16)
+    goto Ready+2		//Reselect weapon
+  Hold:
+    TNT1 A 3 A_GiveInventory("ThrowPower",3)
+    TNT1 A 3 A_Refire
+    goto Fire+11
+  Throw1:
+    FRGA I 0 A_JumpIfInventory("ThrowPower",40,"Throw2")
+    FRGA I 3 A_FireCustomMissile("FragGrenade1",0,0,0,16)
+    goto Ready+2		
+  Throw2:
+    FRGA I 0 A_JumpIfInventory("ThrowPower",60,"Throw3")
+    FRGA H 0 A_PlaySoundEx("grenade/throw","SoundSlot5")
+    FRGA I 3 A_FireCustomMissile("FragGrenade",0,0,0,16)
+    goto Ready+2		
+  Throw3:
+    FRGA I 0 A_JumpIfInventory("ThrowPower",80,"Throw4")
+    FRGA H 0 A_PlaySoundEx("grenade/throw","SoundSlot5")
+    FRGA I 3 A_FireCustomMissile("FragGrenade2",0,0,0,16)
+    goto Ready+2		
+  Throw4:
+    FRGA I 0 A_JumpIfInventory("ThrowPower",100,"Throw5")
+    FRGA H 0 A_PlaySoundEx("grenade/throw","SoundSlot5")
+    FRGA I 3 A_FireCustomMissile("FragGrenade3",0,0,0,16)
+    goto Ready+2		
+  Throw5:
+    FRGA I 0 A_TakeInventory("ThrowPower",100)
+    FRGA H 0 A_PlaySoundEx("grenade/throw","SoundSlot5")
+    FRGA I 3 A_FireCustomMissile("FragGrenade4",0,0,0,16)
+    goto Ready+2		
+  FragGrenade:
+    FRGA I 0 A_GiveInventory("ThrowPower",45)
+    goto Fire
+  KnifeAttack: //Butt of weapon
+    TNT1 A 0 A_ZoomFactor(1.0)
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_JumpIfInventory("ThrowingGrenade",1,"FragGrenade")
+    TNT1 A 0 ACS_ExecuteAlways(600,0,900,900,1)		//Recoil script
+    CLTG A 3 A_PlaySoundEx("melee/swing","SoundSlot5")
+    CLTG BC 3
+    CLTG D 3 A_FireCustomMissile("MeleeAttack",0,0,0,0)
+    TNT1 AA 3
+    CLTG EF 3
+    TNT1 A 0 A_TakeInventory("KnifeAttack",1)
+    goto InHand
+  ThrowBot:
+    TNT1 I 0 A_GiveInventory("ThrowingGrenade",1)
+    TNT1 A 18
+    TNT1 A 3 A_PlaySoundEx("grenade/pinpull","SoundSlot5")
+    TNT1 A 18
+    TNT1 I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    TNT1 I 0 A_TakeInventory("ThrowingGrenade",1)
+    TNT1 I 0 A_TakeInventory("KnifeAttack",1)
+    TNT1 I 3 A_FireCustomMissile("FragGrenade4",0,0,0,16)
+    goto Ready+2		//Reselect weapon
+  }
+}
+actor "Stielhandgranate" : "Fragmentation Grenade"
+{
+  Weapon.SelectionOrder 22
+  Weapon.AmmoUse 1
+  Weapon.AmmoGive 1
+  Weapon.AmmoType "FragGrenadeAmmo"
+  +WEAPON.WIMPY_WEAPON
+  -NOAUTOFIRE
+  States
+  {
+  Select:
+    TNT1 A 0 A_Raise
+    Loop
+  Ready:
+    TNT1 A 0 A_GiveInventory("Weight",1)	//Determines player speed - 1 means normal speed
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 4 A_PlayWeaponSound("weapon/select")
+    //goto InHand 				-- intentional drop to next state
+  InHand: 					//Ready state
+    FRGC J 0 A_JumpIfNoAmmo(5)
+    FRGC J 0 A_JumpIfInventory("ThrowingGrenade",1,"FragGrenade")
+    FRGC J 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    FRGC J 0 A_TakeInventory("ThrowPower",100)
+    FRGC J 1 A_WeaponReady
+    loop 
+    TNT1 A 0 A_CheckReload
+    TNT1 A 1 A_WeaponReady
+    loop 
+  Deselect:
+    TNT1 A 0 A_TakeInventory("Weight",1)	//Determines player speed - 1 means normal speed
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 A_ZoomFactor(1.0)
+    TNT1 AAA 2
+  DeselectFull: 				//Deselect
+    TNT1 AA 0 A_Lower
+    TNT1 A 1 A_Lower
+    loop
+  Fire:
+    FRGA I 0 A_JumpIfInventory("IsBot",1,"ThrowBot")
+    FRGC A 1 ACS_ExecuteAlways(603,0,0,0,0)
+    FRGA I 0 A_GiveInventory("ThrowingGrenade",1)
+    FRGC ABCDEF 3
+    FRGC G 3 
+    TNT1 A 15 A_Refire
+    FRGC H 3
+    FRGC I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    FRGC I 0 A_TakeInventory("ThrowingGrenade",1)
+    FRGC I 0 A_TakeInventory("KnifeAttack",1)
+    FRGC I 0 A_JumpIfInventory("ThrowPower",20,"Throw1")
+    FRGC I 3 A_FireCustomMissile("StickGrenade0",0,0,0,16)
+    goto Ready+2		//Reselect weapon
+  Hold:
+    TNT1 A 3 A_GiveInventory("ThrowPower",3)
+    TNT1 A 3 A_Refire
+    goto Fire+11
+  Throw1:
+    FRGC I 0 A_JumpIfInventory("ThrowPower",40,"Throw2")
+    FRGC I 3 A_FireCustomMissile("StickGrenade1",0,0,0,16)
+    goto Ready+2		
+  Throw2:
+    FRGC I 0 A_JumpIfInventory("ThrowPower",60,"Throw3")
+    FRGC H 0 A_PlaySoundEx("stick/throw","SoundSlot5")
+    FRGC I 3 A_FireCustomMissile("StickGrenade",0,0,0,16)
+    goto Ready+2		
+  Throw3:
+    FRGC I 0 A_JumpIfInventory("ThrowPower",80,"Throw4")
+    FRGC H 0 A_PlaySoundEx("stick/throw","SoundSlot5")
+    FRGC I 3 A_FireCustomMissile("StickGrenade2",0,0,0,16)
+    goto Ready+2		
+  Throw4:
+    FRGC I 0 A_JumpIfInventory("ThrowPower",100,"Throw5")
+    FRGC H 0 A_PlaySoundEx("stick/throw","SoundSlot5")
+    FRGC I 3 A_FireCustomMissile("StickGrenade3",0,0,0,16)
+    goto Ready+2
+  Throw5:
+    FRGC I 0 A_TakeInventory("ThrowPower",100)
+    FRGC H 0 A_PlaySoundEx("stick/throw","SoundSlot5")
+    FRGC I 3 A_FireCustomMissile("StickGrenade4",0,0,0,16)
+    goto Ready+2		
+  FragGrenade:
+    FRGC I 0 A_GiveInventory("ThrowPower",45)
+    goto Fire
+  KnifeAttack: //Butt of weapon
+    TNT1 A 0 A_ZoomFactor(1.0)
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_JumpIfInventory("ThrowingGrenade",1,"FragGrenade")
+    TNT1 A 0 ACS_ExecuteAlways(600,0,900,900,1)		//Recoil script
+    LUGG A 3 A_PlaySoundEx("melee/swing","SoundSlot5")
+    LUGG BC 3
+    LUGG D 3 A_FireCustomMissile("MeleeAttack",0,0,0,0)
+    TNT1 AA 3
+    LUGG EF 3
+    TNT1 A 0 A_TakeInventory("KnifeAttack",1)
+    goto InHand
+  ThrowBot:
+    TNT1 I 0 A_GiveInventory("ThrowingGrenade",1)
+    TNT1 A 18
+    TNT1 A 3 A_PlaySoundEx("grenade/pinpull","SoundSlot5")
+    TNT1 A 18
+    TNT1 I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    TNT1 I 0 A_TakeInventory("ThrowingGrenade",1)
+    TNT1 I 0 A_TakeInventory("KnifeAttack",1)
+    TNT1 I 3 A_FireCustomMissile("StickGrenade4",0,0,0,16)
+    goto Ready+2		//Reselect weapon
+  }
+}
+actor "RGD-33 Grenade" : "Fragmentation Grenade"
+{
+  Weapon.SelectionOrder 22
+  Weapon.AmmoUse 1
+  Weapon.AmmoGive 1
+  Weapon.AmmoType "FragGrenadeAmmo"
+  +WEAPON.WIMPY_WEAPON
+  -NOAUTOFIRE
+  States
+  {
+  Select:
+    TNT1 A 0 A_Raise
+    Loop
+  Ready:
+    TNT1 A 0 A_GiveInventory("Weight",1)	//Determines player speed - 1 means normal speed
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 4 A_PlayWeaponSound("weapon/select")
+    //goto InHand 				-- intentional drop to next state
+  InHand: 					//Ready state
+    FRGD J 0 A_JumpIfNoAmmo(5)
+    FRGD J 0 A_JumpIfInventory("ThrowingGrenade",1,"FragGrenade")
+    FRGD J 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    FRGD J 0 A_TakeInventory("ThrowPower",100)
+    FRGD J 1 A_WeaponReady
+    loop 
+    TNT1 A 0 A_CheckReload
+    TNT1 A 1 A_WeaponReady
+    loop 
+  Deselect:
+    TNT1 A 0 A_TakeInventory("Weight",1)	//Determines player speed - 1 means normal speed
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 A_ZoomFactor(1.0)
+    TNT1 AAA 2
+  DeselectFull: 				//Deselect
+    TNT1 AA 0 A_Lower
+    TNT1 A 1 A_Lower
+    loop
+  Fire:
+    FRGD I 0 A_JumpIfInventory("IsBot",1,"ThrowBot")
+    FRGD A 1 ACS_ExecuteAlways(603,0,0,0,0)
+    FRGD I 0 A_GiveInventory("ThrowingGrenade",1)
+    FRGD ABCDEF 3
+    FRGD G 3 
+    TNT1 A 15 A_Refire
+    FRGD H 3
+    FRGD I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    FRGD I 0 A_TakeInventory("ThrowingGrenade",1)
+    FRGD I 0 A_TakeInventory("KnifeAttack",1)
+    FRGD I 0 A_JumpIfInventory("ThrowPower",20,"Throw1")
+    FRGD I 3 A_FireCustomMissile("RussianGrenade0",0,0,0,16)
+    goto Ready+2		//Reselect weapon
+  Hold:
+    TNT1 A 3 A_GiveInventory("ThrowPower",3)
+    TNT1 A 3 A_Refire
+    goto Fire+11
+  Throw1:
+    FRGD I 0 A_JumpIfInventory("ThrowPower",40,"Throw2")
+    FRGD I 3 A_FireCustomMissile("RussianGrenade1",0,0,0,16)
+    goto Ready+2		
+  Throw2:
+    FRGD I 0 A_JumpIfInventory("ThrowPower",60,"Throw3")
+    FRGD H 0 A_PlaySoundEx("stick/throw","SoundSlot5")
+    FRGD I 3 A_FireCustomMissile("RussianGrenade",0,0,0,16)
+    goto Ready+2		
+  Throw3:
+    FRGD I 0 A_JumpIfInventory("ThrowPower",80,"Throw4")
+    FRGD H 0 A_PlaySoundEx("stick/throw","SoundSlot5")
+    FRGD I 3 A_FireCustomMissile("RussianGrenade2",0,0,0,16)
+    goto Ready+2		
+  Throw4:
+    FRGD I 0 A_JumpIfInventory("ThrowPower",100,"Throw5")
+    FRGD H 0 A_PlaySoundEx("stick/throw","SoundSlot5")
+    FRGD I 3 A_FireCustomMissile("RussianGrenade3",0,0,0,16)
+    goto Ready+2
+  Throw5:
+    FRGD I 0 A_TakeInventory("ThrowPower",100)
+    FRGD H 0 A_PlaySoundEx("stick/throw","SoundSlot5")
+    FRGD I 3 A_FireCustomMissile("RussianGrenade4",0,0,0,16)
+    goto Ready+2		
+  FragGrenade:
+    FRGD I 0 A_GiveInventory("ThrowPower",45)
+    goto Fire
+  KnifeAttack: //Butt of weapon
+    TNT1 A 0 A_ZoomFactor(1.0)
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_JumpIfInventory("ThrowingGrenade",1,"FragGrenade")
+    TNT1 A 0 ACS_ExecuteAlways(600,0,900,900,1)		//Recoil script
+    TT3G A 3 A_PlaySoundEx("melee/swing","SoundSlot5")
+    TT3G BC 3
+    TT3G D 3 A_FireCustomMissile("MeleeAttack",0,0,0,0)
+    TNT1 AA 3
+    TT3G EF 3
+    TNT1 A 0 A_TakeInventory("KnifeAttack",1)
+    goto InHand
+  ThrowBot:
+    TNT1 I 0 A_GiveInventory("ThrowingGrenade",1)
+    TNT1 A 18
+    TNT1 A 3 A_PlaySoundEx("grenade/pinpull","SoundSlot5")
+    TNT1 A 18
+    TNT1 I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    TNT1 I 0 A_TakeInventory("ThrowingGrenade",1)
+    TNT1 I 0 A_TakeInventory("KnifeAttack",1)
+    TNT1 I 3 A_FireCustomMissile("RussianGrenade4",0,0,0,16)
+    goto Ready+2		//Reselect weapon
+  }
+}
+actor "Mills Bomb" : "Fragmentation Grenade"
+{
+  Weapon.SelectionOrder 22
+  Weapon.AmmoUse 1
+  Weapon.AmmoGive 1
+  Weapon.AmmoType "FragGrenadeAmmo"
+  +WEAPON.WIMPY_WEAPON
+  -NOAUTOFIRE
+  States
+  {
+  Select:
+    TNT1 A 0 A_Raise
+    Loop
+  Ready:
+    TNT1 A 0 A_GiveInventory("Weight",1)	//Determines player speed - 1 means normal speed
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 4 A_PlayWeaponSound("weapon/select")
+    //goto InHand 				-- intentional drop to next state
+  InHand: 					//Ready state
+    FRGE J 0 A_JumpIfNoAmmo(5)
+    FRGE J 0 A_JumpIfInventory("ThrowingGrenade",1,"FragGrenade")
+    FRGE J 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    FRGE J 0 A_TakeInventory("ThrowPower",100)
+    FRGE J 1 A_WeaponReady
+    loop     
+    TNT1 A 0 A_CheckReload
+    TNT1 A 1 A_WeaponReady
+    loop 
+  Deselect:
+    TNT1 A 0 A_TakeInventory("Weight",1)	//Determines player speed - 1 means normal speed
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 A_ZoomFactor(1.0)
+    TNT1 AAA 2
+  DeselectFull: 				//Deselect
+    TNT1 AA 0 A_Lower
+    TNT1 A 1 A_Lower
+    loop
+  Fire:
+    FRGE I 0 A_JumpIfInventory("IsBot",1,"ThrowBot")
+    FRGE A 1 ACS_ExecuteAlways(603,0,0,0,0)
+    FRGE I 0 A_GiveInventory("ThrowingGrenade",1)
+    FRGE ABCDEF 3
+    FRGE G 3 A_PlaySoundEx("grenade/pinpull","SoundSlot5")
+    TNT1 A 15 A_Refire
+    FRGE H 3
+    FRGE I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    FRGE I 0 A_TakeInventory("ThrowingGrenade",1)
+    FRGE I 0 A_TakeInventory("KnifeAttack",1)
+    FRGE I 0 A_JumpIfInventory("ThrowPower",20,"Throw1")
+    FRGE I 3 A_FireCustomMissile("MillsBomb0",0,0,0,16)
+    goto Ready+2		//Reselect weapon
+  Hold:
+    TNT1 A 3 A_GiveInventory("ThrowPower",3)
+    TNT1 A 3 A_Refire
+    goto Fire+11
+  Throw1:
+    FRGE I 0 A_JumpIfInventory("ThrowPower",40,"Throw2")
+    FRGE I 3 A_FireCustomMissile("MillsBomb1",0,0,0,16)
+    goto Ready+2		
+  Throw2:
+    FRGE I 0 A_JumpIfInventory("ThrowPower",60,"Throw3")
+    FRGE H 0 A_PlaySoundEx("grenade/throw","SoundSlot5")
+    FRGE I 3 A_FireCustomMissile("MillsBomb",0,0,0,16)
+    goto Ready+2		
+  Throw3:
+    FRGE I 0 A_JumpIfInventory("ThrowPower",80,"Throw4")
+    FRGE H 0 A_PlaySoundEx("grenade/throw","SoundSlot5")
+    FRGE I 3 A_FireCustomMissile("MillsBomb2",0,0,0,16)
+    goto Ready+2		
+  Throw4:
+    FRGE I 0 A_JumpIfInventory("ThrowPower",100,"Throw5")
+    FRGE H 0 A_PlaySoundEx("grenade/throw","SoundSlot5")
+    FRGE I 3 A_FireCustomMissile("MillsBomb3",0,0,0,16)
+    goto Ready+2		
+  Throw5:
+    FRGE I 0 A_TakeInventory("ThrowPower",100)
+    FRGE H 0 A_PlaySoundEx("grenade/throw","SoundSlot5")
+    FRGE I 3 A_FireCustomMissile("MillsBomb4",0,0,0,16)
+    goto Ready+2		
+  FragGrenade:
+    FRGE I 0 A_GiveInventory("ThrowPower",45)
+    goto Fire
+  KnifeAttack: //Butt of weapon
+    TNT1 A 0 A_ZoomFactor(1.0)
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_JumpIfInventory("ThrowingGrenade",1,"FragGrenade")
+    TNT1 A 0 ACS_ExecuteAlways(600,0,900,900,1)		//Recoil script
+    WEBG A 3 A_PlaySoundEx("melee/swing","SoundSlot5")
+    WEBG BC 3
+    WEBG D 3 A_FireCustomMissile("MeleeAttack",0,0,0,0)
+    TNT1 AA 3
+    WEBG EF 3
+    TNT1 A 0 A_TakeInventory("KnifeAttack",1)
+    goto InHand
+  ThrowBot:
+    TNT1 I 0 A_GiveInventory("ThrowingGrenade",1)
+    TNT1 A 18
+    TNT1 A 3 A_PlaySoundEx("grenade/pinpull","SoundSlot5")
+    TNT1 A 18
+    TNT1 I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    TNT1 I 0 A_TakeInventory("ThrowingGrenade",1)
+    TNT1 I 0 A_TakeInventory("KnifeAttack",1)
+    TNT1 I 3 A_FireCustomMissile("MillsBomb4",0,0,0,16)
+    goto Ready+2		//Reselect weapon
+  }
+}
+//Determine speed to throw grenade
+actor ThrowPower : Ammo
+{
+    inventory.amount 0
+    inventory.maxamount 100
+    ammo.backpackamount 0
+    ammo.backpackmaxamount 100
+    +IGNORESKILL
+}
+actor FragGrenadeAmmo : Ammo
+{
+    inventory.icon "CLIPA0"
+    inventory.amount 1
+    inventory.maxamount 2
+    ammo.backpackamount 2
+    ammo.backpackmaxamount 2
+    +IGNORESKILL
+}
+
+actor GrenadeIndicator : CustomInventory
+{
+  radius 240
+  inventory.maxamount 9999
+  +ALWAYSPICKUP
+  +NOCLIP
+  +QUIET
+  states
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    //TNT1 A 0 ACS_ExecuteAlways(607,0,0,0,0)
+    TNT1 A 0 ACS_ExecuteAlways(615,0,3,0,0)
+    stop
+  }
+}
+actor FragGrenade
+{
+  obituary "\cf%k \cc>> \cngrenade impact \cc>> \cf%o"
+  radius 5
+  height 5
+  speed 20
+  PROJECTILE
+  -NOGRAVITY
+  +RANDOMIZE
+  +HEXENBOUNCE
+  +NOEXTREMEDEATH
+  +FORCERADIUSDMG
+  +CANBOUNCEWATER
+  +BOUNCEONACTORS
+  +ROCKETTRAIL
+  -NOTELEPORT
+  +TELESTOMP
+  +THRUGHOST
+  Scale 0.16
+  gravity 0.4
+  bouncefactor 0.5
+  damagetype "Explosion"
+  ReactionTime 3
+  seesound "grenade/lob"
+  states
+  {
+  Spawn:
+    FRGX A 1
+    FRGX B 0 A_JumpIfInTargetInventory("ExpertTimingUpgrade",1,"Spawn2")
+    FRGX ABCD 5
+    FRGX E 5 A_SpawnItemEx("GrenadeIndicator",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0)
+    FRGX FG 5
+    FRGX H 5 A_Countdown
+    goto Spawn+2
+  Spawn2:
+    FRGX ABCD 5
+    FRGX E 6 A_SpawnItemEx("GrenadeIndicator",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0)
+    FRGX FG 6
+    FRGX H 0 A_Countdown
+    FRGX H 6 A_Countdown
+    loop
+  Death:
+    TNT1 A 0 
+    TNT1 A 0 A_AlertMonsters
+    TNT1 A 0 A_SpawnItemEx("ExplosionMain",0,0,0,0,0,0,0,0,0)
+    TNT1 A 0 A_SpawnItemEx("FragGrenadeExplosion",-1,0,0,0,0,0,0,0,0)
+    TNT1 A 0 A_SpawnItemEx("FragGrenadeShock",-1,0,0,0,0,0,0,0,0)
+    TNT1 AAAAAAAAAA 0 A_SpawnItemEx("ImpactSpark2", random(-32,32), random(-32,32), random(-32,32), random(-5,5), 0, random(-1,5), random(-180,180), 128, 0)
+    TNT1 AAAAAAAAAA 0 A_SpawnItemEx("ImpactSpark2", random(-32,32), random(-32,32), random(-32,32), random(-5,5), 0, random(-1,5), random(-180,180), 128, 0)
+    TNT1 A 0 A_PlaySoundEx("grenade/explosion","SoundSlot5")
+    TNT1 A 15 Radius_Quake(9,15,0,8,0)
+    TNT1 A 15 Radius_Quake(5,15,0,16,0)
+    TNT1 A 0 A_PlaySoundEx("distant/explosion","SoundSlot6")
+    TNT1 A 15 Radius_Quake(1,15,0,125,0)
+    stop
+  }
+}
+actor FragGrenade0 : FragGrenade
+{
+  speed 6
+  seesound ""
+  damage 0
+}
+
+actor FragGrenade1 : FragGrenade
+{
+  speed 12
+  seesound ""
+  damage 0
+}
+actor FragGrenade2 : FragGrenade
+{
+  speed 26
+}
+
+actor FragGrenade3 : FragGrenade
+{
+  speed 32
+}
+
+actor FragGrenade4 : FragGrenade
+{
+  speed 38
+}
+
+actor FragGrenadeDropped : FragGrenade
+{
+  speed 2
+  damage 0
+  PROJECTILE
+  -NOGRAVITY
+  +RANDOMIZE
+  +HEXENBOUNCE
+  +NOEXTREMEDEATH
+  +FORCERADIUSDMG
+  +CANBOUNCEWATER
+  +BOUNCEONACTORS
+  +ROCKETTRAIL
+  -NOTELEPORT
+  -TELESTOMP
+  Scale 0.16
+  gravity 0.4
+  bouncefactor 0.5
+  damagetype "Explosion"
+  ReactionTime 3
+  seesound "grenade/lob"
+  states
+  {
+  Spawn:
+    FRGX ABCDEFG 3
+    FRGX H 3 A_Countdown
+    loop
+  Death:
+    TNT1 A 0 
+    TNT1 A 0 A_AlertMonsters
+    TNT1 A 0 A_SpawnItemEx("ExplosionMain",0,0,1,0,0,0,0,0,0)
+    TNT1 A 0 A_SpawnItemEx("MartyrGrenadeExplosion",-1,0,0,0,0,0,0,0,0)
+    TNT1 A 0 A_SpawnItemEx("FragGrenadeShock",-1,0,0,0,0,0,0,0,0)
+    TNT1 AAAAAAAAAA 0 A_SpawnItemEx("ImpactSpark2", random(-32,32), random(-32,32), random(-32,32), random(-5,5), random(-5,5), random(-1,5), 0, 128, 0)
+    TNT1 AAAAAAAAAA 0 A_SpawnItemEx("ImpactSpark2", random(-32,32), random(-32,32), random(-32,32), random(-5,5), random(-5,5), random(-1,5), 0, 128, 0)
+    TNT1 A 0 A_PlaySoundEx("grenade/explosion","SoundSlot5")
+    TNT1 A 15 Radius_Quake(9,15,0,8,0)
+    TNT1 A 15 Radius_Quake(5,15,0,16,0)
+    TNT1 A 0 A_PlaySoundEx("distant/explosion","SoundSlot6")
+    TNT1 A 15 Radius_Quake(1,15,0,125,0)
+    stop
+  }
+}
+actor FragGrenadeExplosion
+{
+  RenderStyle None
+  -RANDOMIZE
+  +NOCLIP
+  PROJECTILE
+  Speed 1
+  Damage 0
+  Scale 0.7
+  obituary "\cf%k \cc>> \ckFrag grenade \cc>> \cf%o"
+  DamageType "Explosion"
+  states
+  {
+  Spawn:
+    TNT1 A 0
+    TNT1 A 0 A_Explode(130,170,0)
+    TNT1 A 5 A_Explode(200,400)
+    stop
+  }  
+}
+actor FragGrenadeShock
+{
+  RenderStyle None
+  -RANDOMIZE
+  +NOCLIP
+  PROJECTILE
+  Speed 1
+  Damage 0
+  Scale 0.7
+  obituary "\cf%k \cc>> \cnexplosion shock \cc>> \cf%o"
+  DamageType "Shock"
+  states
+  {
+  Spawn:
+    TNT1 A 1
+    TNT1 A 5 A_Explode(15,150)
+    stop
+  }  
+}
+
+actor StickGrenade : FragGrenade
+{
+  obituary "\cf%k \cc>> \cngrenade impact \cc>> \cf%o"
+  radius 5
+  height 5
+  speed 20
+  PROJECTILE
+  -NOGRAVITY
+  +RANDOMIZE
+  +HEXENBOUNCE
+  +NOEXTREMEDEATH
+  +FORCERADIUSDMG
+  +CANBOUNCEWATER
+  +BOUNCEONACTORS
+  +ROCKETTRAIL
+  -NOTELEPORT
+  +TELESTOMP
+  +THRUGHOST
+  Scale 0.16
+  gravity 0.4
+  bouncefactor 0.5
+  damagetype "Explosion"
+  ReactionTime 3
+  seesound "grenade/lob"
+  states
+  {
+  Death:
+    TNT1 A 0 
+    TNT1 A 0 A_AlertMonsters
+    TNT1 A 0 A_SpawnItemEx("ExplosionMain",0,0,0,0,0,0,0,0,0)
+    TNT1 A 0 A_SpawnItemEx("StickGrenadeExplosion",-1,0,0,0,0,0,0,0,0)
+    TNT1 A 0 A_SpawnItemEx("FragGrenadeShock",-1,0,0,0,0,0,0,0,0)
+    TNT1 AAAAAAAAAA 0 A_SpawnItemEx("ImpactSpark2", random(-32,32), random(-32,32), random(-32,32), random(-5,5), 0, random(-1,5), random(-180,180), 128, 0)
+    TNT1 AAAAAAAAAA 0 A_SpawnItemEx("ImpactSpark2", random(-32,32), random(-32,32), random(-32,32), random(-5,5), 0, random(-1,5), random(-180,180), 128, 0)
+    TNT1 A 0 A_PlaySoundEx("grenade/explosion","SoundSlot5")
+    TNT1 A 15 Radius_Quake(9,15,0,8,0)
+    TNT1 A 15 Radius_Quake(5,15,0,16,0)
+    TNT1 A 0 A_PlaySoundEx("distant/explosion","SoundSlot6")
+    TNT1 A 15 Radius_Quake(1,15,0,125,0)
+    stop
+  }
+}
+
+actor StickGrenade0 : StickGrenade
+{
+  speed 6
+  seesound ""
+  damage 0
+}
+
+actor StickGrenade1 : StickGrenade
+{
+  speed 12
+  seesound ""
+  damage 0
+}
+actor StickGrenade2 : StickGrenade
+{
+  speed 26
+}
+
+actor StickGrenade3 : StickGrenade
+{
+  speed 32
+}
+
+actor StickGrenade4 : StickGrenade
+{
+  speed 38
+}
+
+actor StickGrenadeExplosion
+{
+  RenderStyle None
+  -RANDOMIZE
+  +NOCLIP
+  PROJECTILE
+  Speed 1
+  Damage 0
+  Scale 0.7
+  obituary "\cf%k \cc>> \ckStielhandgranate \cc>> \cf%o"
+  DamageType "Explosion"
+  states
+  {
+  Spawn:
+    TNT1 A 0
+    TNT1 A 0 A_Explode(150,170,0)
+    TNT1 A 5 A_Explode(400,200)
+    stop
+  }  
+}
+actor MartyrGrenadeExplosion
+{
+  RenderStyle None
+  -RANDOMIZE
+  +NOCLIP
+  PROJECTILE
+  Speed 1
+  Damage 0
+  Scale 0.7
+  obituary "\cf%k \cc>> \cnmartyr \cc>> \cf%o"
+  DamageType "Explosion"
+  states
+  {
+  Spawn:
+    TNT1 A 0
+    TNT1 A 0 A_Explode(150,170,0)
+    TNT1 A 5 A_Explode(300,300)
+    stop
+  }  
+}
+actor RussianGrenade : FragGrenade
+{
+  obituary "\cf%k \cc>> \cngrenade impact \cc>> \cf%o"
+  radius 5
+  height 5
+  speed 20
+  PROJECTILE
+  -NOGRAVITY
+  +RANDOMIZE
+  +HEXENBOUNCE
+  +NOEXTREMEDEATH
+  +FORCERADIUSDMG
+  +CANBOUNCEWATER
+  +BOUNCEONACTORS
+  +ROCKETTRAIL
+  -NOTELEPORT
+  +TELESTOMP
+  +THRUGHOST
+  Scale 0.16
+  gravity 0.4
+  bouncefactor 0.5
+  damagetype "Explosion"
+  ReactionTime 3
+  seesound "grenade/lob"
+  states
+  {
+  Death:
+    TNT1 A 0 
+    TNT1 A 0 A_AlertMonsters
+    TNT1 A 0 A_SpawnItemEx("ExplosionMain",0,0,0,0,0,0,0,0,0)
+    TNT1 A 0 A_SpawnItemEx("RussianGrenadeExplosion",-1,0,0,0,0,0,0,0,0)
+    TNT1 A 0 A_SpawnItemEx("FragGrenadeShock",-1,0,0,0,0,0,0,0,0)
+    TNT1 AAAAAAAAAA 0 A_SpawnItemEx("ImpactSpark2", random(-32,32), random(-32,32), random(-32,32), random(-5,5), 0, random(-1,5), random(-180,180), 128, 0)
+    TNT1 AAAAAAAAAA 0 A_SpawnItemEx("ImpactSpark2", random(-32,32), random(-32,32), random(-32,32), random(-5,5), 0, random(-1,5), random(-180,180), 128, 0)
+    TNT1 A 0 A_PlaySoundEx("grenade/explosion","SoundSlot5")
+    TNT1 A 15 Radius_Quake(9,15,0,8,0)
+    TNT1 A 15 Radius_Quake(5,15,0,16,0)
+    TNT1 A 0 A_PlaySoundEx("distant/explosion","SoundSlot6")
+    TNT1 A 15 Radius_Quake(1,15,0,125,0)
+    stop
+  }
+}
+
+actor RussianGrenade0 : RussianGrenade
+{
+  speed 6
+  seesound ""
+  damage 0
+}
+
+actor RussianGrenade1 : RussianGrenade
+{
+  speed 12
+  seesound ""
+  damage 0
+}
+actor RussianGrenade2 : RussianGrenade
+{
+  speed 26
+}
+
+actor RussianGrenade3 : RussianGrenade
+{
+  speed 32
+}
+
+actor RussianGrenade4 : RussianGrenade
+{
+  speed 38
+}
+
+actor RussianGrenadeExplosion
+{
+  RenderStyle None
+  -RANDOMIZE
+  +NOCLIP
+  PROJECTILE
+  Speed 1
+  Damage 0
+  Scale 0.7
+  obituary "\cf%k \cc>> \ckRGD-33 Grenade \cc>> \cf%o"
+  DamageType "Explosion"
+  states
+  {
+  Spawn:
+    TNT1 A 0
+    TNT1 A 0 A_Explode(150,170,0)
+    TNT1 A 5 A_Explode(200,400)
+    stop
+  }  
+}
+
+actor MillsBomb : FragGrenade
+{
+  obituary "\cf%k \cc>> \cngrenade impact \cc>> \cf%o"
+  radius 5
+  height 5
+  speed 20
+  PROJECTILE
+  -NOGRAVITY
+  +RANDOMIZE
+  +HEXENBOUNCE
+  +NOEXTREMEDEATH
+  +FORCERADIUSDMG
+  +CANBOUNCEWATER
+  +BOUNCEONACTORS
+  +ROCKETTRAIL
+  -NOTELEPORT
+  +TELESTOMP
+  +THRUGHOST
+  Scale 0.16
+  gravity 0.4
+  bouncefactor 0.5
+  damagetype "Explosion"
+  ReactionTime 3
+  seesound "grenade/lob"
+  states
+  {
+  Death:
+    TNT1 A 0 
+    TNT1 A 0 A_AlertMonsters
+    TNT1 A 0 A_SpawnItemEx("ExplosionMain",0,0,0,0,0,0,0,0,0)
+    TNT1 A 0 A_SpawnItemEx("MillsBombExplosion",-1,0,0,0,0,0,0,0,0)
+    TNT1 A 0 A_SpawnItemEx("FragGrenadeShock",-1,0,0,0,0,0,0,0,0)
+    TNT1 AAAAAAAAAA 0 A_SpawnItemEx("ImpactSpark2", random(-32,32), random(-32,32), random(-32,32), random(-5,5), 0, random(-1,5), random(-180,180), 128, 0)
+    TNT1 AAAAAAAAAA 0 A_SpawnItemEx("ImpactSpark2", random(-32,32), random(-32,32), random(-32,32), random(-5,5), 0, random(-1,5), random(-180,180), 128, 0)
+    TNT1 A 0 A_PlaySoundEx("grenade/explosion","SoundSlot5")
+    TNT1 A 15 Radius_Quake(9,15,0,8,0)
+    TNT1 A 15 Radius_Quake(5,15,0,16,0)
+    TNT1 A 0 A_PlaySoundEx("distant/explosion","SoundSlot6")
+    TNT1 A 15 Radius_Quake(1,15,0,125,0)
+    stop
+  }
+}
+actor MillsBomb0 : MillsBomb
+{
+  speed 6
+  seesound ""
+  damage 0
+}
+
+actor MillsBomb1 : MillsBomb
+{
+  speed 12
+  seesound ""
+  damage 0
+}
+actor MillsBomb2 : MillsBomb
+{
+  speed 26
+}
+
+actor MillsBomb3 : MillsBomb
+{
+  speed 32
+}
+
+actor MillsBomb4 : MillsBomb
+{
+  speed 38
+}
+
+actor MillsBombExplosion
+{
+  RenderStyle None
+  -RANDOMIZE
+  +NOCLIP
+  PROJECTILE
+  Speed 1
+  Damage 0
+  Scale 0.7
+  obituary "\cf%k \cc>> \ckMills Bomb \cc>> \cf%o"
+  DamageType "Explosion"
+  states
+  {
+  Spawn:
+    TNT1 A 0
+    TNT1 A 0 A_Explode(150,170,0)
+    TNT1 A 5 A_Explode(200,400)
+    stop
+  }  
+}

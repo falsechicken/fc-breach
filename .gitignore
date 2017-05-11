@@ -1,0 +1,11 @@
+/build
+*.o
+*.err
+*.bak
+*.pk3
+*.pk7
+launch.sh
+*.log
+launch_server.sh
+*.log
+build.sh

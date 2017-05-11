@@ -1,0 +1,58 @@
+WeaponSection "RealGunsUltimate"
+setslot 1 "Fragmentation Grenade" "Stielhandgranate" "RGD-33 Grenade" "Mills Bomb" "Smoke Grenade" "Smoke Grenade "
+setslot 2 "Colt .45" "Luger" "TT30" "Webley" "M1897 Trenchgun"
+setslot 3 "M3 Grease Gun" "Thompson" "MP40" "PPS-42" "Sten Gun"
+setslot 4 "M1A1 Carbine" "Kar98k" "Mosin-Nagant" "Lee-Enfield"
+setslot 5 "M1 Garand" "Gewehr 43" "SVT-40"
+setslot 6 "Springfield" "Scoped Kar98k" "Scoped Mosin-Nagant" "Scoped Lee-Enfield"
+setslot 7 "BAR" "MP44" "PPSh-41" "Bren Gun"
+setslot 9 "Menu"
+
+addkeysection "Real Guns WWII Realism" RealGuns
+addmenukey "Reload" reload
+addmenukey "Equipment/Grenade" grenade
+addmenukey "Melee attack" knife
+addmenukey "Silence Mode" silence
+addmenukey "Peek Lock" peek
+//addmenukey "Deploy MG" mgdeploy
+
+alias reload "puke 601"
+alias grenade "puke 603"
+alias knife "puke 604"
+alias silence "puke 618"
+alias peek "puke 622"
+//alias mgdeploy "puke 623"
+
+defaultbind alt peek
+
+clearplayerclasses
+
+addplayerclass WW2Player_Allied_M3
+addplayerclass WW2Player_Allied_M1Carbine
+addplayerclass WW2Player_Allied_M1Garand
+addplayerclass WW2Player_Allied_Springfield
+addplayerclass WW2Player_Allied_Trenchgun
+addplayerclass WW2Player_Allied_BAR
+addplayerclass WW2Player_Allied_Thompson
+
+addplayerclass WW2Player_British_Sten
+addplayerclass WW2Player_British_Enfield
+addplayerclass WW2Player_British_M1Garand
+addplayerclass WW2Player_British_ScopedEnfield
+addplayerclass WW2Player_British_Trenchgun
+addplayerclass WW2Player_British_Bren
+addplayerclass WW2Player_British_Thompson
+
+addplayerclass WW2Player_German_MP40
+addplayerclass WW2Player_German_Kar98k
+addplayerclass WW2Player_German_G43
+addplayerclass WW2Player_German_ScopedKar98K
+addplayerclass WW2Player_German_Trenchgun
+addplayerclass WW2Player_German_MP44
+
+addplayerclass WW2Player_Russian_PPS42
+addplayerclass WW2Player_Russian_Nagant
+addplayerclass WW2Player_Russian_SVT
+addplayerclass WW2Player_Russian_ScopedNagant
+addplayerclass WW2Player_Russian_Trenchgun
+addplayerclass WW2Player_Russian_PPSh41

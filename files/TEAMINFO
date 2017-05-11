@@ -1,0 +1,49 @@
+ClearTeams
+
+Team "Coalition"
+{
+	PlayerColor "00 FF 00"
+	TextColor "Yellow"
+	RailColor "FF FF 00"
+
+	FlagItem "RedFlag"
+	SkullItem "RedSkullST"
+
+	PlayerStartThingNumber 5080
+	SmallFlagHUDIcon "STFLA2"
+	SmallSkullHUDIcon "STKEYS5"
+	LargeFlagHUDIcon "RFLASMAL"
+	LargeSkullHUDIcon "RSKUA0"
+}
+
+Team "Opposition"
+{
+	PlayerColor "33 33 33"
+	TextColor "DarkGray"
+	RailColor "33 33 33"
+
+	FlagItem "BlueFlag"
+	SkullItem "BlueSkullST"
+
+	PlayerStartThingNumber 5081
+	SmallFlagHUDIcon "STFLA1"
+	SmallSkullHUDIcon "STKEYS3"
+	LargeFlagHUDIcon "BFLASMAL"
+	LargeSkullHUDIcon "BSKUA0"
+}
+
+Team "Russia"
+{
+	PlayerColor "FF 00 00"
+	TextColor "Red"
+	RailColor "FF 00 00"
+
+	FlagItem "RedFlag"
+	SkullItem "RedSkullST"
+
+	PlayerStartThingNumber 5082
+	SmallFlagHUDIcon "STFLA2"
+	SmallSkullHUDIcon "STKEYS5"
+	LargeFlagHUDIcon "RFLASMAL"
+	LargeSkullHUDIcon "RSKUA0"
+}

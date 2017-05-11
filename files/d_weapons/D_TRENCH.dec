@@ -1,0 +1,324 @@
+actor "M1897 Trenchgun" : RGUWeapon
+{
+  obituary "\cf%k \cc>> \caTrenchgun \cc>> \cf%o"
+  inventory.pickupmessage "M1897 Trenchgun"  
+  weapon.selectionorder 17
+  weapon.ammotype "TrenchgunClip"
+  weapon.ammouse 1
+  weapon.ammogive 1
+  weapon.ammotype2 "TrenchgunAmmo"
+  weapon.ammouse2 0
+  weapon.ammogive2 6
+  +NOAUTOFIRE
+  states
+  {
+  Select:
+    TNT1 A 0 A_Raise
+    loop
+  Ready:
+    TNT1 A 0 A_GiveInventory("Weight",3)	//Determines player speed - 3 means 20% less speed
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TRNA A 2 A_PlayWeaponSound("weapon/select")
+    TRNA BCDE 2 A_WeaponReady(WRF_NOPRIMARY)
+    //goto InHand 				-- intentional drop to next state
+  InHand: 					//Ready state
+    TRNA E 0 A_JumpIfNoAmmo("Reload")
+    TRNA E 0 A_JumpIfInventory("Aiming",1,"Aiming")
+    TRNA E 0 A_JumpIfInventory("Reloading",1,"Reload")
+    TRNA E 0 A_JumpIfInventory("ThrowingGrenade",1,"KnifeAttack")
+    TRNA E 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNA E 1 A_WeaponReady
+    loop 
+  Aiming:
+    TRNC E 0 A_JumpIfInventory("Reloading",1,"Reload")    
+    TRNC E 0 A_JumpIfInventory("ThrowingGrenade",1,"KnifeAttack")
+    TRNC E 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNC E 1 A_WeaponReady(WRF_NOBOB)
+    loop
+  Deselect:
+    TNT1 A 0 A_TakeInventory("Weight",5)	//Determines player speed - 3 means 20% less speed
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 A_ZoomFactor(1.0)
+    TRNH ABC 2
+    TNT1 AA 2
+  DeselectFull: 				//Deselect
+    TNT1 AA 0 A_Lower
+    TNT1 A 1 A_Lower
+    loop
+  Fire:
+    TRNA E 0 A_JumpIfInventory("Reloading",1,"ReloadEnd")
+    TRNA E 1 A_JumpIfInventory("Aiming",1,"FireAim")
+    TRNA E 0 A_JumpIfInventory("TrenchGunShellPump",1,"Pump")
+    TRNB A 0 A_JumpIfNoAmmo("ReloadStart")
+    TRNB A 0 A_TakeInventory("TrenchgunPumped",1)
+    TRNB A 0 A_FireCustomMissile("TrenchgunPuff",0,0,4,2)
+    TRNB A 3 BRIGHT A_FireBullets (10, 10, 12, 75, "TrenchgunBullet", 1, 1500)
+    TRNB B 0 ACS_ExecuteAlways(600,0,2500,50*random(2,4),0)		//Recoil script
+    TRNB B 3 BRIGHT A_GunFlash
+    TRNB CD 3
+    TRNB E 0 A_JumpIfNoAmmo(7)
+    TRNB E 1 A_WeaponReady(WRF_NOFIRE)
+    TRNB E 0 A_GiveInventory("TrenchGunShellPump",1)
+    TRNA E 2 A_WeaponReady(WRF_NOFIRE)
+    TRNB E 0 A_JumpIfInventory("TrenchgunAmmo",1,2)
+    TRNB E 0 A_ReFire
+    goto InHand
+    TRNB A 0 A_JumpIfNoAmmo(1)
+    goto InHand
+    TRNB A 0 A_GiveInventory("TrenchgunEmpty",1)		//Go to reload
+    goto Reload
+  FireEmpty:
+    TRNB CDE 2
+    goto Fire+17
+  FireAim:
+    TRNC E 1 A_JumpIfNoAmmo("ReloadStart")
+    TRNC A 0 A_JumpIfInventory("TrenchGunShellPump",1,"PumpAim")
+    TRND A 0 A_TakeInventory("TrenchgunPumped",1)
+    TRND A 0 A_FireCustomMissile("TrenchgunPuff",0,0,0,4)
+    TRND A 3 BRIGHT A_FireBullets (8, 8, 12, 75, "TrenchgunBullet", 1, 2000)
+    TRND B 0 ACS_ExecuteAlways(600,0,2500,50*random(1,2),0)		//Recoil script
+    TRND B 3 BRIGHT A_GunFlash
+    TRND B 0 A_ZoomFactor(1.15)
+    TRND CD 3
+    TRND D 0 A_JumpIfNoAmmo(7)
+    TRND D 2 A_WeaponReady(WRF_NOFIRE)
+    TRND D 0 A_ZoomFactor(1.2)
+    TRND D 0 A_GiveInventory("TrenchGunShellPump",1)
+    TRNC D 0 A_WeaponReady(WRF_NOFIRE)
+    TRND A 0 A_JumpIfInventory("TrenchgunAmmo",1,2)
+    TRND A 0 A_ReFire
+    goto InHand
+    TRND A 0 A_JumpIfNoAmmo(1)
+    goto InHand
+    TRND A 0 A_GiveInventory("TrenchgunEmpty",1)		//Go to reload
+    goto Reload
+  FireEmptyAim:
+    TRNB CDE 2
+    goto Fire+19
+  Hold:
+    TRNA E 0 A_JumpIfInventory("Aiming",1,"HoldAim")	//Don't need a hold because of the already long rechamber time
+    TRNA E 0 A_JumpIfInventory("ThrowingGrenade",1,"KnifeAttack")
+    TRNA E 0 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    goto Fire
+  HoldAim:
+    TRNC E 0
+    goto FireAim
+  Flash:
+    TNT1 A 2 bright A_Light1
+    TNT1 A 0 bright A_Light0
+    stop
+  Reload:
+    TNT1 A 0 A_JumpIfInventory("TrenchgunAmmo",1,"ReloadStart")
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    goto InHand+3
+  ReloadStart:
+    TRNE A 0 A_JumpIfInventory("Aiming",1,"ReloadStartAim")
+    TRNE A 0 A_GiveInventory("Reloading",1)
+    TRNE A 0 A_WeaponReady(WRF_NOFIRE)
+    TRNE A 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNE B 0 A_WeaponReady(WRF_NOFIRE)
+    TRNE B 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNE C 0 A_WeaponReady(WRF_NOFIRE)				//This apparent "messy" setup allows for interruption at all times
+    TRNE C 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    goto ReloadAmmo
+  ReloadAmmo:
+    TNT1 A 0 A_GiveInventory("TrenchgunClip",1)
+    TNT1 A 0 A_TakeInventory("TrenchgunAmmo",1)
+    TRNE G 0 A_WeaponReady(WRF_NOBOB)
+    TRNE G 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNE D 0 A_PlaySoundEx("trenchgun/shell","SoundSlot5")
+    TRNE D 0 A_WeaponReady(WRF_NOBOB)
+    TRNE D 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNE E 0 A_WeaponReady(WRF_NOBOB)
+    TRNE E 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNE F 0 A_WeaponReady(WRF_NOBOB)
+    TRNE F 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TNT1 A 0 A_JumpIfInventory("TrenchgunClip",6,"ReloadEnd")
+    TNT1 A 0 A_JumpIfInventory("TrenchgunAmmo",1,"ReloadAmmo")
+    goto ReloadEnd
+  ReloadEnd:
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TRNE H 0 A_JumpIfInventory("TrenchgunEmpty",1,"ReloadEndEmpty")
+    TRNE H 0 A_WeaponReady(WRF_NOFIRE)
+    TRNE H 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNE I 0 A_WeaponReady(WRF_NOFIRE)
+    TRNE I 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNB F 0 A_WeaponReady(WRF_NOFIRE)
+    TRNB F 3 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNB E 0 A_WeaponReady(WRF_NOFIRE)
+    TRNB E 3 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    goto InHand
+  ReloadEndEmpty:
+    TNT1 A 0 A_TakeInventory("TrenchgunEmpty",1)
+    TRNE A 0 A_TakeInventory("TrenchgunPumped",1)
+    TRNE H 0 A_WeaponReady(WRF_NOFIRE)
+    TRNE H 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNE I 0 A_WeaponReady(WRF_NOFIRE)
+    TRNE I 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNE J 0 A_GiveInventory("TrenchgunPumped",1)
+    TRNE J 0 A_PlaySoundEx("trenchgun/pump","SoundSlot5")
+    TRNE J 0 A_WeaponReady(WRF_NOFIRE)
+    TRNE J 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TRNE K 0 A_WeaponReady(WRF_NOFIRE)
+    TRNE K 5 A_JumpIfInventory("KnifeAttack",1,"KnifeAttack")
+    TNT1 A 0 A_ReFire
+    goto InHand
+  AltFire:	//Aim
+    TRNA E 0 A_JumpIfInventory("Reloading",1,"ReloadEnd")
+    TRNC A 0 A_JumpIfInventory("Aiming",1,"AltFire2")
+    TRNC A 0 A_ZoomFactor(1.2)		
+    TRNC ABCDE 2
+    TRNC E 0 A_GiveInventory("Aiming",1)
+    TRNC E 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TRNC E 0 ACS_ExecuteAlways(600,0,1,0,3)
+    goto Aiming
+  AltFire2:
+    TRNC E 0 A_ZoomFactor(1.0)
+    TRNC EDCBA 2
+    TRNC A 0 A_TakeInventory("Aiming",1)
+    TRNC A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    goto InHand
+  ReloadStartAim:
+    TRNC E 1 A_ZoomFactor(1.0)
+    TRNC EDCBA 1
+    TRNC A 0 A_TakeInventory("Aiming",1)
+    TRNC A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    goto ReloadStart+1
+  Spawn:
+    BKPK A -1
+    loop
+  KnifeAttack: //Butt of weapon
+    TNT1 A 0 A_ZoomFactor(1.0)
+    TNT1 A 0 A_TakeInventory("Aiming",1)
+    TNT1 A 0 A_TakeInventory("Reloading",1)
+    TNT1 A 0 ACS_ExecuteAlways(602,0,0,0,0)
+    TNT1 A 0 A_JumpIfInventory("ThrowingGrenade",1,"FragGrenade")
+    TNT1 A 0 ACS_ExecuteAlways(600,0,900,900,2)		//Recoil script
+    TRNG A 3 A_PlaySoundEx("melee/swing","SoundSlot5")
+    TRNG B 3
+    TRNG C 3 A_FireCustomMissile("MeleeAttack",4,0,0,-4)
+    TRNG DE 3
+    TNT1 A 3
+    TRNG FG 3
+    TNT1 A 0 A_TakeInventory("KnifeAttack",1)
+    goto InHand
+  FragGrenade:
+    FRGA A 0 A_JumpIfInventory("IsBritish",1,"MillsGrenade")
+    FRGA A 0 A_JumpIfInventory("IsRussian",1,"RussianGrenade")
+    FRGA A 3 A_JumpIfInventory("IsAxis",1,"StickGrenade")
+    FRGA BCDEF 3
+    FRGA G 3 A_PlaySoundEx("grenade/pinpull","SoundSlot5")
+    TNT1 A 15 
+    FRGA H 3
+    FRGA H 0 A_PlaySoundEx("grenade/throw","SoundSlot5")
+    FRGA I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    FRGA I 0 A_TakeInventory("ThrowingGrenade",1)
+    FRGA I 0 A_TakeInventory("KnifeAttack",1)
+    FRGA I 3 A_FireCustomMissile("FragGrenade",0,0,0,16)
+    goto Ready+1		//Reselect weapon
+  StickGrenade:
+    FRGC ABCDEFG 3
+    TNT1 A 15 
+    FRGC H 3
+    FRGC H 0 A_PlaySoundEx("stick/throw","SoundSlot5")
+    FRGC I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    FRGC I 0 A_TakeInventory("ThrowingGrenade",1)
+    FRGC I 0 A_TakeInventory("KnifeAttack",1)
+    FRGC I 3 A_FireCustomMissile("StickGrenade",0,0,0,16)
+    goto Ready+1		//Reselect weapon
+  RussianGrenade:
+    FRGD ABCDEFG 3
+    TNT1 A 15 
+    FRGD H 3
+    FRGD H 0 A_PlaySoundEx("stick/throw","SoundSlot5")
+    FRGD I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    FRGD I 0 A_TakeInventory("ThrowingGrenade",1)
+    FRGD I 0 A_TakeInventory("KnifeAttack",1)
+    FRGD I 3 A_FireCustomMissile("RussianGrenade",0,0,0,16)
+    goto Ready+1		//Reselect weapon
+  MillsGrenade:
+    FRGE ABCDEF 3
+    FRGE G 3 A_PlaySoundEx("grenade/pinpull","SoundSlot5")
+    TNT1 A 15 
+    FRGE H 3
+    FRGE H 0 A_PlaySoundEx("grenade/throw","SoundSlot5")
+    FRGE I 0 A_TakeInventory("FragGrenadeAmmo",1)
+    FRGE I 0 A_TakeInventory("ThrowingGrenade",1)
+    FRGE I 0 A_TakeInventory("KnifeAttack",1)
+    FRGE I 3 A_FireCustomMissile("MillsBomb",0,0,0,16)
+    goto Ready+1		//Reselect weapon
+  Pump:
+    TNT1 F 0 A_JumpIfInventory("Aiming",1,"PumpAim")
+    TNT1 F 0 A_TakeInventory("TrenchGunShellPump",1)
+    TRNB F 0 A_GiveInventory("TrenchgunPumped",1)
+    TRNB F 3 A_PlayWeaponSound("trenchgun/pump")
+    TRNB GHIJ 5 A_WeaponReady(WRF_NOFIRE)
+    goto InHand
+  PumpAim:
+    TNT1 H 0 A_TakeInventory("TrenchgunEmpty",1)
+    TRND F 0 A_GiveInventory("TrenchgunPumped",1)
+    TRND F 0 A_TakeInventory("TrenchGunShellPump",1)
+    TRND F 3 A_PlayWeaponSound("trenchgun/pump")
+    TRND HIJ 5 A_WeaponReady(WRF_NOFIRE)
+  goto InHand
+  }
+}
+
+actor TrenchgunEmpty : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+actor TrenchgunPumped : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+actor TrenchgunClip : Ammo
+{
+    inventory.icon "CLIPA0"
+    inventory.amount 0
+    inventory.maxamount 6
+    ammo.backpackamount 0
+    ammo.backpackmaxamount 6
+    +IGNORESKILL
+}
+
+actor TrenchgunPuff
+{
+  RenderStyle None
+  -RANDOMIZE
+  +NOCLIP
+  PROJECTILE
+  Speed 28
+  Damage 0
+  states
+  {
+  Spawn:
+    TNT1 A 0
+    TNT1 A 0 A_AlertMonsters
+    TNT1 A 0 A_SpawnItemEx("WeaponSmokePuffShotgun_Spawned", 1, 0, 0, 0, 0, 0, 0, 128, 0)
+    TNT1 A 1 A_SpawnItemEx("MuzzleFlash2", 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    TNT1 A 0 A_Jump(128,"Spawn2")
+    TNT1 A 0 A_PlaySoundEx("trenchgun/fire1","SoundSlot5")
+    TNT1 A 5 A_PlaySoundEx("trenchgun/fire3","SoundSlot6")
+    stop
+  Spawn2:
+    TNT1 A 0 A_PlaySoundEx("trenchgun/fire2","SoundSlot5")
+    TNT1 A 5 A_PlaySoundEx("trenchgun/fire4","SoundSlot6")
+    stop
+  }
+}
+
+actor TrenchgunBullet : HHBulletPuff
+{
+  damagetype "Trenchgun"
+}
+
+actor TrenchGunShellPump : Inventory //If this is in the players inventory the gun needs to be pumped.
+{
+	inventory.amount 0
+	inventory.maxamount 1
+}

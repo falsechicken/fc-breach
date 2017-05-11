@@ -1,0 +1,18 @@
+episode RANGE
+{
+    name = "Shooting Range"
+}
+
+
+map RANGE "Shooting Range"
+{
+	sky1 = "RSKY1"
+	NoInfighting
+}
+
+map TRENCH "TDM Trench"
+{
+
+	sky1 = "RSKY1"
+
+}

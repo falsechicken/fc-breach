@@ -1,0 +1,104 @@
+// -2 = VERYPOOR
+// -1 = POOR
+// 0 = LOW
+// 1 = MEDIUM
+// 2 = HIGH
+// 3 = EXCELLENT
+// 4 = SUPREME
+// 5 = GODLIKE
+// 6 = PERFECT
+
+{
+	name = "\ctSoap"
+	accuracy = 6
+	intellect = 6
+	evade = 6
+	anticipation = 6
+	reactiontime = 6
+	perception = 6
+	favoriteweapon = "railgun"
+	color = "C0 8F 60"
+	gender = "male"
+	skin = "base"
+	class = "American BAR"
+	railcolor = black
+	chatfrequency = 25
+	revealed = true
+	script = "dfultbot"
+}
+
+{
+	name = "\csHit\cqler"
+	accuracy = 6
+	intellect = 6
+	evade = 6
+	anticipation = 6
+	reactiontime = 6
+	perception = 6
+	favoriteweapon = "railgun"
+	color = "C0 8F 60"
+	gender = "male"
+	skin = "base"
+	class = "German Kar98k"
+	railcolor = black
+	chatfrequency = 25
+	revealed = true
+	script = "dfultbot"
+}
+
+{
+	name = "\cgMaka\crrov"
+	accuracy = 6
+	intellect = 6
+	evade = 6
+	anticipation = 6
+	reactiontime = 6
+	perception = 6
+	favoriteweapon = "railgun"
+	color = "C0 8F 60"
+	gender = "male"
+	skin = "base"
+	class = "Russian PPSh-41"
+	railcolor = black
+	chatfrequency = 25
+	revealed = true
+	script = "dfultbot"
+}
+
+{
+	name = "\crDimi\cgtri"
+	accuracy = 5
+	intellect = 5
+	evade = 5
+	anticipation = 5
+	reactiontime = 5
+	perception = 5
+	favoriteweapon = "railgun"
+	color = "C0 8F 60"
+	gender = "male"
+	skin = "base"
+	class = "Russian Mosin-Nagant"
+	railcolor = black
+	chatfrequency = 25
+	revealed = true
+	script = "dfultbot"
+}
+
+{
+	name = "\ckP\cfrice"
+	accuracy = 6
+	intellect = 6
+	evade = 6
+	anticipation = 6
+	reactiontime = 6
+	perception = 6
+	favoriteweapon = "railgun"
+	color = "C0 8F 60"
+	gender = "male"
+	skin = "base"
+	class = "British Bren"
+	railcolor = black
+	chatfrequency = 25
+	revealed = true
+	script = "dfultbot"
+}

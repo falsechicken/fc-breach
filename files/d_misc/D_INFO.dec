@@ -1,0 +1,1007 @@
+//Is this player Allied?/American
+actor IsAllied : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+//Is this player Axis?/German
+actor IsAxis : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+//Is this player Axis?/Russian
+actor IsRussian : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+//Is this player Allies?/British
+actor IsBritish : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+//Is this player a Bot? Determines to fire a semi-auto weapon
+actor IsBot : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+//Determine when it's ready to regenerate
+actor InCombat : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 14
+}
+//Determine when it's ready to regenerate
+actor ReadyRegen : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+actor WasHeadshot: Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+//Snipers
+actor HoldBreath : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 35
+}
+actor BreathWait : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 35
+}
+//Check this to make player move quieter
+actor Crouching : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+actor Walking : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+actor Sprinting : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+actor TiredLevel : Inventory //Added to inventory while sprinting. Used to determine when to get tired from sprinting.
+{
+	inventory.amount 0
+    inventory.maxamount 100
+}
+actor Tired : Inventory //If we reach full TiredLevel this is used to inform the code that we should be slow until a lower tired level is acheived.
+{
+	inventory.amount 0
+    inventory.maxamount 1
+}
+
+actor Peeking : Inventory //Used to determine if we are peeking.
+{
+	inventory.amount 0
+    inventory.maxamount 1
+}
+
+actor SuppressedLevel : Inventory //Used to determine if we are suppressed or not.
+{
+	+QUIET
+	inventory.amount 1
+	inventory.maxamount 100
+}
+
+actor SuppressedItem : CustomInventory
+{
+	+QUIET
+	radius 50
+	height 85
+	States
+	{
+	Spawn:
+		TNT1 A 5
+	stop
+	Pickup:
+		TNT1 A 0 ACS_ExecuteAlways(626,0,0,0,0)
+    stop
+  }
+}
+
+actor Sliding : Inventory //Used to determine if we are sliding.
+{
+	inventory.amount 0
+    inventory.maxamount 1
+}
+
+actor Deployed : Inventory //Used to deploy machine guns.
+{
+	inventory.amount 0
+    inventory.maxamount 1
+}
+
+//Check this to make the next shot less accurate
+actor Firing : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+
+actor Weight : Inventory
+{
+	inventory.amount 0
+	inventory.maxamount 10
+}
+
+//Check this to make aiming inaccurate
+actor Moving : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+
+//Check this to use "Equipment" item
+actor ThrowingGrenade : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+
+//Check this to throw Special grenade
+actor ThrowingSpecial : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+
+//Check this to use knife attack
+actor KnifeAttack : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+
+//Given when puking the reload script.
+actor Reloading : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+
+//Given when pressing altfire to aim. Used to check and reduce speed when doing so.
+actor Aiming : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+
+//Prevents shellshock and gas grenade effect overlapping
+actor Shellshocked : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+
+//Used when puking the silence mode script. Checked to see if the player should say anything.
+actor Silence : Inventory
+{
+	inventory.amount 0
+	inventory.maxamount 1
+}
+
+actor PowerShellshockSpeed : PowerSpeed
+{
+  Speed 0.5
+}
+
+ACTOR ShellshockSpeed : PowerupGiver
+{
+  +NOGRAVITY
+  +INVENTORY.AUTOACTIVATE
+  +ALWAYSPICKUP
+  Inventory.MaxAmount 0
+  Powerup.Duration -5
+  Powerup.Type "ShellshockSpeed"
+  Inventory.PickupAnnouncerEntry ""
+}
+
+//Hardcore mode
+actor HardcoreMode : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+
+actor PowerHardcoreVulnerability : PowerProtection
+{
+  damagefactor "Normal", 2.0
+}
+
+ACTOR HardcoreVulnerability : PowerupGiver
+{
+  +NOGRAVITY
+  +INVENTORY.AUTOACTIVATE
+  +ALWAYSPICKUP
+  Inventory.MaxAmount 0
+  Powerup.Duration -99999
+  Powerup.Type "HardcoreVulnerability"
+  Inventory.PickupAnnouncerEntry ""
+}
+
+//Make AI do something
+actor AIStuff : CustomInventory
+{
+  States
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    TNT1 A 0 A_LookEx(LOF_NOSOUNDCHECK,0,0,0,180)
+    TNT1 A 0 A_JumpIfTargetInLOS("Stuff")
+    TNT1 A 0 A_Jump(32,"Reload")
+    stop
+  Reload: 
+    TNT1 A 0 ACS_ExecuteAlways(601,0,0,0,0)
+    stop
+  Stuff:
+    TNT1 A 0 A_FaceTarget
+    TNT1 A 0 A_JumpIfCloser(110,"Melee")
+    TNT1 A 0 A_Jump(32,"Grenade")
+    TNT1 A 0 A_Jump(64,"Aim")
+    stop
+  Melee:
+    TNT1 A 0 A_FaceTarget
+    TNT1 A 0 A_GiveInventory("KnifeAttack",1)
+    stop
+  Grenade:
+    TNT1 A 0 ACS_ExecuteAlways(603,0,0,0,0)
+    stop
+  Aim:
+    TNT1 A 0 A_GiveInventory("Aiming",1)
+    stop
+  }
+}
+//Voice Determination
+actor Voice : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 2
+}
+
+actor Talking : Inventory
+{
+    inventory.amount 0
+    inventory.maxamount 1
+}
+
+//Play got Kill sound
+actor Voice_Kill : CustomInventory
+{
+  States
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    TNT1 A 0 A_Jump(72,"Nothing")
+    TNT1 A 0 A_JumpIfInventory("Talking",1,"Nothing")
+    TNT1 A 0 A_JumpIfInventory("IsAllied",1,"Kill_US")
+    TNT1 A 0 A_JumpIfInventory("IsBritish",1,"Kill_US")
+    TNT1 A 0 A_JumpIfInventory("IsAxis",1,"Kill_GE")
+    TNT1 A 0 A_JumpIfInventory("IsRussian",1,"Kill_GE")
+    stop
+  Kill_US:
+    TNT1 A 0 A_GiveInventory("Talking",1)
+    TNT1 A 0 A_JumpIfInventory("Voice",2,"Kill_US_3")
+    TNT1 A 0 A_JumpIfInventory("Voice",1,"Kill_US_2")
+    TNT1 A 0 A_Jump(256,"Kill_US1","Kill_US2","Kill_US3","Kill_US4","Kill_US5")
+    stop
+  Kill_US1:
+    TNT1 A 0 A_PlaySoundEx("us0/kill1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/kill1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/kill2","SoundSlot7")
+    stop
+  Kill_US2:
+    TNT1 A 0 A_PlaySoundEx("us0/kill3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/kill3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/kill4","SoundSlot7")
+    stop
+  Kill_US3:
+    TNT1 A 0 A_PlaySoundEx("us0/kill5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/kill5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/kill6","SoundSlot7")
+    stop
+  Kill_US4:
+    TNT1 A 0 A_PlaySoundEx("us0/kill7","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/kill7","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/kill8","SoundSlot7")
+    stop
+  Kill_US5:
+    TNT1 A 0 A_PlaySoundEx("us0/kill9","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/kill9","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/kill10","SoundSlot7")
+    stop
+  Kill_US_2:
+    TNT1 A 0 A_Jump(256,"Kill_US1_2","Kill_US2_2","Kill_US3_2","Kill_US4_2","Kill_US5_2")
+    stop
+  Kill_US1_2:
+    TNT1 A 0 A_PlaySoundEx("us1/kill1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/kill1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/kill2","SoundSlot7")
+    stop
+  Kill_US2_2:
+    TNT1 A 0 A_PlaySoundEx("us1/kill3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/kill3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/kill4","SoundSlot7")
+    stop
+  Kill_US3_2:
+    TNT1 A 0 A_PlaySoundEx("us1/kill5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/kill5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/kill6","SoundSlot7")
+    stop
+  Kill_US4_2:
+    TNT1 A 0 A_PlaySoundEx("us1/kill7","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/kill7","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/kill8","SoundSlot7")
+    stop
+  Kill_US5_2:
+    TNT1 A 0 A_PlaySoundEx("us1/kill9","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/kill9","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/kill10","SoundSlot7")
+    stop
+  Kill_US_3:
+    TNT1 A 0 A_Jump(256,"Kill_US1_3","Kill_US2_3","Kill_US3_3","Kill_US4_3","Kill_US5_3")
+    stop
+  Kill_US1_3:
+    TNT1 A 0 A_PlaySoundEx("us2/kill1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/kill1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/kill2","SoundSlot7")
+    stop
+  Kill_US2_3:
+    TNT1 A 0 A_PlaySoundEx("us2/kill3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/kill3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/kill4","SoundSlot7")
+    stop
+  Kill_US3_3:
+    TNT1 A 0 A_PlaySoundEx("us2/kill5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/kill5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/kill6","SoundSlot7")
+    stop
+  Kill_US4_3:
+    TNT1 A 0 A_PlaySoundEx("us2/kill7","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/kill7","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/kill8","SoundSlot7")
+    stop
+  Kill_US5_3:
+    TNT1 A 0 A_PlaySoundEx("us2/kill9","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/kill9","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/kill10","SoundSlot7")
+    stop
+  Kill_GE:
+    TNT1 A 0 A_GiveInventory("Talking",1)
+    TNT1 A 0 A_JumpIfInventory("Voice",1,"Kill_GE_2")
+    TNT1 A 0 A_Jump(256,"Kill_GE1","Kill_GE2","Kill_GE3","Kill_GE4","Kill_GE5")
+    stop
+  Kill_GE1:
+    TNT1 A 0 A_PlaySoundEx("ge0/kill1","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/kill1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/kill2","SoundSlot7")
+    stop
+  Kill_GE2:
+    TNT1 A 0 A_PlaySoundEx("ge0/kill3","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/kill3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/kill4","SoundSlot7")
+    stop
+  Kill_GE3:
+    TNT1 A 0 A_PlaySoundEx("ge0/kill5","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/kill5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/kill6","SoundSlot7")
+    stop
+  Kill_GE4:
+    TNT1 A 0 A_PlaySoundEx("ge0/kill7","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/kill7","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/kill8","SoundSlot7")
+    stop
+  Kill_GE5:
+    TNT1 A 0 A_PlaySoundEx("ge0/kill9","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/kill9","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/kill10","SoundSlot7")
+    stop
+  Kill_GE_2:
+    TNT1 A 0 A_Jump(256,"Kill_GE1_2","Kill_GE2_2","Kill_GE3_2","Kill_GE4_2","Kill_GE5_2")
+    stop
+  Kill_GE1_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/kill1","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/kill1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/kill2","SoundSlot7")
+    stop
+  Kill_GE2_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/kill3","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/kill3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/kill4","SoundSlot7")
+    stop
+  Kill_GE3_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/kill5","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/kill5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/kill6","SoundSlot7")
+    stop
+  Kill_GE4_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/kill7","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/kill7","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/kill8","SoundSlot7")
+    stop
+  Kill_GE5_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/kill9","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/kill9","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/kill10","SoundSlot7")
+    stop
+  Nothing:
+    TNT1 A 0
+    stop
+  }
+}
+
+//Play reloading sound
+actor Voice_Reload : CustomInventory
+{
+  States
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    TNT1 A 0 A_Jump(72,"Nothing")
+    TNT1 A 0 A_JumpIfInventory("Talking",1,"Nothing")
+    TNT1 A 0 A_JumpIfInventory("IsAllied",1,"Kill_US")
+    TNT1 A 0 A_JumpIfInventory("IsBritish",1,"Kill_US")
+    TNT1 A 0 A_JumpIfInventory("IsAxis",1,"Kill_GE")
+    TNT1 A 0 A_JumpIfInventory("IsRussian",1,"Kill_GE")
+    stop
+  Kill_US:
+    TNT1 A 0 A_GiveInventory("Talking",1)
+    TNT1 A 0 A_JumpIfInventory("Voice",2,"Kill_US_3")
+    TNT1 A 0 A_JumpIfInventory("Voice",1,"Kill_US_2")
+    TNT1 A 0 A_Jump(256,"Kill_US1","Kill_US2")
+    stop
+  Kill_US1:
+    TNT1 A 0 A_PlaySoundEx("us0/reload1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/reload1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/reload2","SoundSlot7")
+    stop
+  Kill_US2:
+    TNT1 A 0 A_PlaySoundEx("us0/reload3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/reload3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/reload4","SoundSlot7")
+    stop
+  Kill_US_2:
+    TNT1 A 0 A_Jump(256,"Kill_US1_2","Kill_US2_2")
+    stop
+  Kill_US1_2:
+    TNT1 A 0 A_PlaySoundEx("us1/reload1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/reload1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/reload2","SoundSlot7")
+    stop
+  Kill_US2_2:
+    TNT1 A 0 A_PlaySoundEx("us1/reload3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/reload3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/reload4","SoundSlot7")
+    stop
+  Kill_US_3:
+    TNT1 A 0 A_Jump(256,"Kill_US1_3","Kill_US2_3")
+    stop
+  Kill_US1_3:
+    TNT1 A 0 A_PlaySoundEx("us2/reload1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/reload1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/reload2","SoundSlot7")
+    stop
+  Kill_US2_3:
+    TNT1 A 0 A_PlaySoundEx("us2/reload3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/reload3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/reload4","SoundSlot7")
+    stop
+  Kill_GE:
+    TNT1 A 0 A_GiveInventory("Talking",1)
+    TNT1 A 0 A_JumpIfInventory("Voice",1,"Kill_GE_2")
+    TNT1 A 0 A_Jump(256,"Kill_GE1","Kill_GE2")
+    stop
+  Kill_GE1:
+    TNT1 A 0 A_PlaySoundEx("ge0/reload1","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/reload1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/reload2","SoundSlot7")
+    stop
+  Kill_GE2:
+    TNT1 A 0 A_PlaySoundEx("ge0/reload3","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/reload3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/reload4","SoundSlot7")
+    stop
+  Kill_GE_2:
+    TNT1 A 0 A_Jump(256,"Kill_GE1_2","Kill_GE2_2")
+    stop
+  Kill_GE1_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/reload1","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/reload1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/reload2","SoundSlot7")
+    stop
+  Kill_GE2_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/reload3","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/reload3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/reload4","SoundSlot7")
+    stop
+  Nothing:
+    TNT1 A 0
+    stop
+  }
+}
+
+//Play kill frustration sound
+actor Voice_Jugg : CustomInventory
+{
+  States
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    TNT1 A 0 //A_Jump(72,"Nothing")
+    TNT1 A 0 A_JumpIfInventory("Talking",1,"Nothing")
+    TNT1 A 0 A_JumpIfInventory("IsAllied",1,"Kill_US")
+    TNT1 A 0 A_JumpIfInventory("IsBritish",1,"Kill_US")
+    TNT1 A 0 A_JumpIfInventory("IsAxis",1,"Kill_GE")
+    TNT1 A 0 A_JumpIfInventory("IsRussian",1,"Kill_GE")
+    stop
+  Kill_US:
+    TNT1 A 0 A_GiveInventory("Talking",1)
+    TNT1 A 0 A_JumpIfInventory("Voice",2,"Kill_US_3")
+    TNT1 A 0 A_JumpIfInventory("Voice",1,"Kill_US_2")
+    TNT1 A 0 A_Jump(256,"Kill_US1","Kill_US2","Kill_US3")
+    stop
+  Kill_US1:
+    TNT1 A 0 A_PlaySoundEx("us0/jugg1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/jugg1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/jugg2","SoundSlot7")
+    stop
+  Kill_US2:
+    TNT1 A 0 A_PlaySoundEx("us0/jugg3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/jugg3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/jugg4","SoundSlot7")
+    stop
+  Kill_US3:
+    TNT1 A 0 A_PlaySoundEx("us0/jugg5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/jugg5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/jugg6","SoundSlot7")
+    stop
+  Kill_US_2:
+    TNT1 A 0 A_Jump(256,"Kill_US1_2","Kill_US2_2","Kill_US3_2")
+    stop
+  Kill_US1_2:
+    TNT1 A 0 A_PlaySoundEx("us1/jugg1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/jugg1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/jugg2","SoundSlot7")
+    stop
+  Kill_US2_2:
+    TNT1 A 0 A_PlaySoundEx("us1/jugg3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/jugg3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/jugg4","SoundSlot7")
+    stop
+  Kill_US3_2:
+    TNT1 A 0 A_PlaySoundEx("us1/jugg5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/jugg5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/jugg6","SoundSlot7")
+    stop
+  Kill_US_3:
+    TNT1 A 0 A_Jump(256,"Kill_US1_3","Kill_US2_3","Kill_US3_3")
+    stop
+  Kill_US1_3:
+    TNT1 A 0 A_PlaySoundEx("us2/jugg1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/jugg1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/jugg2","SoundSlot7")
+    stop
+  Kill_US2_3:
+    TNT1 A 0 A_PlaySoundEx("us2/jugg3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/jugg3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/jugg4","SoundSlot7")
+    stop
+  Kill_US3_3:
+    TNT1 A 0 A_PlaySoundEx("us2/jugg5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/jugg5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/jugg6","SoundSlot7")
+    stop
+  Kill_GE:
+    TNT1 A 0 A_GiveInventory("Talking",1)
+    TNT1 A 0 A_JumpIfInventory("Voice",1,"Kill_GE_2")
+    TNT1 A 0 A_Jump(256,"Kill_GE1","Kill_GE2","Kill_GE3")
+    stop
+  Kill_GE1:
+    TNT1 A 0 A_PlaySoundEx("ge0/jugg1","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/jugg1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/jugg2","SoundSlot7")
+    stop
+  Kill_GE2:
+    TNT1 A 0 A_PlaySoundEx("ge0/jugg3","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/jugg3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/jugg4","SoundSlot7")
+    stop
+  Kill_GE3:
+    TNT1 A 0 A_PlaySoundEx("ge0/jugg5","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/jugg5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/jugg6","SoundSlot7")
+    stop
+  Kill_GE_2:
+    TNT1 A 0 A_Jump(256,"Kill_GE1_2","Kill_GE2_2","Kill_GE3_2")
+    stop
+  Kill_GE1_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/jugg1","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/jugg1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/jugg2","SoundSlot7")
+    stop
+  Kill_GE2_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/jugg3","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/jugg3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/jugg4","SoundSlot7")
+    stop
+  Kill_GE3_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/jugg5","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/jugg5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/jugg6","SoundSlot7")
+    stop
+  Nothing:
+    TNT1 A 0
+    stop
+  }
+}
+
+//Play grenade indication sound
+actor Voice_GrenadeInc : CustomInventory
+{
+  States
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    TNT1 A 0 //A_Jump(72,"Nothing")
+    TNT1 A 0 A_JumpIfInventory("Talking",1,"Nothing")
+    TNT1 A 0 A_JumpIfInventory("IsAllied",1,"Kill_US")
+    TNT1 A 0 A_JumpIfInventory("IsBritish",1,"Kill_US")
+    TNT1 A 0 A_JumpIfInventory("IsAxis",1,"Kill_GE")
+    TNT1 A 0 A_JumpIfInventory("IsRussian",1,"Kill_GE")
+    stop
+  Kill_US:
+    TNT1 A 0 A_GiveInventory("Talking",1)
+    TNT1 A 0 A_JumpIfInventory("Voice",2,"Kill_US_3")
+    TNT1 A 0 A_JumpIfInventory("Voice",1,"Kill_US_2")
+    TNT1 A 0 A_Jump(256,"Kill_US1","Kill_US2","Kill_US3")
+    stop
+  Kill_US1:
+    TNT1 A 0 A_PlaySoundEx("us0/greninc1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/greninc1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/greninc2","SoundSlot7")
+    stop
+  Kill_US2:
+    TNT1 A 0 A_PlaySoundEx("us0/greninc3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/greninc3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/greninc4","SoundSlot7")
+    stop
+  Kill_US3:
+    TNT1 A 0 A_PlaySoundEx("us0/greninc5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/greninc5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/greninc6","SoundSlot7")
+    stop
+  Kill_US_2:
+    TNT1 A 0 A_Jump(256,"Kill_US1_2","Kill_US2_2","Kill_US3_2")
+    stop
+  Kill_US1_2:
+    TNT1 A 0 A_PlaySoundEx("us1/greninc1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/greninc1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/greninc2","SoundSlot7")
+    stop
+  Kill_US2_2:
+    TNT1 A 0 A_PlaySoundEx("us1/greninc3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/greninc3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/greninc4","SoundSlot7")
+    stop
+  Kill_US3_2:
+    TNT1 A 0 A_PlaySoundEx("us1/greninc5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/greninc5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/greninc6","SoundSlot7")
+    stop
+  Kill_US_3:
+    TNT1 A 0 A_Jump(256,"Kill_US1_3","Kill_US2_3","Kill_US3_3")
+    stop
+  Kill_US1_3:
+    TNT1 A 0 A_PlaySoundEx("us2/greninc1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/greninc1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/greninc2","SoundSlot7")
+    stop
+  Kill_US2_3:
+    TNT1 A 0 A_PlaySoundEx("us2/greninc3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/greninc3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/greninc4","SoundSlot7")
+    stop
+  Kill_US3_3:
+    TNT1 A 0 A_PlaySoundEx("us2/greninc5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/greninc5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/greninc6","SoundSlot7")
+    stop
+  Kill_GE:
+    TNT1 A 0 A_GiveInventory("Talking",1)
+    TNT1 A 0 A_JumpIfInventory("Voice",1,"Kill_GE_2")
+    TNT1 A 0 A_Jump(256,"Kill_GE1","Kill_GE2","Kill_GE3")
+    stop
+  Kill_GE1:
+    TNT1 A 0 A_PlaySoundEx("ge0/greninc1","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/greninc1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/greninc2","SoundSlot7")
+    stop
+  Kill_GE2:
+    TNT1 A 0 A_PlaySoundEx("ge0/greninc3","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/greninc3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/greninc4","SoundSlot7")
+    stop
+  Kill_GE3:
+    TNT1 A 0 A_PlaySoundEx("ge0/greninc5","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/greninc5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/greninc6","SoundSlot7")
+    stop
+  Kill_GE_2:
+    TNT1 A 0 A_Jump(256,"Kill_GE1_2","Kill_GE2_2","Kill_GE3_2")
+    stop
+  Kill_GE1_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/greninc1","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/greninc1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/greninc2","SoundSlot7")
+    stop
+  Kill_GE2_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/greninc3","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/greninc3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/greninc4","SoundSlot7")
+    stop
+  Kill_GE3_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/greninc5","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/greninc5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/greninc6","SoundSlot7")
+    stop
+  Nothing:
+    TNT1 A 0
+    stop
+  }
+}
+
+//Play grenade throw sound
+actor Voice_GrenadeOut : CustomInventory
+{
+  States
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    TNT1 A 0 //A_Jump(72,"Nothing")
+    TNT1 A 0 A_JumpIfInventory("Talking",1,"Nothing")
+    TNT1 A 0 A_JumpIfInventory("IsAllied",1,"Kill_US")
+    TNT1 A 0 A_JumpIfInventory("IsBritish",1,"Kill_US")
+    TNT1 A 0 A_JumpIfInventory("IsAxis",1,"Kill_GE")
+    TNT1 A 0 A_JumpIfInventory("IsRussian",1,"Kill_GE")
+    stop
+  Kill_US:
+    TNT1 A 0 A_GiveInventory("Talking",1)
+    TNT1 A 0 A_JumpIfInventory("Voice",2,"Kill_US_3")
+    TNT1 A 0 A_JumpIfInventory("Voice",1,"Kill_US_2")
+    TNT1 A 0 A_Jump(256,"Kill_US1","Kill_US2","Kill_US3")
+    stop
+  Kill_US1:
+    TNT1 A 0 A_PlaySoundEx("us0/grenade1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/grenade1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/grenade2","SoundSlot7")
+    stop
+  Kill_US2:
+    TNT1 A 0 A_PlaySoundEx("us0/grenade3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/grenade3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/grenade4","SoundSlot7")
+    stop
+  Kill_US3:
+    TNT1 A 0 A_PlaySoundEx("us0/grenade5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/grenade5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/grenade6","SoundSlot7")
+    stop
+  Kill_US_2:
+    TNT1 A 0 A_Jump(256,"Kill_US1_2","Kill_US2_2","Kill_US3_2")
+    stop
+  Kill_US1_2:
+    TNT1 A 0 A_PlaySoundEx("us1/grenade1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/grenade1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/grenade2","SoundSlot7")
+    stop
+  Kill_US2_2:
+    TNT1 A 0 A_PlaySoundEx("us1/grenade3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/grenade3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/grenade4","SoundSlot7")
+    stop
+  Kill_US3_2:
+    TNT1 A 0 A_PlaySoundEx("us1/grenade5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/grenade5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/grenade6","SoundSlot7")
+    stop
+  Kill_US_3:
+    TNT1 A 0 A_Jump(256,"Kill_US1_3","Kill_US2_3","Kill_US3_3")
+    stop
+  Kill_US1_3:
+    TNT1 A 0 A_PlaySoundEx("us2/grenade1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/grenade1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/grenade2","SoundSlot7")
+    stop
+  Kill_US2_3:
+    TNT1 A 0 A_PlaySoundEx("us2/grenade3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/grenade3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/grenade4","SoundSlot7")
+    stop
+  Kill_US3_3:
+    TNT1 A 0 A_PlaySoundEx("us2/grenade5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/grenade5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/grenade6","SoundSlot7")
+    stop
+  Kill_GE:
+    TNT1 A 0 A_GiveInventory("Talking",1)
+    TNT1 A 0 A_JumpIfInventory("Voice",1,"Kill_GE_2")
+    TNT1 A 0 A_Jump(256,"Kill_GE1","Kill_GE2","Kill_GE3")
+    stop
+  Kill_GE1:
+    TNT1 A 0 A_PlaySoundEx("ge0/grenade1","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/grenade1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/grenade2","SoundSlot7")
+    stop
+  Kill_GE2:
+    TNT1 A 0 A_PlaySoundEx("ge0/grenade3","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/grenade3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/grenade4","SoundSlot7")
+    stop
+  Kill_GE3:
+    TNT1 A 0 A_PlaySoundEx("ge0/grenade5","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/grenade5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/grenade6","SoundSlot7")
+    stop
+  Kill_GE_2:
+    TNT1 A 0 A_Jump(256,"Kill_GE1_2","Kill_GE2_2","Kill_GE3_2")
+    stop
+  Kill_GE1_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/grenade1","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/grenade1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/grenade2","SoundSlot7")
+    stop
+  Kill_GE2_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/grenade3","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/grenade3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/grenade4","SoundSlot7")
+    stop
+  Kill_GE3_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/grenade5","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/grenade5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/grenade6","SoundSlot7")
+    stop
+  Nothing:
+    TNT1 A 0
+    stop
+  }
+}
+
+//Play smoke throw sound
+actor Voice_SmokeOut : CustomInventory
+{
+  States
+  {
+  Spawn:
+    TNT1 A 5
+    stop
+  Pickup:
+    TNT1 A 0 //A_Jump(72,"Nothing")
+    TNT1 A 0 A_JumpIfInventory("Talking",1,"Nothing")
+    TNT1 A 0 A_JumpIfInventory("IsAllied",1,"Kill_US")
+    TNT1 A 0 A_JumpIfInventory("IsBritish",1,"Kill_US")
+    TNT1 A 0 A_JumpIfInventory("IsAxis",1,"Kill_GE")
+    TNT1 A 0 A_JumpIfInventory("IsRussian",1,"Kill_GE")
+    stop
+  Kill_US:
+    TNT1 A 0 A_GiveInventory("Talking",1)
+    TNT1 A 0 A_JumpIfInventory("Voice",2,"Kill_US_3")
+    TNT1 A 0 A_JumpIfInventory("Voice",1,"Kill_US_2")
+    TNT1 A 0 A_Jump(256,"Kill_US1","Kill_US2","Kill_US3")
+    stop
+  Kill_US1:
+    TNT1 A 0 A_PlaySoundEx("us0/smoke1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/smoke1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/smoke2","SoundSlot7")
+    stop
+  Kill_US2:
+    TNT1 A 0 A_PlaySoundEx("us0/smoke3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/smoke3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/smoke4","SoundSlot7")
+    stop
+  Kill_US3:
+    TNT1 A 0 A_PlaySoundEx("us0/smoke5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us0/smoke5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us0/smoke6","SoundSlot7")
+    stop
+  Kill_US_2:
+    TNT1 A 0 A_Jump(256,"Kill_US1_2","Kill_US2_2","Kill_US3_2")
+    stop
+  Kill_US1_2:
+    TNT1 A 0 A_PlaySoundEx("us1/smoke1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/smoke1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/smoke2","SoundSlot7")
+    stop
+  Kill_US2_2:
+    TNT1 A 0 A_PlaySoundEx("us1/smoke3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/smoke3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/smoke4","SoundSlot7")
+    stop
+  Kill_US3_2:
+    TNT1 A 0 A_PlaySoundEx("us1/smoke5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us1/smoke5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us1/smoke6","SoundSlot7")
+    stop
+  Kill_US_3:
+    TNT1 A 0 A_Jump(256,"Kill_US1_3","Kill_US2_3","Kill_US3_3")
+    stop
+  Kill_US1_3:
+    TNT1 A 0 A_PlaySoundEx("us2/smoke1","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/smoke1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/smoke2","SoundSlot7")
+    stop
+  Kill_US2_3:
+    TNT1 A 0 A_PlaySoundEx("us2/smoke3","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/smoke3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/smoke4","SoundSlot7")
+    stop
+  Kill_US3_3:
+    TNT1 A 0 A_PlaySoundEx("us2/smoke5","Voice")
+    TNT1 A 0 A_PlaySoundEx("us2/smoke5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("us2/smoke6","SoundSlot7")
+    stop
+  Kill_GE:
+    TNT1 A 0 A_GiveInventory("Talking",1)
+    TNT1 A 0 A_JumpIfInventory("Voice",1,"Kill_GE_2")
+    TNT1 A 0 A_Jump(256,"Kill_GE1","Kill_GE2","Kill_GE3")
+    stop
+  Kill_GE1:
+    TNT1 A 0 A_PlaySoundEx("ge0/smoke1","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/smoke1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/smoke2","SoundSlot7")
+    stop
+  Kill_GE2:
+    TNT1 A 0 A_PlaySoundEx("ge0/smoke3","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/smoke3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/smoke4","SoundSlot7")
+    stop
+  Kill_GE3:
+    TNT1 A 0 A_PlaySoundEx("ge0/smoke5","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge0/smoke5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge0/smoke6","SoundSlot7")
+    stop
+  Kill_GE_2:
+    TNT1 A 0 A_Jump(256,"Kill_GE1_2","Kill_GE2_2","Kill_GE3_2")
+    stop
+  Kill_GE1_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/smoke1","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/smoke1","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/smoke2","SoundSlot7")
+    stop
+  Kill_GE2_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/smoke3","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/smoke3","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/smoke4","SoundSlot7")
+    stop
+  Kill_GE3_2:
+    TNT1 A 0 A_PlaySoundEx("ge1/smoke5","Voice")
+    TNT1 A 0 A_PlaySoundEx("ge1/smoke5","SoundSlot6")
+    TNT1 A 0 A_PlaySoundEx("ge1/smoke6","SoundSlot7")
+    stop
+  Nothing:
+    TNT1 A 0
+    stop
+  }
+}
