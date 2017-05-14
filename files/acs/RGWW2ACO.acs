@@ -1502,8 +1502,8 @@ script 615 (int Mode)
 		Delay(35*2);
 		Talking--;
 		Delay(35*2);
-		TakeInventory("Talking",1);
 	}
+	TakeInventory("Talking",1);
 }
 
 //Shellshock

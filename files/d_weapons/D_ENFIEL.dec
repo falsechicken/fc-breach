@@ -74,7 +74,7 @@ actor "Lee-Enfield" : RGUWeapon
     LEEC E 1 A_JumpIfNoAmmo("ReloadStart")
     LEED A 0 A_TakeInventory("EnfieldClosed",1)
     LEED A 0 A_FireCustomMissile("EnfieldPuff",0,0,0,4)
-    LEED A 1 BRIGHT A_FireBullets (0.35, 0.35, -1, 100, "EnfieldBullet", 1, 9001)
+    LEED A 1 BRIGHT A_FireBullets (0.35, 0.35, -1, 100, "EnfieldBullet3", 1, 9001)
     //LEED A 1 BRIGHT A_FireCustomMissile("EnfieldBullet", 0, 1, -1, 0)
     LEED B 0 ACS_ExecuteAlways(600,0,1500,150*random(1,2),0)			//Recoil script
     LEED B 1 BRIGHT A_GunFlash
