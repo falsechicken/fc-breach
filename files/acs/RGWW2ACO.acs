@@ -54,7 +54,8 @@ bool StandOffMode;
 #define AIM_SWAY_HOLD_MULTI_MAX 55
 #define AIM_SWAY_HOLD_MULTI_MIN 20
 #define AIM_SWAY_HOLD_PASSES 1 //How many passes to make with aim sway.
-#define AIM_SWAY_UPDATE_DELAY 2 //How long to wait before updating the aim away amount.
+#define AIM_SWAY_UPDATE_DELAY 15 //How long to wait before updating the aim away amount.
+#define AIM_SWAY_DELAY 5 //How long to wait before applying the sway effect.
 #define AIM_SWAY_TIRED_MULTI 400
 #define AIM_SWAY_TIRED_PASSES 25 //How many times to loop through the tired sway.
 
@@ -646,6 +647,7 @@ script 600 (int Strength, int Reverse, int Mode) NET CLIENTSIDE
 	{
 		int aimSwayHoldMultiplyer; //Aim sway gets worse the longer you aim. Crouching reduces it.
 		int aimSwayUpdateCounter;
+		int aimSwayDelayCounter;
 		int aimSwayTiredCounter;
 		
 		int suppressionLevel; //Level of suppression. Messes up aim more when a high level.
@@ -671,18 +673,16 @@ script 600 (int Strength, int Reverse, int Mode) NET CLIENTSIDE
 					aimSwayUpdateCounter = 0;
 				}
 				
-				SetActorAngle(0,GetActorAngle(0)+random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength)); //Sway aim.
-				SetActorPitch(0,GetActorPitch(0)-random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
-				delay(1);
-				SetActorAngle(0,GetActorAngle(0)+random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
-				SetActorPitch(0,GetActorPitch(0)-random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
-				delay(1);
-				SetActorAngle(0,GetActorAngle(0)+random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
-				SetActorPitch(0,GetActorPitch(0)-random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
-				delay(1);
-				SetActorAngle(0,GetActorAngle(0)+random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
-				SetActorPitch(0,GetActorPitch(0)-random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
-				
+				if (aimSwayDelayCounter >= AIM_SWAY_DELAY)
+				{
+					SetActorAngle(0,GetActorAngle(0)+random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength)); //Sway aim.
+					SetActorPitch(0,GetActorPitch(0)-random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
+					SetActorAngle(0,GetActorAngle(0)+random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
+					SetActorPitch(0,GetActorPitch(0)-random(-aimSwayHoldMultiplyer,aimSwayHoldMultiplyer)+(random(-10,10)*Strength));
+					
+					aimSwayDelayCounter = 0;
+				}
+					
 				Counter += 1;
 			}
 			
@@ -715,15 +715,6 @@ script 600 (int Strength, int Reverse, int Mode) NET CLIENTSIDE
 			{
 				SetActorAngle(0,GetActorAngle(0)+random(-1,1)*Strength);
 				SetActorPitch(0,GetActorPitch(0)-random(-1,1)*Strength);
-				delay(1);
-				SetActorAngle(0,GetActorAngle(0)+random(-1,1)*Strength);
-				SetActorPitch(0,GetActorPitch(0)-random(-1,1)*Strength);
-				delay(1);
-				SetActorAngle(0,GetActorAngle(0)+random(-1,1)*Strength);
-				SetActorPitch(0,GetActorPitch(0)-random(-1,1)*Strength);
-				delay(1);
-				SetActorAngle(0,GetActorAngle(0)+random(-1,1)*Strength);
-				SetActorPitch(0,GetActorPitch(0)-random(-1,1)*Strength);
 			}
 			
 			if(aimSwayHoldMultiplyer > AIM_SWAY_HOLD_MULTI_MAX) //If the aim multiplier gets too high set it to the max.
@@ -733,6 +724,7 @@ script 600 (int Strength, int Reverse, int Mode) NET CLIENTSIDE
 				aimSwayHoldMultiplyer = AIM_SWAY_HOLD_MULTI_MIN;
 				
 			aimSwayUpdateCounter++;
+			aimSwayDelayCounter++;
 		}
 		
 		aimSwayHoldMultiplyer = 0;
